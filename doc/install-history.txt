@@ -3,3 +3,15 @@ This file just documents how this app was initially generated-
 It should use vite_ruby and inertia_ruby, so it doesn't need the Rails JS stack so it was disabled:
 
 rails new . --name=BilanzBlitz   --database=postgresql   --skip-hotwire   --skip-jbuilder   --skip-asset-pipeline   --devcontainer   --skip-javascript   --skip-bundle   --skip-test
+
+then, run the devcontainer (when devcontainer CLI tools are installed on host machine):
+
+`devcontainer up --workspace-folder .`
+
+After the dev container setup is running, run commands with:
+
+```
+devcontainer exec --workspace-folder . <command>
+```
+
+There is a shell alias `dcx` (dev container exec) that does this.
