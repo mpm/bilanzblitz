@@ -15,3 +15,9 @@ devcontainer exec --workspace-folder . <command>
 ```
 
 There is a shell alias `dcx` (dev container exec) that does this.
+
+
+Then, I added inertia_rails and vite_rails to the Gemfile,
+then I ran `bin/rails generate inertia:install` (which then installs vite ruby and asks for typescript etc.)
+
+after this, the server is running under localhost:3100
