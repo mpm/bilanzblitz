@@ -9,6 +9,14 @@ Rails.application.routes.draw do
     get "(*path)", to: redirect { |params, req| "#{req.protocol}localhost:#{req.port}/#{params[:path]}" }
   end
   root 'home#index'
+
+  # Onboarding
+  get 'onboarding', to: 'onboarding#new', as: :onboarding
+  post 'onboarding', to: 'onboarding#create'
+
+  # Dashboard
+  get 'dashboard', to: 'dashboard#index', as: :dashboard
+
   get 'inertia-example', to: 'inertia_example#index'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

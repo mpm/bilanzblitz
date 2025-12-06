@@ -20,6 +20,20 @@ class Users::SessionsController < Devise::SessionsController
     redirect_to after_sign_out_path_for(resource_name)
   end
 
+  protected
+
+  def after_sign_in_path_for(resource)
+    if resource.companies.any?
+      dashboard_path
+    else
+      onboarding_path
+    end
+  end
+
+  def after_sign_out_path_for(resource_or_scope)
+    root_path
+  end
+
   private
 
   def auth_options
