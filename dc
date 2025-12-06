@@ -1,0 +1,6 @@
+#!/bin/bash
+# Helper script to execute commands in the devcontainer
+# Usage: ./dc <command>
+# Example: ./dc rails console
+
+devcontainer exec --workspace-folder . "$@"

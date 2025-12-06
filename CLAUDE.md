@@ -75,21 +75,28 @@ Once a journal entry has a `posted_at` timestamp, it becomes immutable:
 ## Development Commands
 
 ### Running Commands
-All commands must be prefixed with `devcontainer exec --workspace-folder .` to run inside the development container.
+This project runs in a devcontainer. Use the `./dc` helper script to execute commands inside the container.
+
+The `./dc` script is a shorthand for `devcontainer exec --workspace-folder .`
 
 Examples:
 ```bash
 # Rails console
-devcontainer exec --workspace-folder . rails console
+./dc rails console
 
 # Database migrations
-devcontainer exec --workspace-folder . rails db:migrate
+./dc rails db:migrate
 
 # Run tests
-devcontainer exec --workspace-folder . rails test
+./dc rails test
 
 # Start Rails server (if not already running)
-devcontainer exec --workspace-folder . rails server
+./dc rails server
+```
+
+You can also use the full command if needed:
+```bash
+devcontainer exec --workspace-folder . rails console
 ```
 
 ### Common Tasks
@@ -97,19 +104,19 @@ devcontainer exec --workspace-folder . rails server
 #### Database
 ```bash
 # Create database
-devcontainer exec --workspace-folder . rails db:create
+./dc rails db:create
 
 # Run migrations
-devcontainer exec --workspace-folder . rails db:migrate
+./dc rails db:migrate
 
 # Rollback migration
-devcontainer exec --workspace-folder . rails db:rollback
+./dc rails db:rollback
 
 # Reset database (caution: destroys all data)
-devcontainer exec --workspace-folder . rails db:reset
+./dc rails db:reset
 
 # Seed database
-devcontainer exec --workspace-folder . rails db:seed
+./dc rails db:seed
 ```
 
 #### Frontend (Vite)
@@ -118,22 +125,22 @@ devcontainer exec --workspace-folder . rails db:seed
 # Check package.json for available scripts
 
 # Install JavaScript dependencies
-devcontainer exec --workspace-folder . npm install
+./dc npm install
 
 # Build frontend assets
-devcontainer exec --workspace-folder . npm run build
+./dc npm run build
 ```
 
 #### Generators
 ```bash
 # Generate model
-devcontainer exec --workspace-folder . rails generate model ModelName
+./dc rails generate model ModelName
 
 # Generate controller
-devcontainer exec --workspace-folder . rails generate controller ControllerName
+./dc rails generate controller ControllerName
 
 # Generate migration
-devcontainer exec --workspace-folder . rails generate migration MigrationName
+./dc rails generate migration MigrationName
 ```
 
 ## Project Structure
@@ -271,8 +278,8 @@ Common German VAT rates to support:
 ## Getting Started
 
 1. Ensure the devcontainer is running
-2. Run migrations: `devcontainer exec --workspace-folder . rails db:migrate`
-3. Seed initial data (if available): `devcontainer exec --workspace-folder . rails db:seed`
+2. Run migrations: `./dc rails db:migrate`
+3. Seed initial data (if available): `./dc rails db:seed`
 4. Access the application (typically at http://localhost:3000)
 5. Create your first company and chart of accounts
 6. Start booking transactions!
@@ -280,7 +287,8 @@ Common German VAT rates to support:
 ## Notes for Claude Code
 
 When working on this project:
-- Always prefix Rails/npm commands with `devcontainer exec --workspace-folder .`
+- Use the `./dc` helper script for all Rails/npm commands (e.g., `./dc rails console`)
+- Alternatively, use the full form: `devcontainer exec --workspace-folder . <command>`
 - Respect GoBD immutability rules when modifying accounting logic
 - Consider German accounting standards (SKR03/04) when creating account-related features
 - Use Inertia.js for routing between backend and React frontend
