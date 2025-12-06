@@ -1,4 +1,71 @@
 @import 'tailwindcss';
+@import '@fontsource/syne/400.css';
+@import '@fontsource/syne/700.css';
+@import '@fontsource/syne/800.css';
+@import '@fontsource/literata/400.css';
+@import '@fontsource/literata/500.css';
+@import '@fontsource/literata/600.css';
 
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
+
+@theme {
+  /* Green theme - shadcn/ui preset */
+  --color-background: 0 0% 100%;
+  --color-foreground: 240 10% 3.9%;
+  --color-card: 0 0% 100%;
+  --color-card-foreground: 240 10% 3.9%;
+  --color-popover: 0 0% 100%;
+  --color-popover-foreground: 240 10% 3.9%;
+  --color-primary: 142.1 76.2% 36.3%;
+  --color-primary-foreground: 355.7 100% 97.3%;
+  --color-secondary: 240 4.8% 95.9%;
+  --color-secondary-foreground: 240 5.9% 10%;
+  --color-muted: 240 4.8% 95.9%;
+  --color-muted-foreground: 240 3.8% 46.1%;
+  --color-accent: 240 4.8% 95.9%;
+  --color-accent-foreground: 240 5.9% 10%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 240 5.9% 90%;
+  --color-input: 240 5.9% 90%;
+  --color-ring: 142.1 76.2% 36.3%;
+  --radius: 0.5rem;
+
+  /* Typography */
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-body: 'Literata', Georgia, serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-background: 20 14.3% 4.1%;
+    --color-foreground: 0 0% 95%;
+    --color-card: 24 9.8% 10%;
+    --color-card-foreground: 0 0% 95%;
+    --color-popover: 0 0% 9%;
+    --color-popover-foreground: 0 0% 95%;
+    --color-primary: 142.1 70.6% 45.3%;
+    --color-primary-foreground: 144.9 80.4% 10%;
+    --color-secondary: 240 3.7% 15.9%;
+    --color-secondary-foreground: 0 0% 98%;
+    --color-muted: 0 0% 15%;
+    --color-muted-foreground: 240 5% 64.9%;
+    --color-accent: 12 6.5% 15.1%;
+    --color-accent-foreground: 0 0% 98%;
+    --color-destructive: 0 62.8% 30.6%;
+    --color-destructive-foreground: 0 85.7% 97.3%;
+    --color-border: 240 3.7% 15.9%;
+    --color-input: 240 3.7% 15.9%;
+    --color-ring: 142.4 71.8% 29.2%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
