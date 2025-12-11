@@ -1,4 +1,6 @@
 class Account < ApplicationRecord
+  include AccountingConstants
+
   # Associations
   belongs_to :company
   has_many :line_items, dependent: :destroy
@@ -9,9 +11,5 @@ class Account < ApplicationRecord
   validates :name, presence: true
   validates :account_type, presence: true
   validates :tax_rate, numericality: { greater_than_or_equal_to: 0 }
-
-  # Account types for German accounting
-  # asset, liability, equity, revenue, expense
-  ACCOUNT_TYPES = %w[asset liability equity revenue expense].freeze
   validates :account_type, inclusion: { in: ACCOUNT_TYPES }
 end

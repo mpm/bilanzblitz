@@ -10,9 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_06_105945) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_11_190654) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "account_templates", force: :cascade do |t|
+    t.string "account_type", null: false
+    t.bigint "chart_of_accounts_id", null: false
+    t.string "code", null: false
+    t.jsonb "config", default: {}
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.decimal "tax_rate", precision: 5, scale: 2, default: "0.0"
+    t.datetime "updated_at", null: false
+    t.index ["chart_of_accounts_id", "code"], name: "index_account_templates_on_chart_and_code", unique: true
+    t.index ["chart_of_accounts_id"], name: "index_account_templates_on_chart_of_accounts_id"
+  end
 
   create_table "accounts", force: :cascade do |t|
     t.string "account_type", null: false
@@ -57,14 +71,26 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_105945) do
     t.index ["remote_transaction_id"], name: "index_bank_transactions_on_remote_id", unique: true
   end
 
+  create_table "chart_of_accounts", force: :cascade do |t|
+    t.string "country_code", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_code"], name: "index_chart_of_accounts_on_country_code"
+    t.index ["name"], name: "index_chart_of_accounts_on_name", unique: true
+  end
+
   create_table "companies", force: :cascade do |t|
     t.text "address"
+    t.bigint "chart_of_accounts_id"
     t.string "commercial_register_number"
     t.datetime "created_at", null: false
     t.string "name", null: false
     t.string "tax_number"
     t.datetime "updated_at", null: false
     t.string "vat_id"
+    t.index ["chart_of_accounts_id"], name: "index_companies_on_chart_of_accounts_id"
   end
 
   create_table "company_memberships", force: :cascade do |t|
@@ -158,10 +184,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_105945) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "account_templates", "chart_of_accounts", column: "chart_of_accounts_id"
   add_foreign_key "accounts", "companies"
   add_foreign_key "bank_accounts", "accounts", column: "ledger_account_id"
   add_foreign_key "bank_accounts", "companies"
   add_foreign_key "bank_transactions", "bank_accounts"
+  add_foreign_key "companies", "chart_of_accounts", column: "chart_of_accounts_id"
   add_foreign_key "company_memberships", "companies"
   add_foreign_key "company_memberships", "users"
   add_foreign_key "documents", "companies"

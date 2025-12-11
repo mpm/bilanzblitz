@@ -1,5 +1,6 @@
 class Company < ApplicationRecord
   # Associations
+  belongs_to :chart_of_accounts, optional: true
   has_many :company_memberships, dependent: :destroy
   has_many :users, through: :company_memberships
   has_many :fiscal_years, dependent: :destroy

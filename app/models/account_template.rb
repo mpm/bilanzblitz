@@ -1,0 +1,18 @@
+class AccountTemplate < ApplicationRecord
+  include AccountingConstants
+
+  # Associations
+  belongs_to :chart_of_accounts
+
+  # Validations
+  validates :code, presence: true, uniqueness: { scope: :chart_of_accounts_id }
+  validates :name, presence: true
+  validates :account_type, presence: true
+  validates :tax_rate, numericality: { greater_than_or_equal_to: 0 }
+  validates :account_type, inclusion: { in: ACCOUNT_TYPES }
+
+  # Scopes
+  scope :by_code, -> { order(:code) }
+  scope :for_chart, ->(chart) { where(chart_of_accounts: chart) }
+  scope :of_type, ->(type) { where(account_type: type) }
+end
