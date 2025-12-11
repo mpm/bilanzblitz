@@ -3,7 +3,7 @@ import { FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
 
@@ -24,94 +24,115 @@ export default function Register({ errors }: RegisterProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 p-4">
-      <Head title="Sign Up" />
+    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
+      <Head title="Sign Up - BilanzBlitz" />
 
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold text-center">Create Account</CardTitle>
-          <CardDescription className="text-center">
-            Get started with BilanzBlitz for free
-          </CardDescription>
-        </CardHeader>
+      <div className="w-full max-w-sm">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-semibold tracking-tight mb-1">
+            Bilanz<span className="text-primary">Blitz</span>
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Create your account
+          </p>
+        </div>
 
-        <CardContent>
-          {errors && errors.length > 0 && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                {errors.map((error, index) => (
-                  <p key={index}>{error}</p>
-                ))}
-              </AlertDescription>
-            </Alert>
-          )}
+        <Card>
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="text-xl">Get started free</CardTitle>
+            <CardDescription>
+              Start managing your accounting today
+            </CardDescription>
+          </CardHeader>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={data.email}
-                onChange={e => setData('email', e.target.value)}
-                required
-                autoComplete="email"
-              />
+          <CardContent>
+            {errors && errors.length > 0 && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="text-sm">
+                  {errors.map((error, index) => (
+                    <div key={index}>{error}</div>
+                  ))}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@company.com"
+                  value={data.email}
+                  onChange={e => setData('email', e.target.value)}
+                  required
+                  autoComplete="email"
+                  className="h-9"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium">
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={data.password}
+                  onChange={e => setData('password', e.target.value)}
+                  required
+                  autoComplete="new-password"
+                  className="h-9"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Must be at least 6 characters
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password_confirmation" className="text-sm font-medium">
+                  Confirm password
+                </Label>
+                <Input
+                  id="password_confirmation"
+                  type="password"
+                  value={data.password_confirmation}
+                  onChange={e => setData('password_confirmation', e.target.value)}
+                  required
+                  autoComplete="new-password"
+                  className="h-9"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={processing}
+              >
+                {processing ? 'Creating account...' : 'Create account'}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center text-sm">
+              <span className="text-muted-foreground">Already have an account? </span>
+              <Link
+                href="/users/sign_in"
+                className="text-primary font-medium hover:underline"
+              >
+                Sign in
+              </Link>
             </div>
+          </CardContent>
+        </Card>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={data.password}
-                onChange={e => setData('password', e.target.value)}
-                required
-                autoComplete="new-password"
-              />
-              <p className="text-xs text-muted-foreground">
-                Must be at least 6 characters
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password_confirmation">Confirm Password</Label>
-              <Input
-                id="password_confirmation"
-                type="password"
-                placeholder="••••••••"
-                value={data.password_confirmation}
-                onChange={e => setData('password_confirmation', e.target.value)}
-                required
-                autoComplete="new-password"
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={processing}
-            >
-              {processing ? 'Creating account...' : 'Create Account'}
-            </Button>
-          </form>
-        </CardContent>
-
-        <CardFooter className="flex flex-col space-y-4">
-          <div className="text-sm text-center text-muted-foreground">
-            Already have an account?{' '}
-            <Link
-              href="/users/sign_in"
-              className="text-primary font-medium hover:underline"
-            >
-              Sign in
-            </Link>
-          </div>
-        </CardFooter>
-      </Card>
+        <p className="mt-8 text-center text-xs text-muted-foreground">
+          By signing up, you agree to our Terms of Service and Privacy Policy
+        </p>
+      </div>
     </div>
   )
 }

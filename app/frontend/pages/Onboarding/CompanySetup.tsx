@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, Building2, Sparkles } from 'lucide-react'
+import { AlertCircle, Building2, CheckCircle2 } from 'lucide-react'
 
 interface CompanySetupProps {
   errors?: string[]
@@ -24,44 +24,30 @@ export default function CompanySetup({ errors }: CompanySetupProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
       <Head title="Company Setup - BilanzBlitz" />
 
       <div className="w-full max-w-2xl">
-        {/* Progress Indicator */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-sm font-semibold text-primary" style={{ fontFamily: 'var(--font-display)' }}>
-              Welcome to BilanzBlitz
-            </span>
-          </div>
-          <h1
-            className="text-4xl font-bold mb-2"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            Let's Set Up Your Company
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-semibold tracking-tight mb-1">
+            Bilanz<span className="text-primary">Blitz</span>
           </h1>
-          <p
-            className="text-muted-foreground"
-            style={{ fontFamily: 'var(--font-body)' }}
-          >
-            Just one quick step to get started
+          <p className="text-sm text-muted-foreground">
+            One more step to get started
           </p>
         </div>
 
-        <Card className="shadow-xl">
+        <Card>
           <CardHeader className="space-y-1">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-primary/10 rounded-xl">
-                <Building2 className="h-6 w-6 text-primary" />
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Building2 className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-2xl" style={{ fontFamily: 'var(--font-display)' }}>
-                  Company Details
-                </CardTitle>
-                <CardDescription style={{ fontFamily: 'var(--font-body)' }}>
-                  We'll create your first company and set up the basics
+                <CardTitle className="text-xl">Set up your company</CardTitle>
+                <CardDescription>
+                  We'll create everything you need to get started
                 </CardDescription>
               </div>
             </div>
@@ -69,11 +55,11 @@ export default function CompanySetup({ errors }: CompanySetupProps) {
 
           <CardContent>
             {errors && errors.length > 0 && (
-              <Alert variant="destructive" className="mb-6">
+              <Alert variant="destructive" className="mb-4">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
+                <AlertDescription className="text-sm">
                   {errors.map((error, index) => (
-                    <p key={index}>{error}</p>
+                    <div key={index}>{error}</div>
                   ))}
                 </AlertDescription>
               </Alert>
@@ -81,8 +67,8 @@ export default function CompanySetup({ errors }: CompanySetupProps) {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="company_name" className="text-base">
-                  Company Name <span className="text-destructive">*</span>
+                <Label htmlFor="company_name" className="text-sm font-medium">
+                  Company name
                 </Label>
                 <Input
                   id="company_name"
@@ -92,57 +78,50 @@ export default function CompanySetup({ errors }: CompanySetupProps) {
                   onChange={e => setData('company', { name: e.target.value })}
                   required
                   autoFocus
-                  className="text-base h-12"
-                  style={{ fontFamily: 'var(--font-body)' }}
+                  className="h-9"
                 />
-                <p className="text-sm text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>
-                  You can add more details like tax numbers and address later
+                <p className="text-xs text-muted-foreground">
+                  You can add more details like tax numbers and addresses later
                 </p>
               </div>
 
-              {/* What we'll create info box */}
-              <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                <h3
-                  className="font-semibold mb-3 flex items-center gap-2"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
-                  <Sparkles className="h-4 w-4 text-primary" />
+              {/* What we'll create */}
+              <div className="rounded-lg border bg-muted/30 p-4">
+                <h3 className="text-sm font-medium mb-3">
                   We'll automatically set up:
                 </h3>
-                <ul className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-body)' }}>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">✓</span>
-                    <span>Your company profile</span>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                    Your company profile
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">✓</span>
-                    <span>Current fiscal year ({new Date().getFullYear()})</span>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                    Current fiscal year ({new Date().getFullYear()})
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">✓</span>
-                    <span>A generic bank account to get started</span>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                    A generic bank account to get started
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">✓</span>
-                    <span>Basic chart of accounts (SKR03)</span>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                    Basic chart of accounts (SKR03)
                   </li>
                 </ul>
               </div>
 
               <Button
                 type="submit"
-                className="w-full h-12 text-base"
+                className="w-full"
                 disabled={processing || !data.company.name.trim()}
-                style={{ fontFamily: 'var(--font-display)' }}
               >
-                {processing ? 'Setting up your company...' : 'Create Company & Continue'}
+                {processing ? 'Setting up...' : 'Create company'}
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        {/* Footer note */}
-        <p className="mt-6 text-center text-sm text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>
+        <p className="mt-6 text-center text-xs text-muted-foreground">
           You can always update these details or add more companies later
         </p>
       </div>
