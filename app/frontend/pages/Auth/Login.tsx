@@ -14,9 +14,11 @@ interface LoginProps {
 
 export default function Login({ errors }: LoginProps) {
   const { data, setData, post, processing } = useForm({
-    email: '',
-    password: '',
-    remember_me: false,
+    user: {
+      email: '',
+      password: '',
+      remember_me: false,
+    }
   })
 
   function handleSubmit(e: FormEvent) {
@@ -68,8 +70,8 @@ export default function Login({ errors }: LoginProps) {
                   id="email"
                   type="email"
                   placeholder="name@company.com"
-                  value={data.email}
-                  onChange={e => setData('email', e.target.value)}
+                  value={data.user.email}
+                  onChange={e => setData('user', { ...data.user, email: e.target.value })}
                   required
                   autoComplete="email"
                   className="h-9"
@@ -83,8 +85,8 @@ export default function Login({ errors }: LoginProps) {
                 <Input
                   id="password"
                   type="password"
-                  value={data.password}
-                  onChange={e => setData('password', e.target.value)}
+                  value={data.user.password}
+                  onChange={e => setData('user', { ...data.user, password: e.target.value })}
                   required
                   autoComplete="current-password"
                   className="h-9"
@@ -94,8 +96,8 @@ export default function Login({ errors }: LoginProps) {
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="remember_me"
-                  checked={data.remember_me}
-                  onCheckedChange={(checked) => setData('remember_me', checked === true)}
+                  checked={data.user.remember_me}
+                  onCheckedChange={(checked) => setData('user', { ...data.user, remember_me: checked === true })}
                 />
                 <Label
                   htmlFor="remember_me"
