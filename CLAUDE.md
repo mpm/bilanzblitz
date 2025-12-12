@@ -44,11 +44,12 @@ The application uses a classic double-entry bookkeeping system:
 3. **Fiscal Years** - Year-based accounting periods with closing capability
 4. **Accounts** - Chart of accounts (SKR03/SKR04 compatible)
 5. **Bank Accounts** - Physical bank accounts linked to ledger accounts
-6. **Bank Transactions** - Individual transactions from bank feeds
+6. **Bank Transactions** - Individual transactions from bank feeds (status: pending → booked → reconciled)
 7. **Documents** - Scanned receipts, invoices, and supporting documentation
 8. **Journal Entries** - Bookkeeping transaction headers (can be posted for immutability)
 9. **Line Items** - The debit/credit splits that make up journal entries
 10. **Tax Reports** - VAT and annual tax report storage
+11. **Account Usages** - Tracks recently used accounts per company for quick selection during booking
 
 ### Key Design Decisions
 
@@ -71,6 +72,29 @@ Once a journal entry has a `posted_at` timestamp, it becomes immutable:
 - Posted entries cannot be modified or deleted
 - Line items cannot be changed if their journal entry is posted
 - This ensures audit trail compliance with German tax law (GoBD - Grundsätze zur ordnungsmäßigen Führung und Aufbewahrung von Büchern)
+
+#### Bank Transaction Booking Workflow
+Bank transactions flow through the following states:
+1. **pending** - Imported but not yet booked
+2. **booked** - Linked to a journal entry
+3. **reconciled** - Fully verified against source documents
+
+The booking process uses service classes:
+- `JournalEntryCreator` - Creates journal entries from bank transactions with automatic VAT splits
+- `JournalEntryDestroyer` - Safely deletes journal entries (resets bank transaction to pending)
+
+#### Account Usage Tracking
+The `AccountUsage` model tracks which accounts are frequently used per company:
+- Records are upserted via `AccountUsage.record_usage(company:, account:)`
+- Recently used accounts are retrieved via `company.account_usages.recent`
+- This enables quick account selection in the booking UI
+
+#### VAT Account Constants
+Standard SKR03 VAT accounts are defined in `Account::VAT_ACCOUNTS`:
+- `1576` - Abziehbare Vorsteuer 19% (Input VAT 19%)
+- `1571` - Abziehbare Vorsteuer 7% (Input VAT 7%)
+- `1776` - Umsatzsteuer 19% (Output VAT 19%)
+- `1771` - Umsatzsteuer 7% (Output VAT 7%)
 
 ## Development Commands
 
@@ -150,8 +174,9 @@ devcontainer exec --workspace-folder . rails console
 ├── app/
 │   ├── controllers/          # Rails controllers (Inertia endpoints)
 │   ├── models/              # ActiveRecord models
+│   ├── services/            # Service classes (business logic)
 │   ├── frontend/            # React + TypeScript frontend
-│   │   ├── components/      # React components
+│   │   ├── components/      # React components (including shadcn/ui)
 │   │   ├── pages/          # Inertia page components
 │   │   └── types/          # TypeScript type definitions
 │   └── views/              # Minimal (Inertia uses React for views)
@@ -246,6 +271,12 @@ Common German VAT rates to support:
 - 19% standard rate (Regelsteuersatz)
 - 7% reduced rate (ermäßigter Steuersatz)
 - 0% tax-free (steuerfrei)
+
+### VAT Accounting Method
+The application currently supports **Ist-Versteuerung** (cash accounting):
+- VAT becomes due/deductible when payment is received/made
+- This is the method used when booking bank transactions directly
+- Soll-Versteuerung (accrual accounting) would require invoice-based VAT handling
 
 ### Tax Reports
 - **UStVA** (Umsatzsteuervoranmeldung) - Monthly or quarterly VAT pre-registration
