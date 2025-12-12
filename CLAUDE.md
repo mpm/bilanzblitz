@@ -112,7 +112,10 @@ Examples:
 ./dc rails db:migrate
 
 # Run tests
-./dc rails test
+./dc rspec .
+
+# Apply linting rules
+./dc rubocop -A
 
 # Start Rails server (if not already running)
 ./dc rails server
@@ -151,9 +154,13 @@ devcontainer exec --workspace-folder . rails console
 # Install JavaScript dependencies
 ./dc npm install
 
-# Build frontend assets
-./dc npm run build
+# Check for TypeScript errors
+./dc npm run check
 ```
+
+Explicitly building the frontend assets is not necessary, as there is
+usually a Vite process running during development.
+
 
 #### Generators
 ```bash
