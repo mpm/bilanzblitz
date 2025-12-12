@@ -1,6 +1,6 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   def new
-    render inertia: 'Auth/Register'
+    render inertia: "Auth/Register"
   end
 
   def create
@@ -19,7 +19,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     else
       clean_up_passwords resource
       set_minimum_password_length
-      render inertia: 'Auth/Register', props: {
+      render inertia: "Auth/Register", props: {
         errors: resource.errors.full_messages
       }
     end

@@ -20,6 +20,6 @@ class JournalEntryDestroyer
   private
 
   def failure(message)
-    Result.new(success?: false, errors: [message])
+    Result.new(success?: false, errors: [ message ])
   end
 end

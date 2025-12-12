@@ -40,7 +40,7 @@ class TransactionCsvParser
 
     # Try German format first: DD.MM.YYYY or DD.MM.YY
     if str.match?(/^\d{1,2}\.\d{1,2}\.\d{2,4}$/)
-      parts = str.split('.')
+      parts = str.split(".")
       day = parts[0].to_i
       month = parts[1].to_i
       year = parts[2].to_i
@@ -63,12 +63,12 @@ class TransactionCsvParser
 
     str = str.strip
     # Remove currency symbols and whitespace
-    str = str.gsub(/[€EUR\s]/, '')
+    str = str.gsub(/[€EUR\s]/, "")
 
     # Handle German number format: 1.234,56 -> 1234.56
-    if str.include?(',')
+    if str.include?(",")
       # German format: periods are thousands separators, comma is decimal
-      str = str.gsub('.', '').gsub(',', '.')
+      str = str.gsub(".", "").gsub(",", ".")
     end
 
     str.to_f

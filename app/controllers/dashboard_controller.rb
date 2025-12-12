@@ -7,7 +7,7 @@ class DashboardController < ApplicationController
     @fiscal_year = @company.fiscal_years.order(year: :desc).first
     @bank_account = @company.bank_accounts.first
 
-    render inertia: 'Dashboard/Index', props: {
+    render inertia: "Dashboard/Index", props: {
       company: {
         id: @company.id,
         name: @company.name

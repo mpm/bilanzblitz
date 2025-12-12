@@ -2,7 +2,7 @@ class JournalEntriesController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_has_company
   before_action :set_company
-  before_action :set_journal_entry, only: [:destroy]
+  before_action :set_journal_entry, only: [ :destroy ]
 
   def create
     bank_transaction = find_bank_transaction
@@ -10,7 +10,7 @@ class JournalEntriesController < ApplicationController
     unless bank_transaction
       return render json: {
         success: false,
-        errors: ["Bank transaction not found"]
+        errors: [ "Bank transaction not found" ]
       }, status: :not_found
     end
 

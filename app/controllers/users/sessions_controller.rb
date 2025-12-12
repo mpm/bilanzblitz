@@ -1,6 +1,6 @@
 class Users::SessionsController < Devise::SessionsController
   def new
-    render inertia: 'Auth/Login'
+    render inertia: "Auth/Login"
   end
 
   def create
@@ -9,8 +9,8 @@ class Users::SessionsController < Devise::SessionsController
     yield resource if block_given?
     redirect_to after_sign_in_path_for(resource)
   rescue
-    render inertia: 'Auth/Login', props: {
-      errors: ['Invalid email or password']
+    render inertia: "Auth/Login", props: {
+      errors: [ "Invalid email or password" ]
     }
   end
 

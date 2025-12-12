@@ -28,7 +28,7 @@ class JournalEntryCreator
       Result.new(success?: true, journal_entry: @journal_entry, errors: [])
     end
   rescue ActiveRecord::RecordInvalid => e
-    Result.new(success?: false, journal_entry: nil, errors: [e.message])
+    Result.new(success?: false, journal_entry: nil, errors: [ e.message ])
   end
 
   private
@@ -153,6 +153,6 @@ class JournalEntryCreator
   end
 
   def failure(message)
-    Result.new(success?: false, journal_entry: nil, errors: [message])
+    Result.new(success?: false, journal_entry: nil, errors: [ message ])
   end
 end

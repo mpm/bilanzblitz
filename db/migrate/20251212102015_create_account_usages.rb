@@ -9,7 +9,7 @@ class CreateAccountUsages < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :account_usages, [:company_id, :account_id], unique: true
-    add_index :account_usages, [:company_id, :last_used_at]
+    add_index :account_usages, [ :company_id, :account_id ], unique: true
+    add_index :account_usages, [ :company_id, :last_used_at ]
   end
 end

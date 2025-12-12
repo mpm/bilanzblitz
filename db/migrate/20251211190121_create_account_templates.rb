@@ -12,6 +12,6 @@ class CreateAccountTemplates < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :account_templates, [:chart_of_accounts_id, :code], unique: true, name: 'index_account_templates_on_chart_and_code'
+    add_index :account_templates, [ :chart_of_accounts_id, :code ], unique: true, name: 'index_account_templates_on_chart_and_code'
   end
 end

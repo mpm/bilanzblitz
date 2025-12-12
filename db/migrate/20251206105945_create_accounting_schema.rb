@@ -33,7 +33,7 @@ class CreateAccountingSchema < ActiveRecord::Migration[8.1]
       t.jsonb :balance_sheet_snapshot
       t.timestamps
     end
-    add_index :fiscal_years, [:company_id, :year], unique: true
+    add_index :fiscal_years, [ :company_id, :year ], unique: true
 
     # Chart of Accounts
     create_table :accounts do |t|
@@ -45,7 +45,7 @@ class CreateAccountingSchema < ActiveRecord::Migration[8.1]
       t.boolean :is_system_account, default: false
       t.timestamps
     end
-    add_index :accounts, [:company_id, :code], unique: true
+    add_index :accounts, [ :company_id, :code ], unique: true
 
     # Bank Accounts
     create_table :bank_accounts do |t|

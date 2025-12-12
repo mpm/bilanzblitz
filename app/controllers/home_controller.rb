@@ -10,6 +10,6 @@ class HomeController < ApplicationController
       return
     end
 
-    render inertia: 'Home/Index'
+    render inertia: "Home/Index"
   end
 end

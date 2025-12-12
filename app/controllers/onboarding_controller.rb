@@ -1,9 +1,9 @@
 class OnboardingController < ApplicationController
   before_action :authenticate_user!
-  before_action :redirect_if_has_company, only: [:new, :create]
+  before_action :redirect_if_has_company, only: [ :new, :create ]
 
   def new
-    render inertia: 'Onboarding/CompanySetup'
+    render inertia: "Onboarding/CompanySetup"
   end
 
   def create
@@ -17,7 +17,7 @@ class OnboardingController < ApplicationController
       CompanyMembership.create!(
         user: current_user,
         company: @company,
-        role: 'admin'
+        role: "admin"
       )
 
       # Create current fiscal year
@@ -32,25 +32,25 @@ class OnboardingController < ApplicationController
       # Create a generic bank account (1200 SKR03)
       @bank_account_ledger = Account.create!(
         company: @company,
-        code: '1200',
-        name: 'Bank Account',
-        account_type: 'asset',
+        code: "1200",
+        name: "Bank Account",
+        account_type: "asset",
         is_system_account: true
       )
 
       # Create the generic bank account
       @bank_account = BankAccount.create!(
         company: @company,
-        bank_name: 'Generic Bank Account',
-        currency: 'EUR',
+        bank_name: "Generic Bank Account",
+        currency: "EUR",
         ledger_account: @bank_account_ledger
       )
     end
 
     redirect_to dashboard_path
   rescue ActiveRecord::RecordInvalid => e
-    render inertia: 'Onboarding/CompanySetup', props: {
-      errors: [e.message]
+    render inertia: "Onboarding/CompanySetup", props: {
+      errors: [ e.message ]
     }
   end
 

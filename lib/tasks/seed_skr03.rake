@@ -1,9 +1,9 @@
 namespace :accounting do
   desc "Seed SKR03 chart of accounts from contrib/skr03-extract.txt"
   task seed_skr03: :environment do
-    dry_run = ENV['DRY_RUN'] == 'true'
+    dry_run = ENV["DRY_RUN"] == "true"
 
-    file_path = Rails.root.join('contrib', 'skr03-extract.txt')
+    file_path = Rails.root.join("contrib", "skr03-extract.txt")
 
     unless File.exist?(file_path)
       puts "Error: File not found at #{file_path}"
@@ -24,16 +24,16 @@ namespace :accounting do
       line_number = index + 1
 
       # Skip comment lines and non-table lines
-      next if line.start_with?('#') || !line.start_with?('|')
+      next if line.start_with?("#") || !line.start_with?("|")
 
       # Split by pipe character
-      parts = line.split('|').map(&:strip)
+      parts = line.split("|").map(&:strip)
 
       # Need at least 4 parts (empty, col1, col2, col3)
       next if parts.length < 4
 
       # Skip header row
-      next if parts[3] == 'Konto & Bezeichnung' || parts[3].start_with?(':---')
+      next if parts[3] == "Konto & Bezeichnung" || parts[3].start_with?(":---")
 
       col1 = parts[1] # Bilanz-/GuV-Posten (ignored)
       col2 = parts[2] # Programmverbindung (flags)
@@ -59,7 +59,7 @@ namespace :accounting do
 
       # Store flags in config hash
       config = {}
-      config['_flags'] = col2 unless col2.empty?
+      config["_flags"] = col2 unless col2.empty?
 
       if dry_run
         # In dry mode, just print the parsed data
@@ -120,9 +120,9 @@ namespace :accounting do
 
       ActiveRecord::Base.transaction do
         # Create or find the SKR03 chart
-        chart = ChartOfAccounts.find_or_create_by!(name: 'SKR03') do |c|
-          c.country_code = 'DE'
-          c.description = 'DATEV-Kontenrahmen SKR03 (Prozessgliederungsprinzip)'
+        chart = ChartOfAccounts.find_or_create_by!(name: "SKR03") do |c|
+          c.country_code = "DE"
+          c.description = "DATEV-Kontenrahmen SKR03 (Prozessgliederungsprinzip)"
         end
 
         puts "ChartOfAccounts created/found: #{chart.name} (ID: #{chart.id})"
@@ -162,10 +162,10 @@ namespace :accounting do
   # Parse the account column to extract code and description
   def parse_account_column(text)
     text = text.strip
-    return [nil, nil] if text.empty?
+    return [ nil, nil ] if text.empty?
 
     # Split at first space
-    parts = text.split(' ', 2)
+    parts = text.split(" ", 2)
 
     if parts.length == 1
       # No space found, this is either a single account or a range
@@ -176,9 +176,9 @@ namespace :accounting do
     end
 
     # Handle account ranges (e.g., "1610-23" or "8925-8928")
-    if account_part.include?('-')
+    if account_part.include?("-")
       # Take the first number before the dash
-      account_code = account_part.split('-').first
+      account_code = account_part.split("-").first
     else
       account_code = account_part
     end
@@ -186,7 +186,7 @@ namespace :accounting do
     # If no description was found, use "Konto XXXX" as default
     description ||= "Konto #{account_code}"
 
-    [account_code, description]
+    [ account_code, description ]
   end
 
   # Determine account type based on SKR03 (Prozessgliederungsprinzip) structure
@@ -203,48 +203,48 @@ namespace :accounting do
     case account_num
     # Class 0: Fixed assets and capital accounts
     when 0...800
-      'asset' # Fixed assets (intangible, tangible, financial assets)
+      "asset" # Fixed assets (intangible, tangible, financial assets)
     when 800...1000
-      'equity' # Capital accounts, equity
+      "equity" # Capital accounts, equity
 
     # Class 1: Finance and private accounts
     when 1000...1600
-      'asset' # Cash, bank, receivables
+      "asset" # Cash, bank, receivables
     when 1600...1800
-      'liability' # Payables (Verbindlichkeiten)
+      "liability" # Payables (Verbindlichkeiten)
     when 1800...2000
-      'asset' # Other current assets
+      "asset" # Other current assets
 
     # Class 2: Deferral accounts
     when 2000...2200
-      'equity' # Equity accounts
+      "equity" # Equity accounts
     when 2200...2400
-      'liability' # Provisions (Rückstellungen)
+      "liability" # Provisions (Rückstellungen)
     when 2400...3000
-      'liability' # Liabilities and deferrals
+      "liability" # Liabilities and deferrals
 
     # Class 3: Inventory accounts
     when 3000...4000
-      'asset' # Raw materials, goods, work in progress
+      "asset" # Raw materials, goods, work in progress
 
     # Class 4, 5, 6: Expense accounts
     when 4000...7000
-      'expense' # Operating expenses
+      "expense" # Operating expenses
 
     # Class 7: Additional expenses or cost types
     when 7000...8000
-      'expense' # Other expenses
+      "expense" # Other expenses
 
     # Class 8: Revenue accounts
     when 8000...9000
-      'revenue' # Sales revenue and closing accounts
+      "revenue" # Sales revenue and closing accounts
 
     # Class 9: Carryforward and statistical accounts
     when 9000...10000
-      'equity' # Cost accounting, closing, carryforward
+      "equity" # Cost accounting, closing, carryforward
 
     else
-      'asset' # Default fallback
+      "asset" # Default fallback
     end
   end
 
@@ -254,7 +254,7 @@ namespace :accounting do
 
     # Look for patterns like "7 %", "19 %", "16 %", etc.
     if description =~ /(\d+(?:,\d+)?)\s*%/
-      rate = $1.gsub(',', '.').to_f
+      rate = $1.gsub(",", ".").to_f
       return rate
     end
 

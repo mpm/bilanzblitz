@@ -2,12 +2,12 @@ class BankAccountsController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_has_company
   before_action :set_company
-  before_action :set_bank_account, only: [:show, :import_preview, :import]
+  before_action :set_bank_account, only: [ :show, :import_preview, :import ]
 
   def index
     @bank_accounts = @company.bank_accounts.includes(:ledger_account)
 
-    render inertia: 'BankAccounts/Index', props: {
+    render inertia: "BankAccounts/Index", props: {
       company: {
         id: @company.id,
         name: @company.name
@@ -23,7 +23,7 @@ class BankAccountsController < ApplicationController
     @recent_accounts = @company.account_usages.recent.includes(:account).map(&:account).compact
     @fiscal_year = FiscalYear.current_for(company: @company)
 
-    render inertia: 'BankAccounts/Show', props: {
+    render inertia: "BankAccounts/Show", props: {
       company: {
         id: @company.id,
         name: @company.name
@@ -73,11 +73,11 @@ class BankAccountsController < ApplicationController
             remittance_information: tx_data.remittance_information,
             counterparty_name: tx_data.counterparty_name,
             counterparty_iban: tx_data.counterparty_iban,
-            status: 'pending',
+            status: "pending",
             config: {
               import: {
                 ts: import_timestamp,
-                origin: 'csv-paste'
+                origin: "csv-paste"
               }
             }
           )
