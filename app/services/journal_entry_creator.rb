@@ -114,7 +114,33 @@ class JournalEntryCreator
   end
 
   def main_account
-    @main_account ||= @company.accounts.find(@params[:account_id])
+    return @main_account if defined?(@main_account)
+
+    # Support both account_id (legacy) and account_code (new approach)
+    if @params[:account_code].present?
+      @main_account = find_or_create_account_by_code(@params[:account_code])
+    elsif @params[:account_id].present?
+      @main_account = @company.accounts.find(@params[:account_id])
+    else
+      raise ActiveRecord::RecordNotFound, "No account_id or account_code provided"
+    end
+
+    @main_account
+  end
+
+  def find_or_create_account_by_code(code)
+    # First try to find existing account
+    account = @company.accounts.find_by(code: code)
+    return account if account
+
+    # If not found, try to create from template
+    return nil unless @company.chart_of_accounts.present?
+
+    template = @company.chart_of_accounts.account_templates.find_by(code: code)
+    return nil unless template
+
+    # Create account from template
+    template.add_to_company(@company)
   end
 
   def vat_account

@@ -18,11 +18,12 @@ import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Account {
-  id: number
+  id: number | null
   code: string
   name: string
   accountType: string
   taxRate: number
+  fromTemplate?: boolean
 }
 
 interface AccountSearchProps {
@@ -39,11 +40,13 @@ export function AccountSearch({
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [searchResults, setSearchResults] = useState<Account[]>([])
+  const [templateResults, setTemplateResults] = useState<Account[]>([])
   const [isSearching, setIsSearching] = useState(false)
 
   useEffect(() => {
     if (search.length < 2) {
       setSearchResults([])
+      setTemplateResults([])
       return
     }
 
@@ -52,7 +55,8 @@ export function AccountSearch({
       try {
         const response = await fetch(`/accounts?search=${encodeURIComponent(search)}`)
         const data = await response.json()
-        setSearchResults(data.accounts)
+        setSearchResults(data.accounts || [])
+        setTemplateResults(data.templateAccounts || [])
       } catch (err) {
         console.error('Failed to search accounts', err)
       } finally {
@@ -80,8 +84,6 @@ export function AccountSearch({
     return 'outline'
   }
 
-  const displayAccounts = search.length >= 2 ? searchResults : recentAccounts
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -96,6 +98,9 @@ export function AccountSearch({
               <span className="font-mono">{selectedAccount.code}</span>
               {' '}
               {selectedAccount.name}
+              {selectedAccount.fromTemplate && (
+                <span className="text-xs text-muted-foreground ml-2">(new)</span>
+              )}
             </span>
           ) : (
             <span className="text-muted-foreground">Select account...</span>
@@ -118,8 +123,8 @@ export function AccountSearch({
               <CommandGroup heading="Recently Used">
                 {recentAccounts.map((account) => (
                   <CommandItem
-                    key={account.id}
-                    value={account.id.toString()}
+                    key={account.code}
+                    value={account.code}
                     onSelect={() => {
                       onSelect(account)
                       setOpen(false)
@@ -128,7 +133,7 @@ export function AccountSearch({
                     <Check
                       className={cn(
                         'mr-2 h-4 w-4',
-                        selectedAccount?.id === account.id ? 'opacity-100' : 'opacity-0'
+                        selectedAccount?.code === account.code ? 'opacity-100' : 'opacity-0'
                       )}
                     />
                     <span className="font-mono mr-2">{account.code}</span>
@@ -141,11 +146,11 @@ export function AccountSearch({
               </CommandGroup>
             )}
             {search.length >= 2 && searchResults.length > 0 && (
-              <CommandGroup heading="Search Results">
+              <CommandGroup heading="Existing Accounts">
                 {searchResults.map((account) => (
                   <CommandItem
-                    key={account.id}
-                    value={account.id.toString()}
+                    key={account.code}
+                    value={account.code}
                     onSelect={() => {
                       onSelect(account)
                       setOpen(false)
@@ -154,7 +159,7 @@ export function AccountSearch({
                     <Check
                       className={cn(
                         'mr-2 h-4 w-4',
-                        selectedAccount?.id === account.id ? 'opacity-100' : 'opacity-0'
+                        selectedAccount?.code === account.code ? 'opacity-100' : 'opacity-0'
                       )}
                     />
                     <span className="font-mono mr-2">{account.code}</span>
@@ -162,6 +167,33 @@ export function AccountSearch({
                     <Badge variant={accountTypeBadgeVariant(account.accountType)} className="ml-2">
                       {accountTypeLabel(account.accountType)}
                     </Badge>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+            {search.length >= 2 && templateResults.length > 0 && (
+              <CommandGroup heading="Available from Chart of Accounts">
+                {templateResults.map((account) => (
+                  <CommandItem
+                    key={account.code}
+                    value={account.code}
+                    onSelect={() => {
+                      onSelect(account)
+                      setOpen(false)
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        'mr-2 h-4 w-4',
+                        selectedAccount?.code === account.code ? 'opacity-100' : 'opacity-0'
+                      )}
+                    />
+                    <span className="font-mono mr-2">{account.code}</span>
+                    <span className="flex-1 truncate">{account.name}</span>
+                    <Badge variant={accountTypeBadgeVariant(account.accountType)} className="ml-2">
+                      {accountTypeLabel(account.accountType)}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground ml-2">(new)</span>
                   </CommandItem>
                 ))}
               </CommandGroup>

@@ -15,11 +15,12 @@ import { AccountSearch } from '@/components/AccountSearch'
 import { Loader2, AlertCircle } from 'lucide-react'
 
 interface Account {
-  id: number
+  id: number | null
   code: string
   name: string
   accountType: string
   taxRate: number
+  fromTemplate?: boolean
 }
 
 interface Transaction {
@@ -103,7 +104,7 @@ export function BookingModal({
         body: JSON.stringify({
           bank_transaction_id: transaction.id,
           journal_entry: {
-            account_id: selectedAccount.id,
+            account_code: selectedAccount.code,
             description,
             vat_split: vatSplit,
             vat_rate: vatSplit ? vatRate : 0,

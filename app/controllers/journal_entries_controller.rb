@@ -69,6 +69,7 @@ class JournalEntriesController < ApplicationController
   def journal_entry_params
     params.require(:journal_entry).permit(
       :account_id,
+      :account_code,
       :description,
       :vat_split,
       :vat_rate
