@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_11_190654) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_12_073830) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -58,6 +58,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_11_190654) do
     t.decimal "amount", precision: 13, scale: 2, null: false
     t.bigint "bank_account_id", null: false
     t.date "booking_date", null: false
+    t.jsonb "config", default: {}
     t.string "counterparty_iban"
     t.string "counterparty_name"
     t.datetime "created_at", null: false

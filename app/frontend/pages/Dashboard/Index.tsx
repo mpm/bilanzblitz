@@ -1,15 +1,12 @@
-import { Head, router } from '@inertiajs/react'
-import { Button } from '@/components/ui/button'
+import { Head } from '@inertiajs/react'
+import { AppLayout } from '@/components/AppLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-  LayoutDashboard,
   Building2,
   Calendar,
   Wallet,
   FileText,
   BarChart3,
-  Settings,
-  LogOut,
   ChevronRight
 } from 'lucide-react'
 
@@ -32,88 +29,9 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ company, fiscalYear, bankAccount }: DashboardProps) {
-  const handleLogout = () => {
-    router.delete('/users/sign_out')
-  }
-
   return (
-    <div className="min-h-screen bg-background">
+    <AppLayout company={company} currentPage="dashboard">
       <Head title={`Dashboard - ${company.name}`} />
-
-      {/* Top Navigation - Stripe style */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-14 items-center px-4 sm:px-6">
-          <div className="flex items-center gap-4 flex-1">
-            <h1 className="text-lg font-semibold tracking-tight">
-              Bilanz<span className="text-primary">Blitz</span>
-            </h1>
-            <div className="h-4 w-px bg-border" />
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Building2 className="h-4 w-4" />
-              <span className="font-medium text-foreground">{company.name}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Settings className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleLogout}>
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <div className="flex">
-        {/* Sidebar - Stripe style */}
-        <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-64 flex-col border-r bg-background lg:flex">
-          <nav className="flex-1 space-y-1 p-4">
-            <Button
-              variant="secondary"
-              className="w-full justify-start gap-3 font-normal"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              Dashboard
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 font-normal text-muted-foreground"
-              disabled
-            >
-              <FileText className="h-4 w-4" />
-              Journal Entries
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 font-normal text-muted-foreground"
-              disabled
-            >
-              <Wallet className="h-4 w-4" />
-              Bank Accounts
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 font-normal text-muted-foreground"
-              disabled
-            >
-              <FileText className="h-4 w-4" />
-              Documents
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 font-normal text-muted-foreground"
-              disabled
-            >
-              <BarChart3 className="h-4 w-4" />
-              Reports
-            </Button>
-          </nav>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1">
-          <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
             {/* Welcome Header */}
             <div className="mb-8">
               <h2 className="text-2xl font-semibold tracking-tight mb-1">
@@ -285,9 +203,6 @@ export default function Dashboard({ company, fiscalYear, bankAccount }: Dashboar
                 </ul>
               </CardContent>
             </Card>
-          </div>
-        </main>
-      </div>
-    </div>
+    </AppLayout>
   )
 }

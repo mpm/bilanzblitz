@@ -17,6 +17,14 @@ Rails.application.routes.draw do
   # Dashboard
   get 'dashboard', to: 'dashboard#index', as: :dashboard
 
+  # Bank Accounts
+  resources :bank_accounts, only: [:index, :show] do
+    member do
+      post :import_preview
+      post :import
+    end
+  end
+
   get 'inertia-example', to: 'inertia_example#index'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

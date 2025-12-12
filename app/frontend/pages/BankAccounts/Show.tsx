@@ -1,0 +1,501 @@
+import { useState } from 'react'
+import { Head, router } from '@inertiajs/react'
+import { AppLayout } from '@/components/AppLayout'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import {
+  ArrowLeft,
+  Upload,
+  Building2,
+  X,
+  Check,
+  ArrowDownRight,
+  ArrowUpRight,
+  AlertCircle,
+  Loader2
+} from 'lucide-react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+
+interface Transaction {
+  id: number
+  bookingDate: string
+  valueDate: string | null
+  amount: number
+  currency: string
+  remittanceInformation: string | null
+  counterpartyName: string | null
+  counterpartyIban: string | null
+  status: 'pending' | 'booked' | 'reconciled'
+  config: Record<string, unknown>
+}
+
+interface PreviewTransaction {
+  booking_date: string
+  value_date: string | null
+  amount: number
+  remittance_information: string | null
+  counterparty_name: string | null
+  counterparty_iban: string | null
+}
+
+interface BankAccount {
+  id: number
+  bankName: string | null
+  iban: string | null
+  bic: string | null
+  currency: string
+  ledgerAccount: {
+    id: number
+    code: string
+    name: string
+  } | null
+  transactionCount: number
+}
+
+interface BankAccountShowProps {
+  company: {
+    id: number
+    name: string
+  }
+  bankAccount: BankAccount
+  transactions: Transaction[]
+}
+
+type ImportStep = 'input' | 'preview' | 'success'
+
+export default function BankAccountShow({ company, bankAccount, transactions }: BankAccountShowProps) {
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [importStep, setImportStep] = useState<ImportStep>('input')
+  const [csvData, setCsvData] = useState('')
+  const [previewData, setPreviewData] = useState<PreviewTransaction[]>([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [importedCount, setImportedCount] = useState(0)
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('de-DE')
+  }
+
+  const formatAmount = (amount: number, currency: string) => {
+    return new Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: currency,
+    }).format(amount)
+  }
+
+  const formatIban = (iban: string | null) => {
+    if (!iban) return '-'
+    return iban.replace(/(.{4})/g, '$1 ').trim()
+  }
+
+  const getStatusBadge = (status: Transaction['status']) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="outline">Pending</Badge>
+      case 'booked':
+        return <Badge variant="secondary">Booked</Badge>
+      case 'reconciled':
+        return <Badge variant="success">Reconciled</Badge>
+    }
+  }
+
+  const handlePreview = async () => {
+    if (!csvData.trim()) {
+      setError('Please paste your transaction data')
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`/bank_accounts/${bankAccount.id}/import_preview`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+        body: JSON.stringify({ csv_data: csvData }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setPreviewData(data.preview)
+        setTotalCount(data.totalCount)
+        setImportStep('preview')
+      } else {
+        setError(data.error || 'Failed to parse transaction data')
+      }
+    } catch (err) {
+      setError('An error occurred while parsing the data')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleImport = async () => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`/bank_accounts/${bankAccount.id}/import`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+        body: JSON.stringify({ csv_data: csvData }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setImportedCount(data.importedCount)
+        setImportStep('success')
+      } else {
+        setError(data.error || 'Failed to import transactions')
+      }
+    } catch (err) {
+      setError('An error occurred while importing')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setShowImportModal(false)
+    setImportStep('input')
+    setCsvData('')
+    setPreviewData([])
+    setTotalCount(0)
+    setError(null)
+
+    // Refresh the page if we imported transactions
+    if (importStep === 'success') {
+      router.reload()
+    }
+  }
+
+  const handleBack = () => {
+    if (importStep === 'preview') {
+      setImportStep('input')
+    }
+  }
+
+  return (
+    <AppLayout company={company} currentPage="bank-accounts">
+      <Head title={`${bankAccount.bankName || 'Bank Account'} - ${company.name}`} />
+
+      {/* Page Header */}
+      <div className="mb-8">
+        <Button
+          variant="ghost"
+          className="mb-4 -ml-2 gap-2"
+          onClick={() => router.visit('/bank_accounts')}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Bank Accounts
+        </Button>
+
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="rounded-full bg-primary/10 p-3">
+              <Building2 className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight">
+                {bankAccount.bankName || 'Bank Account'}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {formatIban(bankAccount.iban)}
+              </p>
+            </div>
+          </div>
+          <Button onClick={() => setShowImportModal(true)} className="gap-2">
+            <Upload className="h-4 w-4" />
+            Import Transactions
+          </Button>
+        </div>
+      </div>
+
+      {/* Account Info Card */}
+      <div className="grid gap-4 md:grid-cols-3 mb-8">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Currency</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-semibold">{bankAccount.currency}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">BIC</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-semibold">{bankAccount.bic || '-'}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Ledger Account</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {bankAccount.ledgerAccount ? (
+              <div className="text-lg font-semibold">
+                {bankAccount.ledgerAccount.code} - {bankAccount.ledgerAccount.name}
+              </div>
+            ) : (
+              <div className="text-lg text-muted-foreground">Not linked</div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Transactions Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Transactions</CardTitle>
+          <CardDescription>
+            {transactions.length === 0
+              ? 'No transactions yet. Import transactions to get started.'
+              : `${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`
+            }
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {transactions.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="rounded-full bg-muted p-3 mb-4">
+                <Upload className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <h3 className="font-semibold mb-1">No transactions</h3>
+              <p className="text-sm text-muted-foreground text-center max-w-sm mb-4">
+                Import your bank statement to see transactions here
+              </p>
+              <Button onClick={() => setShowImportModal(true)} variant="outline" className="gap-2">
+                <Upload className="h-4 w-4" />
+                Import Transactions
+              </Button>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Date</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Counterparty</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead className="w-[100px]">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {transactions.map((tx) => (
+                  <TableRow key={tx.id}>
+                    <TableCell className="font-mono text-sm">
+                      {formatDate(tx.bookingDate)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-[300px] truncate">
+                        {tx.remittanceInformation || '-'}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        {tx.counterpartyName || '-'}
+                      </div>
+                      {tx.counterpartyIban && (
+                        <div className="text-xs text-muted-foreground font-mono">
+                          {tx.counterpartyIban}
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className={`flex items-center justify-end gap-1 font-semibold ${
+                        tx.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {tx.amount >= 0 ? (
+                          <ArrowDownRight className="h-4 w-4" />
+                        ) : (
+                          <ArrowUpRight className="h-4 w-4" />
+                        )}
+                        {formatAmount(tx.amount, tx.currency)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(tx.status)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <Card className="w-full max-w-2xl max-h-[90vh] overflow-auto">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>
+                  {importStep === 'input' && 'Import Transactions'}
+                  {importStep === 'preview' && 'Preview Import'}
+                  {importStep === 'success' && 'Import Complete'}
+                </CardTitle>
+                <CardDescription>
+                  {importStep === 'input' && 'Paste your bank statement data (CSV, tab or semicolon separated)'}
+                  {importStep === 'preview' && `Showing ${previewData.length} of ${totalCount} transactions`}
+                  {importStep === 'success' && `Successfully imported ${importedCount} transactions`}
+                </CardDescription>
+              </div>
+              <Button variant="ghost" size="icon" onClick={handleCloseModal}>
+                <X className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              {importStep === 'input' && (
+                <>
+                  <div className="space-y-2">
+                    <Textarea
+                      placeholder={`Paste your transaction data here...
+
+Example formats supported:
+- Tab-separated (from Excel)
+- Semicolon-separated (German CSV)
+- Comma-separated
+
+German date format (DD.MM.YYYY) and currency format (1.234,56 €) are supported.`}
+                      className="min-h-[300px] font-mono text-sm"
+                      value={csvData}
+                      onChange={(e) => setCsvData(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      The system will try to auto-detect columns. Common headers: Buchungstag, Betrag, Verwendungszweck, Auftraggeber/Empfänger
+                    </p>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" onClick={handleCloseModal}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handlePreview} disabled={isLoading}>
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Parsing...
+                        </>
+                      ) : (
+                        'Preview Import'
+                      )}
+                    </Button>
+                  </div>
+                </>
+              )}
+
+              {importStep === 'preview' && (
+                <>
+                  <div className="border rounded-lg overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Date</TableHead>
+                          <TableHead className="text-right">Amount</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead>Counterparty</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {previewData.map((tx, index) => (
+                          <TableRow key={index}>
+                            <TableCell className="font-mono text-sm">
+                              {tx.booking_date ? formatDate(tx.booking_date) : '-'}
+                            </TableCell>
+                            <TableCell className={`text-right font-semibold ${
+                              tx.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              {formatAmount(tx.amount, bankAccount.currency)}
+                            </TableCell>
+                            <TableCell className="max-w-[200px] truncate">
+                              {tx.remittance_information || '-'}
+                            </TableCell>
+                            <TableCell>
+                              {tx.counterparty_name || '-'}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  {totalCount > previewData.length && (
+                    <p className="text-sm text-muted-foreground text-center">
+                      ... and {totalCount - previewData.length} more transactions
+                    </p>
+                  )}
+                  <div className="flex justify-between">
+                    <Button variant="outline" onClick={handleBack}>
+                      Back
+                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={handleCloseModal}>
+                        Cancel
+                      </Button>
+                      <Button onClick={handleImport} disabled={isLoading}>
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Importing...
+                          </>
+                        ) : (
+                          `Import ${totalCount} Transactions`
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {importStep === 'success' && (
+                <>
+                  <div className="flex flex-col items-center justify-center py-8">
+                    <div className="rounded-full bg-green-500/10 p-3 mb-4">
+                      <Check className="h-8 w-8 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1">Import Successful</h3>
+                    <p className="text-sm text-muted-foreground text-center">
+                      {importedCount} transaction{importedCount === 1 ? ' has' : 's have'} been imported
+                    </p>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button onClick={handleCloseModal}>
+                      Done
+                    </Button>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </AppLayout>
+  )
+}
