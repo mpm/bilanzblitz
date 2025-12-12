@@ -17,7 +17,11 @@ class BankAccountsController < ApplicationController
   end
 
   def show
-    @transactions = @bank_account.bank_transactions.order(booking_date: :desc, created_at: :desc)
+    @transactions = @bank_account.bank_transactions
+      .includes(line_item: :journal_entry)
+      .order(booking_date: :desc, created_at: :desc)
+    @recent_accounts = @company.account_usages.recent.includes(:account).map(&:account).compact
+    @fiscal_year = FiscalYear.current_for(company: @company)
 
     render inertia: 'BankAccounts/Show', props: {
       company: {
@@ -25,7 +29,9 @@ class BankAccountsController < ApplicationController
         name: @company.name
       },
       bankAccount: bank_account_json(@bank_account),
-      transactions: @transactions.map { |tx| transaction_json(tx) }
+      transactions: @transactions.map { |tx| transaction_json(tx) },
+      recentAccounts: @recent_accounts.map { |a| account_json(a) },
+      fiscalYear: @fiscal_year ? fiscal_year_json(@fiscal_year) : nil
     }
   end
 
@@ -124,6 +130,8 @@ class BankAccountsController < ApplicationController
   end
 
   def transaction_json(transaction)
+    journal_entry = transaction.line_item&.journal_entry
+
     {
       id: transaction.id,
       bookingDate: transaction.booking_date,
@@ -134,7 +142,29 @@ class BankAccountsController < ApplicationController
       counterpartyName: transaction.counterparty_name,
       counterpartyIban: transaction.counterparty_iban,
       status: transaction.status,
-      config: transaction.config
+      config: transaction.config,
+      journalEntryId: journal_entry&.id,
+      journalEntryPosted: journal_entry&.posted?
+    }
+  end
+
+  def account_json(account)
+    {
+      id: account.id,
+      code: account.code,
+      name: account.name,
+      accountType: account.account_type,
+      taxRate: account.tax_rate.to_f
+    }
+  end
+
+  def fiscal_year_json(fiscal_year)
+    {
+      id: fiscal_year.id,
+      year: fiscal_year.year,
+      startDate: fiscal_year.start_date,
+      endDate: fiscal_year.end_date,
+      closed: fiscal_year.closed
     }
   end
 

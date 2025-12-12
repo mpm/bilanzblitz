@@ -22,9 +22,12 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   AlertCircle,
-  Loader2
+  Loader2,
+  PenLine,
+  Trash2
 } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { BookingModal } from '@/components/BookingModal'
 
 interface Transaction {
   id: number
@@ -37,6 +40,24 @@ interface Transaction {
   counterpartyIban: string | null
   status: 'pending' | 'booked' | 'reconciled'
   config: Record<string, unknown>
+  journalEntryId: number | null
+  journalEntryPosted: boolean | null
+}
+
+interface Account {
+  id: number
+  code: string
+  name: string
+  accountType: string
+  taxRate: number
+}
+
+interface FiscalYear {
+  id: number
+  year: number
+  startDate: string
+  endDate: string
+  closed: boolean
 }
 
 interface PreviewTransaction {
@@ -69,11 +90,13 @@ interface BankAccountShowProps {
   }
   bankAccount: BankAccount
   transactions: Transaction[]
+  recentAccounts: Account[]
+  fiscalYear: FiscalYear | null
 }
 
 type ImportStep = 'input' | 'preview' | 'success'
 
-export default function BankAccountShow({ company, bankAccount, transactions }: BankAccountShowProps) {
+export default function BankAccountShow({ company, bankAccount, transactions, recentAccounts, fiscalYear }: BankAccountShowProps) {
   const [showImportModal, setShowImportModal] = useState(false)
   const [importStep, setImportStep] = useState<ImportStep>('input')
   const [csvData, setCsvData] = useState('')
@@ -82,6 +105,11 @@ export default function BankAccountShow({ company, bankAccount, transactions }: 
   const [importedCount, setImportedCount] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+
+  // Booking modal state
+  const [bookingModalOpen, setBookingModalOpen] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('de-DE')
@@ -194,6 +222,47 @@ export default function BankAccountShow({ company, bankAccount, transactions }: 
     }
   }
 
+  const handleOpenBooking = (transaction: Transaction) => {
+    setSelectedTransaction(transaction)
+    setBookingModalOpen(true)
+  }
+
+  const handleBookingSuccess = () => {
+    router.reload()
+  }
+
+  const handleDeleteBooking = async (journalEntryId: number) => {
+    if (!confirm('Are you sure you want to delete this booking? The transaction will return to pending status.')) {
+      return
+    }
+
+    setDeletingId(journalEntryId)
+
+    try {
+      const response = await fetch(`/journal_entries/${journalEntryId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        router.reload()
+      } else {
+        alert(data.errors?.join(', ') || 'Failed to delete booking')
+      }
+    } catch (err) {
+      alert('An error occurred while deleting the booking')
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  const canBook = fiscalYear && !fiscalYear.closed
+
   return (
     <AppLayout company={company} currentPage="bank-accounts">
       <Head title={`${bankAccount.bankName || 'Bank Account'} - ${company.name}`} />
@@ -299,6 +368,7 @@ export default function BankAccountShow({ company, bankAccount, transactions }: 
                   <TableHead>Counterparty</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                   <TableHead className="w-[100px]">Status</TableHead>
+                  <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -336,6 +406,33 @@ export default function BankAccountShow({ company, bankAccount, transactions }: 
                     </TableCell>
                     <TableCell>
                       {getStatusBadge(tx.status)}
+                    </TableCell>
+                    <TableCell>
+                      {tx.status === 'pending' && canBook && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleOpenBooking(tx)}
+                          title="Book transaction"
+                        >
+                          <PenLine className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {tx.status === 'booked' && tx.journalEntryId && !tx.journalEntryPosted && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteBooking(tx.journalEntryId!)}
+                          disabled={deletingId === tx.journalEntryId}
+                          title="Delete booking"
+                        >
+                          {deletingId === tx.journalEntryId ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          )}
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -496,6 +593,15 @@ German date format (DD.MM.YYYY) and currency format (1.234,56 €) are supported
           </Card>
         </div>
       )}
+
+      {/* Booking Modal */}
+      <BookingModal
+        open={bookingModalOpen}
+        onOpenChange={setBookingModalOpen}
+        transaction={selectedTransaction}
+        recentAccounts={recentAccounts}
+        onSuccess={handleBookingSuccess}
+      />
     </AppLayout>
   )
 }

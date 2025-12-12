@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_12_073830) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_12_102015) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,6 +26,19 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_073830) do
     t.datetime "updated_at", null: false
     t.index ["chart_of_accounts_id", "code"], name: "index_account_templates_on_chart_and_code", unique: true
     t.index ["chart_of_accounts_id"], name: "index_account_templates_on_chart_of_accounts_id"
+  end
+
+  create_table "account_usages", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "company_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "last_used_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "usage_count", default: 1
+    t.index ["account_id"], name: "index_account_usages_on_account_id"
+    t.index ["company_id", "account_id"], name: "index_account_usages_on_company_id_and_account_id", unique: true
+    t.index ["company_id", "last_used_at"], name: "index_account_usages_on_company_id_and_last_used_at"
+    t.index ["company_id"], name: "index_account_usages_on_company_id"
   end
 
   create_table "accounts", force: :cascade do |t|
@@ -186,6 +199,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_073830) do
   end
 
   add_foreign_key "account_templates", "chart_of_accounts", column: "chart_of_accounts_id"
+  add_foreign_key "account_usages", "accounts"
+  add_foreign_key "account_usages", "companies"
   add_foreign_key "accounts", "companies"
   add_foreign_key "bank_accounts", "accounts", column: "ledger_account_id"
   add_foreign_key "bank_accounts", "companies"

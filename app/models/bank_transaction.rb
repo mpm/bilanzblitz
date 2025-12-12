@@ -17,4 +17,21 @@ class BankTransaction < ApplicationRecord
   scope :pending, -> { where(status: "pending") }
   scope :booked, -> { where(status: "booked") }
   scope :reconciled, -> { where(status: "reconciled") }
+
+  # Status helper methods
+  def booked?
+    status == "booked"
+  end
+
+  def can_be_booked?
+    status == "pending"
+  end
+
+  def mark_as_booked!
+    update!(status: "booked")
+  end
+
+  def reset_to_pending!
+    update!(status: "pending")
+  end
 end

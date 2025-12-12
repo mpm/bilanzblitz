@@ -15,4 +15,14 @@ class AccountTemplate < ApplicationRecord
   scope :by_code, -> { order(:code) }
   scope :for_chart, ->(chart) { where(chart_of_accounts: chart) }
   scope :of_type, ->(type) { where(account_type: type) }
+
+  def add_to_company(company)
+    if company.accounts.where(code: code).exists?
+      return false
+    else
+      local_account = Account.new(code: code, name: description, account_type: account_type, tax_rate: tax_rate)
+      company.accounts << local_account
+      return local_account
+    end
+  end
 end

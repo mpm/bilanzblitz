@@ -9,9 +9,12 @@ class JournalEntry < ApplicationRecord
   validates :booking_date, presence: true
   validates :description, presence: true
   validate :line_items_must_balance
+  validate :fiscal_year_must_be_open, on: :create
 
   # Callbacks
   before_destroy :ensure_not_posted
+  before_destroy :ensure_fiscal_year_open
+  before_destroy :reset_linked_bank_transactions
 
   # Scopes
   scope :posted, -> { where.not(posted_at: nil) }
@@ -45,6 +48,25 @@ class JournalEntry < ApplicationRecord
     if posted?
       errors.add(:base, "Cannot delete a posted journal entry (GoBD compliance)")
       throw :abort
+    end
+  end
+
+  def ensure_fiscal_year_open
+    if fiscal_year&.closed?
+      errors.add(:base, "Cannot delete journal entry in a closed fiscal year")
+      throw :abort
+    end
+  end
+
+  def fiscal_year_must_be_open
+    if fiscal_year&.closed?
+      errors.add(:fiscal_year, "is closed and cannot accept new entries")
+    end
+  end
+
+  def reset_linked_bank_transactions
+    line_items.each do |line_item|
+      line_item.bank_transaction&.reset_to_pending!
     end
   end
 end

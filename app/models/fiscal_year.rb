@@ -9,6 +9,15 @@ class FiscalYear < ApplicationRecord
   validates :end_date, presence: true
   validate :end_date_after_start_date
 
+  # Scopes
+  scope :open, -> { where(closed: false) }
+  scope :for_date, ->(date) { where("start_date <= ? AND end_date >= ?", date, date) }
+
+  # Class methods
+  def self.current_for(company:, date: Date.current)
+    company.fiscal_years.open.for_date(date).first
+  end
+
   private
 
   def end_date_after_start_date

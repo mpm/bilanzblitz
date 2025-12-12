@@ -17,6 +17,16 @@ Rails.application.routes.draw do
   # Dashboard
   get 'dashboard', to: 'dashboard#index', as: :dashboard
 
+  # Accounts API (for account search)
+  resources :accounts, only: [:index] do
+    collection do
+      get :recent
+    end
+  end
+
+  # Journal Entries
+  resources :journal_entries, only: [:create, :destroy]
+
   # Bank Accounts
   resources :bank_accounts, only: [:index, :show] do
     member do
