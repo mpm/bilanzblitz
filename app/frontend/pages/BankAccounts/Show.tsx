@@ -348,7 +348,7 @@ export default function BankAccountShow({ company, bankAccount, transactions }: 
       {/* Import Modal */}
       {showImportModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-2xl max-h-[90vh] overflow-auto">
+          <Card className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-white dark:bg-gray-900">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>
