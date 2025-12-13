@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   end
 
   # Journal Entries
-  resources :journal_entries, only: [ :create, :destroy ]
+  resources :journal_entries, only: [ :index, :create, :update, :destroy ]
 
   # Bank Accounts
   resources :bank_accounts, only: [ :index, :show ] do

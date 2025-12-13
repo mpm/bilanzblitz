@@ -19,7 +19,7 @@ class BankAccountsController < ApplicationController
   def show
     @transactions = @bank_account.bank_transactions
       .includes(line_item: :journal_entry)
-      .order(booking_date: :desc, created_at: :desc)
+      .order(booking_date: :asc, created_at: :desc)
     @recent_accounts = @company.account_usages.recent.includes(:account).map(&:account).compact
     @fiscal_year = FiscalYear.current_for(company: @company)
 
