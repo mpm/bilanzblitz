@@ -378,7 +378,7 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
                       {formatDate(tx.bookingDate)}
                     </TableCell>
                     <TableCell>
-                      <div className="max-w-[300px] truncate">
+                      <div className="max-w-[300px]">
                         {tx.remittanceInformation || '-'}
                       </div>
                     </TableCell>
@@ -530,7 +530,7 @@ German date format (DD.MM.YYYY) and currency format (1.234,56 €) are supported
                               }`}>
                               {formatAmount(tx.amount, bankAccount.currency)}
                             </TableCell>
-                            <TableCell className="max-w-[200px] truncate">
+                            <TableCell className="max-w-[200px]">
                               {tx.remittance_information || '-'}
                             </TableCell>
                             <TableCell>
