@@ -11,33 +11,33 @@
   /* Stripe-inspired Green Theme */
 
   /* Colors - Refined green palette inspired by Stripe's precision */
-  --color-background: 0 0% 100%;
-  --color-foreground: 240 5% 9%;
-  --color-card: 0 0% 100%;
-  --color-card-foreground: 240 5% 9%;
-  --color-popover: 0 0% 100%;
-  --color-popover-foreground: 240 5% 9%;
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(240 5% 9%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(240 5% 9%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(240 5% 9%);
 
   /* Primary green - refined, not too saturated */
-  --color-primary: 142 71% 45%;
-  --color-primary-foreground: 0 0% 100%;
+  --color-primary: hsl(142 71% 45%);
+  --color-primary-foreground: hsl(0 0% 100%);
 
   /* Muted grays - Stripe's signature subtle backgrounds */
-  --color-secondary: 240 5% 96%;
-  --color-secondary-foreground: 240 5% 9%;
-  --color-muted: 240 5% 96%;
-  --color-muted-foreground: 240 4% 46%;
-  --color-accent: 240 5% 96%;
-  --color-accent-foreground: 240 5% 9%;
+  --color-secondary: hsl(240 5% 96%);
+  --color-secondary-foreground: hsl(240 5% 9%);
+  --color-muted: hsl(240 5% 96%);
+  --color-muted-foreground: hsl(240 4% 46%);
+  --color-accent: hsl(240 5% 96%);
+  --color-accent-foreground: hsl(240 5% 9%);
 
   /* Destructive - subtle red */
-  --color-destructive: 0 72% 51%;
-  --color-destructive-foreground: 0 0% 100%;
+  --color-destructive: hsl(0 72% 51%);
+  --color-destructive-foreground: hsl(0 0% 100%);
 
   /* Borders - Stripe uses very subtle borders */
-  --color-border: 240 6% 90%;
-  --color-input: 240 6% 90%;
-  --color-ring: 142 71% 45%;
+  --color-border: hsl(240 6% 90%);
+  --color-input: hsl(240 6% 90%);
+  --color-ring: hsl(142 71% 45%);
 
   /* Radius - Stripe uses subtle, consistent rounding */
   --radius: 0.5rem;
@@ -56,25 +56,25 @@
 
 @media (prefers-color-scheme: dark) {
   @theme {
-    --color-background: 240 6% 10%;
-    --color-foreground: 0 0% 98%;
-    --color-card: 240 4% 14%;
-    --color-card-foreground: 0 0% 98%;
-    --color-popover: 240 4% 14%;
-    --color-popover-foreground: 0 0% 98%;
-    --color-primary: 142 70% 50%;
-    --color-primary-foreground: 240 6% 10%;
-    --color-secondary: 240 4% 16%;
-    --color-secondary-foreground: 0 0% 98%;
-    --color-muted: 240 4% 16%;
-    --color-muted-foreground: 240 5% 65%;
-    --color-accent: 240 4% 16%;
-    --color-accent-foreground: 0 0% 98%;
-    --color-destructive: 0 63% 31%;
-    --color-destructive-foreground: 0 0% 98%;
-    --color-border: 240 4% 18%;
-    --color-input: 240 4% 18%;
-    --color-ring: 142 70% 50%;
+    --color-background: hsl(240 6% 10%);
+    --color-foreground: hsl(0 0% 98%);
+    --color-card: hsl(240 4% 14%);
+    --color-card-foreground: hsl(0 0% 98%);
+    --color-popover: hsl(240 4% 14%);
+    --color-popover-foreground: hsl(0 0% 98%);
+    --color-primary: hsl(142 70% 50%);
+    --color-primary-foreground: hsl(240 6% 10%);
+    --color-secondary: hsl(240 4% 16%);
+    --color-secondary-foreground: hsl(0 0% 98%);
+    --color-muted: hsl(240 4% 16%);
+    --color-muted-foreground: hsl(240 5% 65%);
+    --color-accent: hsl(240 4% 16%);
+    --color-accent-foreground: hsl(0 0% 98%);
+    --color-destructive: hsl(0 63% 31%);
+    --color-destructive-foreground: hsl(0 0% 98%);
+    --color-border: hsl(240 4% 18%);
+    --color-input: hsl(240 4% 18%);
+    --color-ring: hsl(142 70% 50%);
   }
 }
 

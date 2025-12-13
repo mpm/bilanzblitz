@@ -393,9 +393,8 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className={`flex items-center justify-end gap-1 font-semibold ${
-                        tx.amount >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
+                      <div className={`flex items-center justify-end gap-1 font-semibold ${tx.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
                         {tx.amount >= 0 ? (
                           <ArrowDownRight className="h-4 w-4" />
                         ) : (
@@ -445,7 +444,7 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
       {/* Import Modal */}
       {showImportModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-white dark:bg-gray-900">
+          <Card className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-background dark:bg-gray-900">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>
@@ -527,9 +526,8 @@ German date format (DD.MM.YYYY) and currency format (1.234,56 €) are supported
                             <TableCell className="font-mono text-sm">
                               {tx.booking_date ? formatDate(tx.booking_date) : '-'}
                             </TableCell>
-                            <TableCell className={`text-right font-semibold ${
-                              tx.amount >= 0 ? 'text-green-600' : 'text-red-600'
-                            }`}>
+                            <TableCell className={`text-right font-semibold ${tx.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                              }`}>
                               {formatAmount(tx.amount, bankAccount.currency)}
                             </TableCell>
                             <TableCell className="max-w-[200px] truncate">
