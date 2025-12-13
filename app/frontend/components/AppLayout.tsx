@@ -15,7 +15,7 @@ interface AppLayoutProps {
     id: number
     name: string
   }
-  currentPage: 'dashboard' | 'bank-accounts' | 'journal-entries' | 'documents' | 'reports'
+  currentPage: 'dashboard' | 'bank-accounts' | 'journal-entries' | 'documents' | 'reports' | 'balance-sheet'
   children: React.ReactNode
 }
 
@@ -29,7 +29,7 @@ export function AppLayout({ company, currentPage, children }: AppLayoutProps) {
     { key: 'journal-entries', label: 'Journal Entries', icon: FileText, href: '#', enabled: false },
     { key: 'bank-accounts', label: 'Bank Accounts', icon: Wallet, href: '/bank_accounts', enabled: true },
     { key: 'documents', label: 'Documents', icon: FileText, href: '#', enabled: false },
-    { key: 'reports', label: 'Reports', icon: BarChart3, href: '#', enabled: false },
+    { key: 'reports', label: 'Reports', icon: BarChart3, href: '/reports/balance_sheet', enabled: true },
   ]
 
   return (

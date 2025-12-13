@@ -17,6 +17,11 @@ Rails.application.routes.draw do
   # Dashboard
   get "dashboard", to: "dashboard#index", as: :dashboard
 
+  # Reports
+  namespace :reports do
+    get "balance_sheet", to: "balance_sheets#index"
+  end
+
   # Accounts API (for account search)
   resources :accounts, only: [ :index ] do
     collection do
