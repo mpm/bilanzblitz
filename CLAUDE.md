@@ -11,6 +11,7 @@ BilanzBlitz is a comprehensive accounting and tax management application designe
 - **Double-Entry Bookkeeping**: Complete ledger system with journal entries and line items
 - **Transaction Splitting**: Split bank transactions across multiple accounts (e.g., separating VAT from expenses)
 - **Bank Reconciliation**: Link bank transactions to bookkeeping entries
+- **Balance Sheet Reports**: Generate on-the-fly balance sheets (Bilanz) following German GmbH standards with SKR03 account mapping
 - **VAT Reports**: Generate periodic VAT reports (Umsatzsteuervoranmeldung)
 - **Annual Tax Returns**: Prepare and generate annual tax filings
 - **GoBD Compliance**: Immutable posted entries to comply with German accounting regulations
@@ -96,6 +97,17 @@ Standard SKR03 VAT accounts are defined in `Account::VAT_ACCOUNTS`:
 - `1776` - Umsatzsteuer 19% (Output VAT 19%)
 - `1771` - Umsatzsteuer 7% (Output VAT 7%)
 
+#### Balance Sheet Generation
+The `BalanceSheetService` generates balance sheets on-the-fly from posted journal entries:
+- **SKR03 Code Range Mapping**: Accounts are automatically grouped based on their code prefix:
+  - 0xxx → Anlagevermögen (Fixed Assets)
+  - 1xxx → Umlaufvermögen (Current Assets)
+  - 2xxx → Eigenkapital (Equity)
+  - 3xxx → Fremdkapital (Liabilities)
+- **Net Income Integration**: P&L is calculated from revenue (4xxx) and expense (5xxx-7xxx) accounts and included in equity
+- **Account Balances**: Calculated using debit/credit logic appropriate to each account type
+- **Balance Verification**: Ensures Aktiva = Passiva (or flags data integrity issues)
+
 ## Development Commands
 
 ### Running Commands
@@ -180,11 +192,18 @@ usually a Vite process running during development.
 .
 ├── app/
 │   ├── controllers/          # Rails controllers (Inertia endpoints)
+│   │   └── reports/         # Report controllers (balance sheet, etc.)
 │   ├── models/              # ActiveRecord models
 │   ├── services/            # Service classes (business logic)
+│   │   ├── balance_sheet_service.rb  # Balance sheet generation
+│   │   ├── journal_entry_creator.rb  # Journal entry creation
+│   │   └── journal_entry_destroyer.rb # Journal entry deletion
 │   ├── frontend/            # React + TypeScript frontend
 │   │   ├── components/      # React components (including shadcn/ui)
 │   │   ├── pages/          # Inertia page components
+│   │   │   ├── Reports/    # Report pages (Balance Sheet, etc.)
+│   │   │   ├── BankAccounts/
+│   │   │   └── Dashboard/
 │   │   └── types/          # TypeScript type definitions
 │   └── views/              # Minimal (Inertia uses React for views)
 ├── db/
@@ -257,6 +276,37 @@ LineItem.create!(
 je.post!
 ```
 
+### Balance Sheet Report
+
+The Balance Sheet (Bilanz) report provides a snapshot of the company's financial position at the end of a fiscal year.
+
+**Access**: Navigate to Reports → Balance Sheet in the sidebar menu.
+
+**Features**:
+- **Fiscal Year Selection**: Choose any fiscal year from the dropdown to view its balance sheet
+- **Two-Column Layout**:
+  - **Aktiva (Assets)**: Fixed Assets (Anlagevermögen) and Current Assets (Umlaufvermögen)
+  - **Passiva (Liabilities & Equity)**: Equity (Eigenkapital) with net income/loss, and Liabilities (Fremdkapital)
+- **Automatic P&L Integration**: Net income (Jahresüberschuss) or loss (Jahresfehlbetrag) is calculated and included in equity
+- **Balance Verification**: System verifies that Aktiva = Passiva and warns of data integrity issues
+- **Status Indicators**: Shows whether fiscal year is open or closed
+- **German Locale Formatting**: Amounts displayed in EUR with German number formatting
+
+**How It Works**:
+1. Service queries all journal entries for the selected fiscal year
+2. Only posted entries are included (GoBD compliance)
+3. Line items are aggregated by account using SQL GROUP BY
+4. Accounts are automatically grouped by SKR03 code ranges (0xxx, 1xxx, 2xxx, 3xxx)
+5. Net income is calculated from revenue (4xxx) minus expenses (5xxx-7xxx)
+6. Zero-balance accounts are filtered out for cleaner reports
+7. Final balance sheet is validated (Aktiva = Passiva)
+
+**Implementation**:
+- **Service**: `BalanceSheetService` (`app/services/balance_sheet_service.rb`)
+- **Controller**: `Reports::BalanceSheetsController` (`app/controllers/reports/balance_sheets_controller.rb`)
+- **Frontend**: `Reports/BalanceSheet.tsx` (`app/frontend/pages/Reports/BalanceSheet.tsx`)
+- **Route**: `/reports/balance_sheet`
+
 ## German Accounting Context
 
 ### Chart of Accounts (Kontenrahmen)
@@ -310,7 +360,7 @@ The application currently supports **Ist-Versteuerung** (cash accounting):
 - **Bank API Integration** - FinTS/HBCI or PSD2 for automatic bank sync
 - **OCR for Receipts** - Automatic extraction of invoice data
 - **Multi-currency Support** - Currently focuses on EUR
-- **Reporting Dashboard** - P&L, Balance Sheet, Cash Flow
+- **Additional Reports** - P&L (Profit & Loss Statement), Cash Flow Statement
 - **Document Management** - Enhanced DMS with full-text search
 
 ## Getting Started
