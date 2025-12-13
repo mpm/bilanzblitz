@@ -1,0 +1,75 @@
+{
+  "Anlagevermögen": [
+    {
+      "name": "Immaterielle Vermögensgegenstände",
+      "codes": "",
+      "children": [
+        "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte;",
+        "entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten;",
+        "Geschäfts- oder Firmenwert;",
+        "geleistete Anzahlungen;"
+      ]
+    },
+    {
+      "name": "Sachanlagen",
+      "codes": "",
+      "children": [
+        "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken;",
+        "technische Anlagen und Maschinen;",
+        "andere Anlagen, Betriebs- und Geschäftsausstattung;",
+        "geleistete Anzahlungen und Anlagen im Bau;"
+      ]
+    },
+    {
+      "name": "Finanzanlagen",
+      "codes": "",
+      "children": [
+        "Anteile an verbundenen Unternehmen;",
+        "Ausleihungen an verbundene Unternehmen;",
+        "Beteiligungen;",
+        "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht;",
+        "Wertpapiere des Anlagevermögens;",
+        "sonstige Ausleihungen."
+      ]
+    }
+  ],
+  "Umlaufvermögen": [
+    {
+      "name": "Vorräte",
+      "codes": "",
+      "children": [
+        "Roh-, Hilfs- und Betriebsstoffe;",
+        "unfertige Erzeugnisse, unfertige Leistungen;",
+        "fertige Erzeugnisse und Waren;",
+        "geleistete Anzahlungen;"
+      ]
+    },
+    {
+      "name": "Forderungen und sonstige Vermögensgegenstände",
+      "codes": "",
+      "children": [
+        "Forderungen aus Lieferungen und Leistungen;",
+        "Forderungen gegen verbundene Unternehmen;",
+        "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht;",
+        "sonstige Vermögensgegenstände;"
+      ]
+    },
+    {
+      "name": "Wertpapiere",
+      "codes": "",
+      "children": [
+        "Anteile an verbundenen Unternehmen;",
+        "sonstige Wertpapiere;"
+      ]
+    },
+    {
+      "name": "Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks",
+      "codes": "",
+      "children": []
+    }
+  ],
+  "Rechnungsabgrenzungsposten": [],
+  "Aktive latente Steuern": [],
+  "Aktiver Unterschiedsbetrag aus der Vermögensverrechnung": []
+}
+

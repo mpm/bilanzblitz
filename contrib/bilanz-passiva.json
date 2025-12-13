@@ -1,0 +1,64 @@
+{
+  "Eigenkapital": [
+    {
+      "name": "Gezeichnetes Kapital",
+      "codes": "",
+      "children": []
+    },
+    {
+      "name": "Kapitalrücklage",
+      "codes": "",
+      "children": []
+    },
+    {
+      "name": "Gewinnrücklagen",
+      "codes": "",
+      "children": [
+        "gesetzliche Rücklage;",
+        "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen;",
+        "satzungsmäßige Rücklagen;",
+        "andere Gewinnrücklagen;"
+      ]
+    },
+    {
+      "name": "Gewinnvortrag/Verlustvortrag",
+      "codes": "",
+      "children": []
+    },
+    {
+      "name": "Jahresüberschuß/Jahresfehlbetrag",
+      "codes": "",
+      "children": []
+    }
+  ],
+  "Rückstellungen": [
+    {
+      "name": "",
+      "codes": "",
+      "children": [
+        "Rückstellungen für Pensionen und ähnliche Verpflichtungen;",
+        "Steuerrückstellungen;",
+        "sonstige Rückstellungen."
+      ]
+    }
+  ],
+  "Verbindlichkeiten": [
+    {
+      "name": "",
+      "codes": "",
+      "children": [
+        "Anleihen, davon konvertibel;",
+        "Verbindlichkeiten gegenüber Kreditinstituten;",
+        "erhaltene Anzahlungen auf Bestellungen;",
+        "Verbindlichkeiten aus Lieferungen und Leistungen;",
+        "Verbindlichkeiten aus der Annahme gezogener Wechsel und der Ausstellung eigener Wechsel;",
+        "Verbindlichkeiten gegenüber verbundenen Unternehmen;",
+        "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht;",
+        "sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen Sicherheit."
+      ]
+    }
+  ],
+  "Rechnungsabgrenzungsposten": [],
+  "Passive latente Steuern": []
+}
+
