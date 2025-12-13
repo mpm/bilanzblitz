@@ -13,4 +13,12 @@ class Company < ApplicationRecord
 
   # Validations
   validates :name, presence: true
+
+  # Returns dates for the fiscal year start and end dates (for given year).
+  # Currently only supports calendar years.
+  def default_start_end_date(year)
+    start_date = Date.new(year, 1, 1)
+    end_date = Date.new(year, 12, 31)
+    return start_date, end_date
+  end
 end

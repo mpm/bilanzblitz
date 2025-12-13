@@ -14,8 +14,26 @@ class FiscalYear < ApplicationRecord
   scope :for_date, ->(date) { where("start_date <= ? AND end_date >= ?", date, date) }
 
   # Class methods
+  # Returns a non-closed fiscal year for the given date. Creates the fiscal year if none
+  # exists. Returns nil if the year exists and is already closed.
   def self.current_for(company:, date: Date.current)
-    company.fiscal_years.open.for_date(date).first
+    year = company.fiscal_years.for_date(date).first
+    if !year
+      start_date, end_date = company.default_start_end_date(date.year)
+      year = new(
+        closed: false,
+        start_date: start_date,
+        end_date: end_date,
+        year: date.year
+      )
+      company.fiscal_years << year
+      year.save!
+      year
+    elsif year.closed
+      nil
+    else
+      year
+    end
   end
 
   private
