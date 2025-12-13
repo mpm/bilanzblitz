@@ -30,13 +30,25 @@ class Reports::BalanceSheetsController < ApplicationController
       end
     end
 
-    render inertia: "Reports/BalanceSheet", props: {
-      company: company_json(@company),
-      fiscalYears: @fiscal_years.map { |fy| fiscal_year_json(fy) },
-      selectedFiscalYearId: @fiscal_year&.id,
-      balanceSheet: @balance_sheet ? balance_sheet_json(@balance_sheet) : nil,
+    # Build props hash with snake_case keys, then transform all to camelCase
+    render inertia: "Reports/BalanceSheet", props: camelize_keys({
+      company: {
+        id: @company.id,
+        name: @company.name
+      },
+      fiscal_years: @fiscal_years.map { |fy|
+        {
+          id: fy.id,
+          year: fy.year,
+          start_date: fy.start_date,
+          end_date: fy.end_date,
+          closed: fy.closed
+        }
+      },
+      selected_fiscal_year_id: @fiscal_year&.id,
+      balance_sheet: @balance_sheet,
       errors: @errors
-    }
+    })
   end
 
   private
@@ -45,39 +57,5 @@ class Reports::BalanceSheetsController < ApplicationController
     unless current_user.companies.any?
       redirect_to onboarding_path
     end
-  end
-
-  def company_json(company)
-    {
-      id: company.id,
-      name: company.name
-    }
-  end
-
-  def fiscal_year_json(fiscal_year)
-    {
-      id: fiscal_year.id,
-      year: fiscal_year.year,
-      startDate: fiscal_year.start_date,
-      endDate: fiscal_year.end_date,
-      closed: fiscal_year.closed
-    }
-  end
-
-  def balance_sheet_json(balance_sheet)
-    {
-      fiscalYear: balance_sheet[:fiscal_year],
-      aktiva: {
-        anlagevermoegen: balance_sheet[:aktiva][:anlagevermoegen],
-        umlaufvermoegen: balance_sheet[:aktiva][:umlaufvermoegen],
-        total: balance_sheet[:aktiva][:total]
-      },
-      passiva: {
-        eigenkapital: balance_sheet[:passiva][:eigenkapital],
-        fremdkapital: balance_sheet[:passiva][:fremdkapital],
-        total: balance_sheet[:passiva][:total]
-      },
-      balanced: balance_sheet[:balanced]
-    }
   end
 end
