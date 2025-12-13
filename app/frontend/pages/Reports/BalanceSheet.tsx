@@ -1,6 +1,7 @@
+import React from 'react'
 import { Head, router } from '@inertiajs/react'
 import { AppLayout } from '@/components/AppLayout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -56,33 +57,118 @@ const formatCurrency = (amount: number): string => {
   }).format(amount)
 }
 
-const AccountTable = ({ accounts }: { accounts: AccountBalance[] }) => {
-  if (accounts.length === 0) {
-    return (
-      <div className="text-center py-6 text-muted-foreground text-sm">
-        No accounts with balances
-      </div>
-    )
-  }
+const SHOW_PREVIOUS_YEAR = false // Feature flag for previous year column
+
+interface BalanceSheetTableProps {
+  title: string
+  sections: Array<{
+    label: string
+    accounts: AccountBalance[]
+  }>
+  total: number
+}
+
+const BalanceSheetTable = ({ title, sections, total }: BalanceSheetTableProps) => {
+  const hasAccounts = sections.some((section) => section.accounts.length > 0)
 
   return (
-    <div className="space-y-2">
-      {accounts.map((account) => (
-        <div
-          key={account.accountCode}
-          className="flex justify-between items-center py-2 px-3 rounded-md hover:bg-accent/50 transition-colors"
-        >
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-sm text-muted-foreground">
-              {account.accountCode}
-            </span>
-            <span className="text-sm">{account.accountName}</span>
-          </div>
-          <span className="font-mono text-sm font-medium">
-            {formatCurrency(account.balance)}
-          </span>
-        </div>
-      ))}
+    <div className="flex flex-col h-full">
+      <h2 className="text-2xl font-semibold mb-4">{title}</h2>
+      <table className="w-full h-full" style={{ borderCollapse: 'collapse' }}>
+        <thead>
+          <tr className="border-b-2 border-border">
+            <th className="text-left py-2 font-semibold text-sm">Position</th>
+            <th className="text-right py-2 font-semibold text-sm w-32">
+              Current Year
+            </th>
+            {SHOW_PREVIOUS_YEAR && (
+              <th className="text-right py-2 font-semibold text-sm w-32">
+                Previous Year
+              </th>
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {!hasAccounts ? (
+            <tr>
+              <td
+                colSpan={SHOW_PREVIOUS_YEAR ? 3 : 2}
+                className="text-center py-6 text-muted-foreground text-sm"
+              >
+                No accounts with balances
+              </td>
+            </tr>
+          ) : (
+            <>
+              {sections.map((section, sectionIndex) => (
+                <React.Fragment key={sectionIndex}>
+                  {/* Section Header */}
+                  <tr className="border-t border-border">
+                    <td
+                      colSpan={SHOW_PREVIOUS_YEAR ? 3 : 2}
+                      className="py-3 pt-4 font-semibold text-base"
+                    >
+                      {section.label}
+                    </td>
+                  </tr>
+                  {/* Account Rows */}
+                  {section.accounts.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={SHOW_PREVIOUS_YEAR ? 3 : 2}
+                        className="pl-6 py-2 text-sm text-muted-foreground italic"
+                      >
+                        No accounts
+                      </td>
+                    </tr>
+                  ) : (
+                    section.accounts.map((account) => (
+                      <tr
+                        key={account.accountCode}
+                        className="hover:bg-accent/50 transition-colors"
+                      >
+                        <td className="py-2 pl-6">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-sm text-muted-foreground">
+                              {account.accountCode}
+                            </span>
+                            <span className="text-sm">{account.accountName}</span>
+                          </div>
+                        </td>
+                        <td className="py-2 text-right font-mono text-sm">
+                          {formatCurrency(account.balance)}
+                        </td>
+                        {SHOW_PREVIOUS_YEAR && (
+                          <td className="py-2 text-right font-mono text-sm text-muted-foreground">
+                            {formatCurrency(0)}
+                          </td>
+                        )}
+                      </tr>
+                    ))
+                  )}
+                </React.Fragment>
+              ))}
+              {/* Spacer row to push footer to bottom */}
+              <tr style={{ height: '100%' }}>
+                <td colSpan={SHOW_PREVIOUS_YEAR ? 3 : 2}></td>
+              </tr>
+            </>
+          )}
+        </tbody>
+        <tfoot>
+          <tr className="border-t-2 border-border font-bold">
+            <td className="py-3 text-lg">Total</td>
+            <td className="py-3 text-right font-mono text-lg">
+              {formatCurrency(total)}
+            </td>
+            {SHOW_PREVIOUS_YEAR && (
+              <td className="py-3 text-right font-mono text-lg text-muted-foreground">
+                {formatCurrency(0)}
+              </td>
+            )}
+          </tr>
+        </tfoot>
+      </table>
     </div>
   )
 }
@@ -204,93 +290,39 @@ export default function BalanceSheet({
               </Alert>
             )}
 
-            {/* Two-Column Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Two-Column Layout with Aligned Tables */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-stretch">
               {/* AKTIVA (Assets) */}
-              <div className="space-y-4">
-                <h2 className="text-2xl font-semibold">Aktiva (Assets)</h2>
-
-                {/* Fixed Assets */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      A. Anlagevermögen (Fixed Assets)
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <AccountTable accounts={balanceSheet.aktiva.anlagevermoegen} />
-                  </CardContent>
-                </Card>
-
-                {/* Current Assets */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      B. Umlaufvermögen (Current Assets)
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <AccountTable accounts={balanceSheet.aktiva.umlaufvermoegen} />
-                  </CardContent>
-                </Card>
-
-                {/* Total Aktiva */}
-                <Card className="bg-primary/5 border-primary/20">
-                  <CardContent className="pt-6">
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold">Total Assets</span>
-                      <span className="text-2xl font-bold font-mono">
-                        {formatCurrency(balanceSheet.aktiva.total)}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+              <BalanceSheetTable
+                title="Aktiva (Assets)"
+                sections={[
+                  {
+                    label: 'A. Anlagevermögen (Fixed Assets)',
+                    accounts: balanceSheet.aktiva.anlagevermoegen,
+                  },
+                  {
+                    label: 'B. Umlaufvermögen (Current Assets)',
+                    accounts: balanceSheet.aktiva.umlaufvermoegen,
+                  },
+                ]}
+                total={balanceSheet.aktiva.total}
+              />
 
               {/* PASSIVA (Liabilities & Equity) */}
-              <div className="space-y-4">
-                <h2 className="text-2xl font-semibold">
-                  Passiva (Liabilities & Equity)
-                </h2>
-
-                {/* Equity */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      A. Eigenkapital (Equity)
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <AccountTable accounts={balanceSheet.passiva.eigenkapital} />
-                  </CardContent>
-                </Card>
-
-                {/* Liabilities */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      B. Fremdkapital (Liabilities)
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <AccountTable accounts={balanceSheet.passiva.fremdkapital} />
-                  </CardContent>
-                </Card>
-
-                {/* Total Passiva */}
-                <Card className="bg-primary/5 border-primary/20">
-                  <CardContent className="pt-6">
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold">
-                        Total Liabilities & Equity
-                      </span>
-                      <span className="text-2xl font-bold font-mono">
-                        {formatCurrency(balanceSheet.passiva.total)}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+              <BalanceSheetTable
+                title="Passiva (Liabilities & Equity)"
+                sections={[
+                  {
+                    label: 'A. Eigenkapital (Equity)',
+                    accounts: balanceSheet.passiva.eigenkapital,
+                  },
+                  {
+                    label: 'B. Fremdkapital (Liabilities)',
+                    accounts: balanceSheet.passiva.fremdkapital,
+                  },
+                ]}
+                total={balanceSheet.passiva.total}
+              />
             </div>
           </>
         )}
