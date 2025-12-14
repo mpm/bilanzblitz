@@ -9,10 +9,15 @@ OUTPUT_DIR = 'kontenrahmen-pdf/results'
 CROP_Y_START = 300
 CROP_Y_END = 1997
 CROP_HEIGHT = CROP_Y_END - CROP_Y_START
-SPLIT_X_ODD = 778
-SPLIT_X_EVEN = 707
+# Margin removal (before split)
+MARGIN_X_START_EVEN = 72
+MARGIN_X_END_EVEN = 1340
+MARGIN_X_START_ODD = 142
+MARGIN_X_END_ODD = 1416
+# Split position (after margins removed)
+SPLIT_X = 636
 CONSECUTIVE_PIXELS_THRESHOLD = 30
-CHECK_POSITIONS = [30, 90, 150]
+CHECK_POSITIONS = [30]
 
 # Ensure output directory exists
 Dir.mkdir(OUTPUT_DIR) unless Dir.exist?(OUTPUT_DIR)
@@ -86,45 +91,89 @@ end
 def process_page(page_num, input_file)
   puts "\nProcessing page #{page_num}..."
 
-  # Step 1: Crop the image
+  # Step 1: Crop the image vertically and save
   img = MiniMagick::Image.open(input_file)
   original_width = img.width
 
   puts "  Original dimensions: #{img.width}x#{img.height}"
-  puts "  Cropping to y=#{CROP_Y_START}..#{CROP_Y_END}"
+  puts "  Step 1: Cropping vertically to y=#{CROP_Y_START}..#{CROP_Y_END}"
 
-  img.crop "#{original_width}x#{CROP_HEIGHT}+0+#{CROP_Y_START}"
+  img.combine_options do |c|
+    c.crop "#{original_width}x#{CROP_HEIGHT}+0+#{CROP_Y_START}"
+    c << "+repage"
+  end
 
-  # Save temporary cropped image
-  temp_cropped = File.join(OUTPUT_DIR, "temp_cropped_#{page_num}.png")
-  img.write(temp_cropped)
+  temp_vertical_crop = File.join(OUTPUT_DIR, "temp_vert_#{page_num}.png")
+  img.write(temp_vertical_crop)
 
-  # Step 2: Split the page based on odd/even
-  split_x = page_num.even? ? SPLIT_X_EVEN : SPLIT_X_ODD
-  puts "  Splitting at x=#{split_x} (#{page_num.even? ? 'even' : 'odd'} page)"
+  # Step 2: Load vertically cropped image fresh and remove horizontal margins
+  img2 = MiniMagick::Image.open(temp_vertical_crop)
+  puts "    After vertical crop, image dimensions: #{img2.width}x#{img2.height}"
 
-  # Part A (left side)
-  img_a = MiniMagick::Image.open(temp_cropped)
-  img_a.crop "#{split_x}x#{CROP_HEIGHT}+0+0"
+  is_even = page_num.even?
+  margin_x_start = is_even ? MARGIN_X_START_EVEN : MARGIN_X_START_ODD
+  margin_x_end = is_even ? MARGIN_X_END_EVEN : MARGIN_X_END_ODD
+  content_width = margin_x_end - margin_x_start
+
+  puts "  Step 2: Removing margins: keeping x=#{margin_x_start}..#{margin_x_end} (#{is_even ? 'even' : 'odd'} page, calculated width=#{content_width})"
+
+  img2.combine_options do |c|
+    c.crop "#{content_width}x#{CROP_HEIGHT}+#{margin_x_start}+0"
+    c << "+repage"
+  end
+
+  temp_margins_removed = File.join(OUTPUT_DIR, "temp_margins_#{page_num}.png")
+  img2.write(temp_margins_removed)
+
+  # Verify actual dimensions
+  img2_verify = MiniMagick::Image.open(temp_margins_removed)
+  puts "    After margin removal, actual image dimensions: #{img2_verify.width}x#{img2_verify.height}"
+
+  # Step 3: Load margin-removed image fresh and create split A
+  puts "  Step 3: Splitting at x=#{SPLIT_X}"
+
+  img_a = MiniMagick::Image.open(temp_margins_removed)
+  puts "    Part A: cropping to width=#{SPLIT_X} from position 0"
+  img_a.combine_options do |c|
+    c.crop "#{SPLIT_X}x#{CROP_HEIGHT}+0+0"
+    c << "+repage"
+  end
   temp_a = File.join(OUTPUT_DIR, "temp_a_#{page_num}.png")
   img_a.write(temp_a)
 
-  # Part B (right side)
-  img_b = MiniMagick::Image.open(temp_cropped)
-  remaining_width = original_width - split_x
-  img_b.crop "#{remaining_width}x#{CROP_HEIGHT}+#{split_x}+0"
+  # Verify part A dimensions
+  img_a_verify = MiniMagick::Image.open(temp_a)
+  puts "    Part A actual dimensions: #{img_a_verify.width}x#{img_a_verify.height}"
+
+  # Step 4: Load margin-removed image fresh again and create split B
+  img_b = MiniMagick::Image.open(temp_margins_removed)
+  remaining_width = content_width - SPLIT_X
+  puts "    Part B: cropping to width=#{remaining_width} from position #{SPLIT_X}"
+  img_b.combine_options do |c|
+    c.crop "#{remaining_width}x#{CROP_HEIGHT}+#{SPLIT_X}+0"
+    c << "+repage"
+  end
   temp_b = File.join(OUTPUT_DIR, "temp_b_#{page_num}.png")
   img_b.write(temp_b)
 
-  # Step 3: Add horizontal dividers
-  puts "  Processing part A..."
+  # Verify part B dimensions
+  img_b_verify = MiniMagick::Image.open(temp_b)
+  puts "    Part B actual dimensions: #{img_b_verify.width}x#{img_b_verify.height}"
+
+  # DON'T clean up intermediate files for debugging
+  # File.delete(temp_vertical_crop, temp_margins_removed)
+  puts "    [DEBUG] Keeping intermediate files: #{File.basename(temp_vertical_crop)}, #{File.basename(temp_margins_removed)}"
+
+  # Step 5: Add horizontal dividers
+  puts "  Step 4: Adding horizontal dividers..."
+  puts "    Processing part A..."
   rows_a = find_rows_to_blacken(temp_a)
   final_img_a = MiniMagick::Image.open(temp_a)
   add_horizontal_dividers(final_img_a, rows_a)
   output_a = File.join(OUTPUT_DIR, format('result-%02da.png', page_num))
   final_img_a.write(output_a)
 
-  puts "  Processing part B..."
+  puts "    Processing part B..."
   rows_b = find_rows_to_blacken(temp_b)
   final_img_b = MiniMagick::Image.open(temp_b)
   add_horizontal_dividers(final_img_b, rows_b)
@@ -132,7 +181,7 @@ def process_page(page_num, input_file)
   final_img_b.write(output_b)
 
   # Clean up temporary files
-  File.delete(temp_cropped, temp_a, temp_b)
+  File.delete(temp_a, temp_b)
 
   puts "  ✓ Created #{File.basename(output_a)} and #{File.basename(output_b)}"
 end
