@@ -17,6 +17,9 @@ Rails.application.routes.draw do
   # Dashboard
   get "dashboard", to: "dashboard#index", as: :dashboard
 
+  # User Preferences
+  patch "user_preferences", to: "user_preferences#update"
+
   # Reports
   namespace :reports do
     get "balance_sheet", to: "balance_sheets#index"

@@ -2,6 +2,12 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
+  inertia_share do
+    {
+      userConfig: current_user&.config || {}
+    }
+  end
+
   protected
 
   # Recursively converts hash keys from snake_case to camelCase

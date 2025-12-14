@@ -1,5 +1,9 @@
-import { router } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
   LayoutDashboard,
   Building2,
@@ -20,6 +24,47 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ company, currentPage, children }: AppLayoutProps) {
+  const { props } = usePage()
+  const userConfig = (props.userConfig || {}) as { ui?: { theme?: string } }
+  const [theme, setTheme] = useState<'light' | 'dark'>(
+    (userConfig.ui?.theme === 'dark' ? 'dark' : 'light') as 'light' | 'dark'
+  )
+
+  // Debug: Log the user config
+  useEffect(() => {
+    console.log('User config:', userConfig)
+    console.log('Theme:', userConfig.ui?.theme)
+  }, [])
+
+  // Apply dark mode class to HTML element on mount and when theme changes
+  useEffect(() => {
+    console.log('Applying theme:', theme)
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [theme])
+
+  const handleDarkModeToggle = async (checked: boolean) => {
+    const newTheme = checked ? 'dark' : 'light'
+    setTheme(newTheme)
+
+    // Update user preference in backend
+    try {
+      await fetch('/user_preferences', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+        },
+        body: JSON.stringify({ theme: newTheme }),
+      })
+    } catch (error) {
+      console.error('Failed to update theme preference:', error)
+    }
+  }
+
   const handleLogout = () => {
     router.delete('/users/sign_out')
   }
@@ -52,9 +97,28 @@ export function AppLayout({ company, currentPage, children }: AppLayoutProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Settings className="h-4 w-4" />
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64" align="end">
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm">Settings</h4>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="dark-mode" className="text-sm font-normal">
+                      Dark Mode
+                    </Label>
+                    <Switch
+                      id="dark-mode"
+                      checked={theme === 'dark'}
+                      onCheckedChange={handleDarkModeToggle}
+                    />
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleLogout}>
               <LogOut className="h-4 w-4" />
             </Button>
