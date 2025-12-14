@@ -81,21 +81,27 @@ class BalanceSheetService
       expenses: []         # Expenses (5xxx, 6xxx, 7xxx) - for P&L calculation
     }.tap do |groups|
       account_balances.each do |account|
-        code_prefix = account[:code][0] # First digit of account code
+        c = account[:code]
 
-        case code_prefix
-        when "0"
-          groups[:anlagevermoegen] << account
-        when "1"
-          groups[:umlaufvermoegen] << account
-        when "2"
+        if c == "0800"
           groups[:eigenkapital] << account
-        when "3"
-          groups[:fremdkapital] << account
-        when "4"
-          groups[:revenue] << account
-        when "5", "6", "7"
-          groups[:expenses] << account
+        else
+          code_prefix = account[:code][0] # First digit of account code
+
+          case code_prefix
+          when "0"
+            groups[:anlagevermoegen] << account
+          when "1"
+            groups[:umlaufvermoegen] << account
+          when "2"
+            groups[:eigenkapital] << account
+          when "3"
+            groups[:fremdkapital] << account
+          when "4"
+            groups[:revenue] << account
+          when "5", "6", "7"
+            groups[:expenses] << account
+          end
         end
       end
     end
