@@ -32,6 +32,9 @@ Rails.application.routes.draw do
   # Journal Entries
   resources :journal_entries, only: [ :index, :create, :update, :destroy ]
 
+  # Documents
+  resources :documents, only: [ :index, :create, :update, :destroy ]
+
   # Bank Accounts
   resources :bank_accounts, only: [ :index, :show ] do
     member do

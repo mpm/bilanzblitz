@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_12_102015) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_14_014112) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,34 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_102015) do
     t.datetime "updated_at", null: false
     t.index ["company_id", "code"], name: "index_accounts_on_company_id_and_code", unique: true
     t.index ["company_id"], name: "index_accounts_on_company_id"
+  end
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "bank_accounts", force: :cascade do |t|
@@ -119,11 +147,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_102015) do
 
   create_table "documents", force: :cascade do |t|
     t.bigint "company_id", null: false
+    t.jsonb "config", default: {}
     t.datetime "created_at", null: false
     t.date "document_date"
     t.string "document_number"
     t.string "document_type"
     t.string "file_data"
+    t.string "issuer_name"
+    t.string "issuer_tax_id"
+    t.string "processing_status", default: "pending"
     t.decimal "total_amount", precision: 13, scale: 2
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_documents_on_company_id"
@@ -202,6 +234,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_12_102015) do
   add_foreign_key "account_usages", "accounts"
   add_foreign_key "account_usages", "companies"
   add_foreign_key "accounts", "companies"
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "bank_accounts", "accounts", column: "ledger_account_id"
   add_foreign_key "bank_accounts", "companies"
   add_foreign_key "bank_transactions", "bank_accounts"

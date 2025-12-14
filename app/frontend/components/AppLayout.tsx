@@ -28,7 +28,7 @@ export function AppLayout({ company, currentPage, children }: AppLayoutProps) {
     { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', enabled: true },
     { key: 'journal-entries', label: 'Journal Entries', icon: FileText, href: '/journal_entries', enabled: true },
     { key: 'bank-accounts', label: 'Bank Accounts', icon: Wallet, href: '/bank_accounts', enabled: true },
-    { key: 'documents', label: 'Documents', icon: FileText, href: '#', enabled: false },
+    { key: 'documents', label: 'Documents', icon: FileText, href: '/documents', enabled: true },
     { key: 'reports', label: 'Reports', icon: BarChart3, href: '/reports/balance_sheet', enabled: true },
   ]
 
