@@ -17,7 +17,7 @@ MARGIN_X_END_ODD = 1416
 # Split position (after margins removed)
 SPLIT_X = 636
 CONSECUTIVE_PIXELS_THRESHOLD = 30
-CHECK_POSITIONS = [30]
+CHECK_POSITIONS = [ 30 ]
 
 # Ensure output directory exists
 Dir.mkdir(OUTPUT_DIR) unless Dir.exist?(OUTPUT_DIR)

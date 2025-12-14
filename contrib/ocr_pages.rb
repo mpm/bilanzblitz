@@ -58,14 +58,14 @@ def submit_page(image_path)
     reasoning: {},
     max_output_tokens: 5074,
     store: true,
-    include: ["web_search_call.action.sources"]
+    include: [ "web_search_call.action.sources" ]
   }.to_json
 
   response = http.request(request)
 
   result = JSON.parse(response.body)
-  #puts "JSON response:"
-  #puts result.inspect
+  # puts "JSON response:"
+  # puts result.inspect
 
   txt = []
   o = result['output']
@@ -81,10 +81,10 @@ page_files = Dir.glob(File.join(INPUT_DIR, 'result-*.png')).sort
 
 page_files.each do |file|
   # Extract page number from filename
-  #match = File.basename(file)
-  #next unless match
+  # match = File.basename(file)
+  # next unless match
 
-  #page_num = match[1].to_i
+  # page_num = match[1].to_i
 
   begin
     puts "OCRing #{file}"

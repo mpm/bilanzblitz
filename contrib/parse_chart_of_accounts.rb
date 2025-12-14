@@ -55,7 +55,7 @@ File.readlines("skr03-ocr-results.txt").each do |line|
 
     pos_desc = "(none)" if pos_desc == "" || empty_positions.include?(pos_desc)
 
-    pdata = positions[pos_desc] ||= {name: pos_desc, items: []}
+    pdata = positions[pos_desc] ||= { name: pos_desc, items: [] }
 
     items = r3&.split(";")&.map(&:strip)
 
