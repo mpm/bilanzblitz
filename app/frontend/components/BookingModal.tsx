@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AccountSearch } from '@/components/AccountSearch'
 import { Loader2, AlertCircle } from 'lucide-react'
+import { formatAmount } from '@/utils/formatting'
 
 interface Account {
   id: number | null
@@ -125,13 +126,6 @@ export function BookingModal({
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const formatAmount = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency,
-    }).format(amount)
   }
 
   const split = calculateSplit()

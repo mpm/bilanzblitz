@@ -204,7 +204,8 @@ usually a Vite process running during development.
 │   │   │   ├── Reports/    # Report pages (Balance Sheet, etc.)
 │   │   │   ├── BankAccounts/
 │   │   │   └── Dashboard/
-│   │   └── types/          # TypeScript type definitions
+│   │   ├── types/          # TypeScript type definitions
+│   │   └── utils/          # Shared utility functions (formatting, etc.)
 │   └── views/              # Minimal (Inertia uses React for views)
 ├── db/
 │   ├── migrate/            # Database migrations
@@ -214,6 +215,39 @@ usually a Vite process running during development.
 │   └── database.yml        # Database configuration
 └── .devcontainer/          # Dev container configuration
 ```
+
+## Frontend Development
+
+### Formatting Utilities
+
+The application uses shared formatting utilities to ensure consistent display of dates, currencies, and amounts across all components.
+
+**Location**: `app/frontend/utils/formatting.ts`
+
+**Available Functions**:
+- `formatDate(dateString, options?)` - Formats dates to German locale (DD.MM.YYYY)
+- `formatAmount(amount, currency)` - Formats amounts with currency symbols (e.g., "1.234,56 €")
+- `formatCurrency(amount, currency?)` - Like formatAmount but handles null values (returns '-')
+
+**Usage**:
+```typescript
+import { formatDate, formatAmount, formatCurrency } from '@/utils/formatting'
+
+// Format a date
+formatDate('2024-03-15')  // Returns: "15.03.2024"
+
+// Format an amount with currency
+formatAmount(1234.56, 'EUR')  // Returns: "1.234,56 €"
+
+// Format currency with null handling
+formatCurrency(null)  // Returns: "-"
+formatCurrency(100.50)  // Returns: "100,50 €"
+```
+
+**Important**:
+- **Before creating new formatting functions**, always check if the functionality exists in `formatting.ts`
+- **All new formatting utilities** should be added to `formatting.ts` to avoid duplication
+- Use German locale (`de-DE`) for all date and number formatting to comply with local accounting standards
 
 ## Data Models
 
@@ -382,3 +416,5 @@ When working on this project:
 - Use Inertia.js for routing between backend and React frontend
 - Follow TypeScript best practices for frontend code
 - Use shadcn/ui components for consistent UI design
+- **Always check `app/frontend/utils/formatting.ts` for existing formatting functions before creating new ones**
+- **Add all new formatting utilities to `formatting.ts` to maintain consistency and avoid duplication**

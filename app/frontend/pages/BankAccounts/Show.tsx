@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { BookingModal } from '@/components/BookingModal'
+import { formatDate, formatAmount } from '@/utils/formatting'
 
 interface Transaction {
   id: number
@@ -110,17 +111,6 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
   const [bookingModalOpen, setBookingModalOpen] = useState(false)
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
   const [deletingId, setDeletingId] = useState<number | null>(null)
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE')
-  }
-
-  const formatAmount = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: currency,
-    }).format(amount)
-  }
 
   const formatIban = (iban: string | null) => {
     if (!iban) return '-'

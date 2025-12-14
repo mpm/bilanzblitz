@@ -12,6 +12,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { AlertCircle, FileText } from 'lucide-react'
+import { formatCurrency } from '@/utils/formatting'
 
 interface FiscalYear {
   id: number
@@ -48,13 +49,6 @@ interface BalanceSheetProps {
   selectedFiscalYearId: number | null
   balanceSheet: BalanceSheetData | null
   errors: string[]
-}
-
-const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('de-DE', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(amount)
 }
 
 const SHOW_PREVIOUS_YEAR = false // Feature flag for previous year column

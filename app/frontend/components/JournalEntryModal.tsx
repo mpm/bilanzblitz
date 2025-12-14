@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AccountSearch } from '@/components/AccountSearch'
 import { Plus, Trash2, AlertCircle, Loader2 } from 'lucide-react'
+import { formatCurrency } from '@/utils/formatting'
 
 interface FiscalYear {
   id: number
@@ -309,13 +310,6 @@ export function JournalEntryModal({
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(amount)
   }
 
   const canSave = balance.balanced && formData.description.trim() && lineItems.length >= 2

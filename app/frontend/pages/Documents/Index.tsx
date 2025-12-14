@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { FileText, Download, Trash2, Link as LinkIcon, Loader2 } from 'lucide-react'
+import { formatDate, formatCurrency } from '@/utils/formatting'
 
 interface Document {
   id: number
@@ -60,19 +61,6 @@ export default function DocumentsIndex({ company, documents }: DocumentsIndexPro
     if (bytes < 1024) return `${bytes} B`
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
     return `${(bytes / 1024 / 1024).toFixed(1)} MB`
-  }
-
-  const formatDate = (dateString: string | null): string => {
-    if (!dateString) return '-'
-    return new Date(dateString).toLocaleDateString('de-DE')
-  }
-
-  const formatCurrency = (amount: number | null): string => {
-    if (amount === null) return '-'
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(amount)
   }
 
   const getDocumentTypeBadgeVariant = (type: string | null) => {

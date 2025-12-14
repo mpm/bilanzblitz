@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PenLine, Trash2, FileText, Plus } from 'lucide-react'
 import { JournalEntryModal } from '@/components/JournalEntryModal'
+import { formatDate, formatCurrency } from '@/utils/formatting'
 
 interface FiscalYear {
   id: number
@@ -127,21 +128,6 @@ export default function JournalEntriesIndex({
   const handleModalSuccess = () => {
     setModalOpen(false)
     setEditEntryId(null)
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    })
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(amount)
   }
 
   const calculateDebits = (entry: JournalEntry) => {
