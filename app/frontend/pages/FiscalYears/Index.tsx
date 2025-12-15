@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FiscalYearStatusBadge } from '@/components/FiscalYearStatusBadge'
 import { formatDate } from '@/utils/formatting'
-import { Calendar, Eye } from 'lucide-react'
+import { Calendar, Eye, Upload, Plus } from 'lucide-react'
 
 interface FiscalYear {
   id: number
@@ -38,6 +38,20 @@ export default function FiscalYearsIndex({
             <p className="text-muted-foreground mt-1">
               Manage fiscal years for {company.name}
             </p>
+          </div>
+          <div className="flex gap-3">
+            <Link href="/fiscal_years/import_form">
+              <Button variant="outline">
+                <Upload className="mr-2 h-4 w-4" />
+                Import Fiscal Year
+              </Button>
+            </Link>
+            <Link href="/fiscal_years/new">
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Fiscal Year
+              </Button>
+            </Link>
           </div>
         </div>
 

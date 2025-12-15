@@ -26,7 +26,11 @@ Rails.application.routes.draw do
   end
 
   # Fiscal Years
-  resources :fiscal_years, only: [ :index, :show ] do
+  resources :fiscal_years, only: [ :index, :show, :new, :create ] do
+    collection do
+      get :import_form
+      post :import_create
+    end
     member do
       post :post_opening_balance
       get :preview_closing

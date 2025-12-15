@@ -16,6 +16,111 @@ class FiscalYearsController < ApplicationController
     })
   end
 
+  def new
+    @company = current_user.companies.first
+
+    # Calculate available years for dropdown
+    latest_fiscal_year = @company.fiscal_years.maximum(:year)
+    current_year = Date.today.year
+
+    # If no fiscal years exist, start from current year
+    start_year = latest_fiscal_year ? latest_fiscal_year + 1 : current_year
+
+    # Only offer years up to current year
+    available_years = (start_year..current_year).to_a
+
+    render inertia: "FiscalYears/New", props: camelize_keys({
+      company: {
+        id: @company.id,
+        name: @company.name
+      },
+      available_years: available_years
+    })
+  end
+
+  def create
+    @company = current_user.companies.first
+    year = params[:year].to_i
+
+    # Validate year
+    if year < 1900 || year > 2100
+      return render json: { errors: [ "Invalid year" ] }, status: :unprocessable_entity
+    end
+
+    # Check if fiscal year already exists
+    if @company.fiscal_years.exists?(year: year)
+      return render json: { errors: [ "Fiscal year #{year} already exists" ] }, status: :unprocessable_entity
+    end
+
+    # Create fiscal year
+    start_date = Date.new(year, 1, 1)
+    end_date = Date.new(year, 12, 31)
+
+    fiscal_year = @company.fiscal_years.create!(
+      year: year,
+      start_date: start_date,
+      end_date: end_date,
+      closed: false
+    )
+
+    # Check if previous year exists and is closed
+    previous_year = @company.fiscal_years.find_by(year: year - 1)
+
+    if previous_year&.closed?
+      # Get closing balance sheet from previous year
+      closing_balance = previous_year.balance_sheets.closing.posted.first
+
+      if closing_balance && closing_balance.data.present?
+        # Create opening balance via carryforward
+        creator = OpeningBalanceCreator.new(
+          fiscal_year: fiscal_year,
+          balance_data: closing_balance.data,
+          source: "carryforward"
+        )
+
+        result = creator.call
+
+        unless result.success?
+          # Rollback and return error
+          fiscal_year.destroy
+          return render json: { errors: result.errors }, status: :unprocessable_entity
+        end
+      end
+    end
+
+    redirect_to fiscal_year_path(fiscal_year), notice: "Fiscal year #{year} created successfully"
+  end
+
+  def import_form
+    @company = current_user.companies.first
+
+    render inertia: "FiscalYears/Import", props: camelize_keys({
+      company: {
+        id: @company.id,
+        name: @company.name
+      }
+    })
+  end
+
+  def import_create
+    @company = current_user.companies.first
+
+    # Parse the JSON string from frontend
+    balance_sheet_data = JSON.parse(params[:balance_sheet_data], symbolize_names: true)
+
+    importer = FiscalYearImporter.new(
+      company: @company,
+      year: params[:year],
+      balance_sheet_data: balance_sheet_data
+    )
+
+    if importer.call
+      redirect_to fiscal_years_path, notice: "Fiscal year #{params[:year]} imported successfully"
+    else
+      render json: { errors: importer.errors }, status: :unprocessable_entity
+    end
+  end
+
   def show
     @company = current_user.companies.first
 
