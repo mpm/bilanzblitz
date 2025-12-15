@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
+import { FiscalYearStatusBadge } from '@/components/FiscalYearStatusBadge'
 import { AlertCircle, FileText } from 'lucide-react'
 import { formatCurrency } from '@/utils/formatting'
 
@@ -20,6 +21,9 @@ interface FiscalYear {
   startDate: string
   endDate: string
   closed: boolean
+  openingBalancePostedAt: string | null
+  closingBalancePostedAt: string | null
+  workflowState: 'open' | 'open_with_opening' | 'closing_posted' | 'closed'
 }
 
 interface AccountBalance {
@@ -221,11 +225,22 @@ export default function BalanceSheet({
           )}
 
           {selectedFiscalYear && (
-            <Badge variant={selectedFiscalYear.closed ? 'secondary' : 'default'}>
-              {selectedFiscalYear.closed
-                ? 'Closed fiscal year'
-                : 'Open fiscal year - balances may change'}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <FiscalYearStatusBadge
+                workflowState={selectedFiscalYear.workflowState}
+              />
+              {!selectedFiscalYear.openingBalancePostedAt && (
+                <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                  <AlertCircle className="mr-1 h-3 w-3" />
+                  No opening balance
+                </Badge>
+              )}
+              {selectedFiscalYear.closed && (
+                <Badge variant="secondary">
+                  Stored balance sheet
+                </Badge>
+              )}
+            </div>
           )}
         </div>
 

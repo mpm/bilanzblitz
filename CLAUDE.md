@@ -11,10 +11,14 @@ BilanzBlitz is a comprehensive accounting and tax management application designe
 - **Double-Entry Bookkeeping**: Complete ledger system with journal entries and line items
 - **Transaction Splitting**: Split bank transactions across multiple accounts (e.g., separating VAT from expenses)
 - **Bank Reconciliation**: Link bank transactions to bookkeeping entries
-- **Balance Sheet Reports**: Generate on-the-fly balance sheets (Bilanz) following German GmbH standards with SKR03 account mapping
+- **Opening Balance Sheets (EBK)**: Create opening balances manually or import from previous year
+- **Closing Balance Sheets (SBK)**: Automated fiscal year closing with proper German accounting procedures
+- **Fiscal Year Management**: Complete workflow from opening to closing with state tracking
+- **Balance Sheet Reports**: Generate balance sheets (Bilanz) following German GmbH standards with SKR03 account mapping
+- **Balance Sheet Persistence**: Store and retrieve opening and closing balance sheets
 - **VAT Reports**: Generate periodic VAT reports (Umsatzsteuervoranmeldung)
 - **Annual Tax Returns**: Prepare and generate annual tax filings
-- **GoBD Compliance**: Immutable posted entries to comply with German accounting regulations
+- **GoBD Compliance**: Immutable posted entries and balance sheets to comply with German accounting regulations
 
 ## Technology Stack
 
@@ -42,15 +46,17 @@ The application uses a classic double-entry bookkeeping system:
 
 1. **Companies** - Business entities being managed
 2. **Users** - Accountants and business owners (linked via CompanyMemberships)
-3. **Fiscal Years** - Year-based accounting periods with closing capability
+3. **Fiscal Years** - Year-based accounting periods with workflow state tracking and closing capability
 4. **Accounts** - Chart of accounts (SKR03/SKR04 compatible)
-5. **Bank Accounts** - Physical bank accounts linked to ledger accounts
-6. **Bank Transactions** - Individual transactions from bank feeds (status: pending → booked → reconciled)
-7. **Documents** - Scanned receipts, invoices, and supporting documentation
-8. **Journal Entries** - Bookkeeping transaction headers (can be posted for immutability)
-9. **Line Items** - The debit/credit splits that make up journal entries
-10. **Tax Reports** - VAT and annual tax report storage
-11. **Account Usages** - Tracks recently used accounts per company for quick selection during booking
+5. **Account Templates** - Template accounts in chart of accounts (used to create company-specific accounts)
+6. **Bank Accounts** - Physical bank accounts linked to ledger accounts
+7. **Bank Transactions** - Individual transactions from bank feeds (status: pending → booked → reconciled)
+8. **Documents** - Scanned receipts, invoices, and supporting documentation
+9. **Journal Entries** - Bookkeeping transaction headers (can be posted for immutability, with entry_type: normal/opening/closing)
+10. **Line Items** - The debit/credit splits that make up journal entries
+11. **Balance Sheets** - Stored opening and closing balance sheets (Eröffnungsbilanz/Schlussbilanz)
+12. **Tax Reports** - VAT and annual tax report storage (with report_type field)
+13. **Account Usages** - Tracks recently used accounts per company for quick selection during booking
 
 ### Key Design Decisions
 
@@ -97,16 +103,78 @@ Standard SKR03 VAT accounts are defined in `Account::VAT_ACCOUNTS`:
 - `1776` - Umsatzsteuer 19% (Output VAT 19%)
 - `1771` - Umsatzsteuer 7% (Output VAT 7%)
 
+#### Journal Entry Types and Ordering
+Journal entries have three types that determine their purpose and ordering:
+- **normal** (sequence: 1000-8999) - Regular business transactions
+- **opening** (sequence: 0-999) - Opening balance entries (Eröffnungsbilanzkonto - EBK)
+- **closing** (sequence: 9000-9999) - Closing balance entries (Schlussbilanzkonto - SBK)
+
+Entries are ordered by: `booking_date ASC, sequence ASC, id ASC`
+- This ensures EBK entries always appear first on the opening date
+- SBK entries always appear last on the closing date
+- Normal transactions appear in between based on booking date
+
+#### Fiscal Year Workflow States
+Fiscal years progress through five workflow states:
+
+1. **open** - New fiscal year created, no opening balance yet
+2. **open_with_opening** - Opening balance posted, transactions can be recorded
+3. **closing_posted** - Closing balance has been calculated and posted (not yet used)
+4. **closed** - Fiscal year is closed, immutable
+
+State transitions are tracked via:
+- `opening_balance_posted_at` - Timestamp when opening balance was posted
+- `closing_balance_posted_at` - Timestamp when closing balance was posted
+- `closed` / `closed_at` - Final closing timestamp
+
+#### Opening and Closing Balance Sheets (EBK/SBK)
+The application supports German-standard opening and closing balance sheets:
+
+**Opening Balance (Eröffnungsbilanz - EBK)**:
+- Created at the start of a fiscal year
+- Two modes:
+  - **Manual Entry**: User manually enters balance sheet data
+  - **Carryforward**: Automatically imports closing balance from previous year
+- Uses account 9000 "Saldenvorträge, Sachkonten" as contra account
+- Generates journal entries with `entry_type: 'opening'`
+- Stored in `balance_sheets` table with `sheet_type: 'opening'`
+
+**Closing Balance (Schlussbilanz - SBK)**:
+- Created at fiscal year end
+- Automatically calculated from posted journal entries
+- Creates closing journal entries that reverse the opening (credit assets, debit liabilities/equity)
+- Uses account 9000 as contra account
+- Generates journal entries with `entry_type: 'closing'`
+- Stored in `balance_sheets` table with `sheet_type: 'closing'`
+- Fiscal year is marked as closed and becomes immutable
+
+**SKR03 Closing Accounts (9000-series)**:
+- `9000` - Saldenvorträge, Sachkonten (main EBK/SBK account)
+- `9008` - Saldenvorträge, Debitoren
+- `9009` - Saldenvorträge, Kreditoren
+- `9090` - Summenvortragskonto
+- These are system accounts (hidden from normal booking UI)
+- Must collectively balance to zero
+
+**Service Classes**:
+- `OpeningBalanceCreator` - Creates opening balance entries
+- `FiscalYearClosingService` - Closes fiscal year and generates SBK entries
+- `BalanceSheetService` - Calculates balance sheets (updated to exclude closing entries and 9000-series accounts)
+
 #### Balance Sheet Generation
-The `BalanceSheetService` generates balance sheets on-the-fly from posted journal entries:
+The `BalanceSheetService` generates balance sheets from posted journal entries:
 - **SKR03 Code Range Mapping**: Accounts are automatically grouped based on their code prefix:
   - 0xxx → Anlagevermögen (Fixed Assets)
   - 1xxx → Umlaufvermögen (Current Assets)
   - 2xxx → Eigenkapital (Equity)
   - 3xxx → Fremdkapital (Liabilities)
+  - 9xxx → Closing accounts (filtered out from display)
+- **Closing Entry Exclusion**: Entries with `entry_type: 'closing'` are excluded from calculations
+- **Posted Entries Only**: Only posted journal entries are included (GoBD compliance)
 - **Net Income Integration**: P&L is calculated from revenue (4xxx) and expense (5xxx-7xxx) accounts and included in equity
 - **Account Balances**: Calculated using debit/credit logic appropriate to each account type
 - **Balance Verification**: Ensures Aktiva = Passiva (or flags data integrity issues)
+- **Stored Balance Sheets**: For closed fiscal years, loads stored balance sheet instead of recalculating
 
 ## Development Commands
 
@@ -192,16 +260,35 @@ usually a Vite process running during development.
 .
 ├── app/
 │   ├── controllers/          # Rails controllers (Inertia endpoints)
-│   │   └── reports/         # Report controllers (balance sheet, etc.)
+│   │   ├── fiscal_years_controller.rb        # Fiscal year management
+│   │   ├── opening_balances_controller.rb    # Opening balance entry
+│   │   └── reports/                          # Report controllers
+│   │       └── balance_sheets_controller.rb  # Balance sheet reports
 │   ├── models/              # ActiveRecord models
+│   │   ├── balance_sheet.rb            # Stored balance sheets (opening/closing)
+│   │   ├── fiscal_year.rb              # Fiscal years with workflow states
+│   │   ├── journal_entry.rb            # Journal entries with entry_type
+│   │   ├── account.rb                  # Chart of accounts
+│   │   └── account_template.rb         # Account templates for charts
 │   ├── services/            # Service classes (business logic)
-│   │   ├── balance_sheet_service.rb  # Balance sheet generation
-│   │   ├── journal_entry_creator.rb  # Journal entry creation
-│   │   └── journal_entry_destroyer.rb # Journal entry deletion
+│   │   ├── balance_sheet_service.rb         # Balance sheet calculation
+│   │   ├── opening_balance_creator.rb       # Opening balance (EBK) creation
+│   │   ├── fiscal_year_closing_service.rb   # Fiscal year closing (SBK)
+│   │   ├── journal_entry_creator.rb         # Journal entry creation
+│   │   └── journal_entry_destroyer.rb       # Journal entry deletion
 │   ├── frontend/            # React + TypeScript frontend
 │   │   ├── components/      # React components (including shadcn/ui)
+│   │   │   ├── FiscalYearStatusBadge.tsx  # Workflow state indicator
+│   │   │   └── ui/                        # shadcn/ui components
 │   │   ├── pages/          # Inertia page components
-│   │   │   ├── Reports/    # Report pages (Balance Sheet, etc.)
+│   │   │   ├── FiscalYears/              # Fiscal year management
+│   │   │   │   ├── Index.tsx             # List fiscal years
+│   │   │   │   ├── Show.tsx              # Fiscal year details
+│   │   │   │   └── PreviewClosing.tsx    # Preview closing balance
+│   │   │   ├── OpeningBalances/
+│   │   │   │   └── Form.tsx              # Opening balance entry form
+│   │   │   ├── Reports/                  # Report pages
+│   │   │   │   └── BalanceSheet.tsx      # Balance sheet report
 │   │   │   ├── BankAccounts/
 │   │   │   └── Dashboard/
 │   │   ├── types/          # TypeScript type definitions
@@ -341,6 +428,64 @@ The Balance Sheet (Bilanz) report provides a snapshot of the company's financial
 - **Frontend**: `Reports/BalanceSheet.tsx` (`app/frontend/pages/Reports/BalanceSheet.tsx`)
 - **Route**: `/reports/balance_sheet`
 
+## Fiscal Year Management
+
+### Fiscal Year Workflow
+
+The application supports a complete fiscal year lifecycle with proper opening and closing procedures following German accounting standards.
+
+**Access**: Navigate to `/fiscal_years` to manage fiscal years.
+
+**Workflow States**:
+
+1. **Open** - Newly created fiscal year without opening balance
+   - Cannot create journal entries yet
+   - Shows "Create Opening Balance" button
+
+2. **Open with Opening** - Opening balance has been posted
+   - Normal journal entries can be created
+   - This is the active working state for the fiscal year
+
+3. **Closed** - Fiscal year has been finalized
+   - Closing balance sheet stored
+   - All entries are immutable
+   - Opening balance automatically created for next year
+
+**Creating Opening Balance**:
+- Navigate to fiscal year details → "Create Opening Balance"
+- Two options:
+  - **Import from Previous Year** (recommended): Automatically imports closing balance
+  - **Manual Entry**: Enter balance sheet data manually (for first year or corrections)
+- Opening balance must be posted before journal entries can be created
+
+**Closing Fiscal Year**:
+1. Navigate to fiscal year details → "Preview Closing"
+2. Review the calculated closing balance sheet
+3. System validates that Aktiva = Passiva
+4. Click "Confirm Close Fiscal Year"
+5. System automatically:
+   - Creates SBK (closing) journal entries
+   - Stores closing balance sheet
+   - Marks fiscal year as closed
+   - Creates opening balance for next fiscal year
+
+**Controllers and Routes**:
+- `FiscalYearsController`:
+  - `GET /fiscal_years` - List all fiscal years
+  - `GET /fiscal_years/:id` - Show fiscal year details
+  - `GET /fiscal_years/:id/preview_closing` - Preview closing balance
+  - `POST /fiscal_years/:id/close` - Close the fiscal year
+- `OpeningBalancesController`:
+  - `GET /opening_balances/new` - Opening balance entry form
+  - `POST /opening_balances` - Create opening balance
+
+**Frontend Pages**:
+- `FiscalYears/Index.tsx` - List fiscal years with workflow state badges
+- `FiscalYears/Show.tsx` - Fiscal year details with workflow timeline
+- `FiscalYears/PreviewClosing.tsx` - Preview closing balance before finalizing
+- `OpeningBalances/Form.tsx` - Create opening balance (manual or carryforward)
+- `FiscalYearStatusBadge.tsx` - Component showing workflow state with icons
+
 ## German Accounting Context
 
 ### Chart of Accounts (Kontenrahmen)
@@ -355,7 +500,8 @@ Account codes follow the standard numbering:
 - 3xxx: Liabilities (Fremdkapital)
 - 4xxx: Operating income (Betriebliche Erträge)
 - 5-7xxx: Operating expenses (Betriebliche Aufwendungen)
-- 8xxx: Closing accounts (Abschlusskonten)
+- 8xxx: Revenue accounts (Erlöskonten)
+- 9xxx: Carryforward and closing accounts (Saldenvorträge - EBK/SBK)
 
 ### VAT Rates (Umsatzsteuer)
 Common German VAT rates to support:
@@ -382,10 +528,13 @@ The application currently supports **Ist-Versteuerung** (cash accounting):
 - Role-based access through CompanyMembership
 
 ### GoBD Compliance
-- Posted journal entries are immutable
-- Complete audit trail through timestamps
+- Posted journal entries are immutable (via `posted_at` timestamp)
+- Posted balance sheets are immutable (via `posted_at` timestamp)
+- Complete audit trail through timestamps and workflow state tracking
 - Document archival (receipts/invoices stored with metadata)
-- Fiscal year closing mechanism
+- Fiscal year closing mechanism with SBK entries
+- 10-year retention of closed fiscal years and balance sheets
+- Proper separation of opening/closing entries from regular transactions
 
 ## Future Considerations
 
