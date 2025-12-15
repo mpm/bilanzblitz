@@ -10,6 +10,13 @@ class BalanceSheetService
     return failure("Company is required") unless @company
     return failure("Fiscal year is required") unless @fiscal_year
 
+    # If fiscal year is closed, try to load stored balance sheet
+    if @fiscal_year.closed?
+      stored_sheet = load_stored_balance_sheet
+      return Result.new(success?: true, data: stored_sheet, errors: []) if stored_sheet
+    end
+
+    # Otherwise calculate on-the-fly
     account_balances = calculate_account_balances
     grouped_accounts = group_by_balance_sheet_sections(account_balances)
     net_income = calculate_net_income(account_balances)
@@ -26,11 +33,13 @@ class BalanceSheetService
 
   def calculate_account_balances
     # Query all accounts with their aggregated debit/credit amounts
-    # Only include posted journal entries
+    # Only include posted journal entries (GoBD compliance)
+    # Exclude closing entries (they close out accounts, not part of ongoing balance)
     results = @company.accounts
       .joins(line_items: :journal_entry)
       .where(journal_entries: { fiscal_year_id: @fiscal_year.id })
-      # .where.not(journal_entries: { posted_at: nil })
+      .where.not(journal_entries: { posted_at: nil })
+      .where.not(journal_entries: { entry_type: "closing" })
       .select(
         "accounts.id",
         "accounts.code",
@@ -55,7 +64,7 @@ class BalanceSheetService
         type: account.account_type,
         balance: balance
       }
-    end.reject { |a| a[:balance].abs < 0.01 } # Filter near-zero balances (accounting for floating point)
+    end.reject { |a| a[:balance].abs < 0.01 || a[:code].start_with?("9") } # Filter near-zero balances and 9000-series closing accounts
   end
 
   def calculate_account_balance(account_type, total_debit, total_credit)
@@ -175,5 +184,17 @@ class BalanceSheetService
 
   def failure(message)
     Result.new(success?: false, data: nil, errors: [ message ])
+  end
+
+  def load_stored_balance_sheet
+    # Load the stored closing balance sheet for closed fiscal years
+    stored_sheet = @fiscal_year.balance_sheets.closing.posted.first
+    return nil unless stored_sheet
+
+    # Return the stored data with a flag indicating it's from storage
+    stored_sheet.data.merge(
+      stored: true,
+      posted_at: stored_sheet.posted_at
+    )
   end
 end
