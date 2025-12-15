@@ -47,13 +47,19 @@ class OpeningBalanceCreator
 
       success(balance_sheet: balance_sheet, journal_entry: journal_entry)
     rescue StandardError => e
-      failure("Error creating opening balance: #{e.message}")
+      failure("Error creating opening balance: #{e.message} #{e.backtrace.join('\n')}")
     end
   end
 
   private
 
   def validate_balance_sheet
+    # Check for required structure
+    unless @balance_data[:aktiva].present? && @balance_data[:passiva].present?
+      @errors << "Invalid balance sheet structure: missing aktiva or passiva sections"
+      return false
+    end
+
     aktiva_total = calculate_total(@balance_data[:aktiva])
     passiva_total = calculate_total(@balance_data[:passiva])
 
@@ -119,12 +125,21 @@ class OpeningBalanceCreator
     return account if account
 
     # If not found, create from template
-    return nil unless @company.chart_of_accounts.present?
+    unless @company.chart_of_accounts.present?
+      raise "Cannot create EBK account: company has no chart of accounts"
+    end
 
     template = @company.chart_of_accounts.account_templates.find_by(code: CLOSING_ACCOUNTS[:ebk_sbk])
-    return nil unless template
+    unless template
+      raise "Cannot create EBK account: account template #{CLOSING_ACCOUNTS[:ebk_sbk]} not found in chart of accounts"
+    end
 
-    template.add_to_company(@company)
+    account = template.add_to_company(@company)
+    unless account
+      raise "Failed to create EBK account #{CLOSING_ACCOUNTS[:ebk_sbk]} from template"
+    end
+
+    account
   end
 
   def create_line_items_for_accounts(journal_entry, ebk_account)
@@ -205,12 +220,21 @@ class OpeningBalanceCreator
     return account if account
 
     # If not found, create from template
-    return nil unless @company.chart_of_accounts.present?
+    unless @company.chart_of_accounts.present?
+      raise "Cannot create account #{code}: company has no chart of accounts"
+    end
 
     template = @company.chart_of_accounts.account_templates.find_by(code: code)
-    return nil unless template
+    unless template
+      raise "Cannot create account: account template #{code} not found in chart of accounts"
+    end
 
-    template.add_to_company(@company)
+    account = template.add_to_company(@company)
+    unless account
+      raise "Failed to create account #{code} from template"
+    end
+
+    account
   end
 
   def success(data)

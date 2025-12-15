@@ -71,10 +71,13 @@ class FiscalYearsController < ApplicationController
       closing_balance = previous_year.balance_sheets.closing.posted.first
 
       if closing_balance && closing_balance.data.present?
+        # Symbolize keys for consistent hash access (JSONB data uses string keys)
+        balance_data = closing_balance.data.deep_symbolize_keys
+
         # Create opening balance via carryforward
         creator = OpeningBalanceCreator.new(
           fiscal_year: fiscal_year,
-          balance_data: closing_balance.data,
+          balance_data: balance_data,
           source: "carryforward"
         )
 
