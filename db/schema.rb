@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_14_220215) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_15_104007) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_14_220215) do
     t.jsonb "config", default: {}
     t.datetime "created_at", null: false
     t.text "description"
+    t.boolean "is_system_account", default: false
     t.string "name", null: false
     t.decimal "tax_rate", precision: 5, scale: 2, default: "0.0"
     t.datetime "updated_at", null: false
@@ -80,6 +81,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_14_220215) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "balance_sheets", force: :cascade do |t|
+    t.date "balance_date", null: false
+    t.datetime "created_at", null: false
+    t.jsonb "data", default: {}, null: false
+    t.bigint "fiscal_year_id", null: false
+    t.jsonb "metadata", default: {}
+    t.datetime "posted_at"
+    t.string "sheet_type", null: false
+    t.string "source", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fiscal_year_id", "sheet_type"], name: "index_balance_sheets_on_fiscal_year_id_and_sheet_type", unique: true
+    t.index ["fiscal_year_id"], name: "index_balance_sheets_on_fiscal_year_id"
+    t.index ["posted_at"], name: "index_balance_sheets_on_posted_at"
   end
 
   create_table "bank_accounts", force: :cascade do |t|
@@ -165,14 +181,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_14_220215) do
     t.jsonb "balance_sheet_snapshot"
     t.boolean "closed", default: false
     t.datetime "closed_at"
+    t.datetime "closing_balance_posted_at"
     t.bigint "company_id", null: false
     t.datetime "created_at", null: false
     t.date "end_date", null: false
+    t.datetime "opening_balance_posted_at"
     t.date "start_date", null: false
     t.datetime "updated_at", null: false
     t.integer "year", null: false
+    t.index ["closing_balance_posted_at"], name: "index_fiscal_years_on_closing_balance_posted_at"
     t.index ["company_id", "year"], name: "index_fiscal_years_on_company_id_and_year", unique: true
     t.index ["company_id"], name: "index_fiscal_years_on_company_id"
+    t.index ["opening_balance_posted_at"], name: "index_fiscal_years_on_opening_balance_posted_at"
   end
 
   create_table "journal_entries", force: :cascade do |t|
@@ -181,11 +201,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_14_220215) do
     t.datetime "created_at", null: false
     t.string "description", null: false
     t.bigint "document_id"
+    t.string "entry_type", default: "normal", null: false
     t.bigint "fiscal_year_id", null: false
     t.datetime "posted_at"
+    t.integer "sequence"
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_journal_entries_on_company_id"
     t.index ["document_id"], name: "index_journal_entries_on_document_id"
+    t.index ["fiscal_year_id", "booking_date", "sequence"], name: "idx_on_fiscal_year_id_booking_date_sequence_d969771c87"
     t.index ["fiscal_year_id"], name: "index_journal_entries_on_fiscal_year_id"
   end
 
@@ -209,10 +232,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_14_220215) do
     t.date "end_date", null: false
     t.jsonb "generated_data"
     t.string "period_type", null: false
+    t.string "report_type", default: "vat", null: false
     t.date "start_date", null: false
     t.string "status", default: "draft"
     t.datetime "submitted_at"
     t.datetime "updated_at", null: false
+    t.index ["company_id", "report_type", "period_type"], name: "idx_on_company_id_report_type_period_type_b09cde21dd"
     t.index ["company_id"], name: "index_tax_reports_on_company_id"
   end
 
@@ -237,6 +262,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_14_220215) do
   add_foreign_key "accounts", "companies"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "balance_sheets", "fiscal_years"
   add_foreign_key "bank_accounts", "accounts", column: "ledger_account_id"
   add_foreign_key "bank_accounts", "companies"
   add_foreign_key "bank_transactions", "bank_accounts"

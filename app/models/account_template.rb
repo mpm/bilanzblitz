@@ -20,7 +20,13 @@ class AccountTemplate < ApplicationRecord
     if company.accounts.where(code: code).exists?
       false
     else
-      local_account = Account.new(code: code, name: name, account_type: account_type, tax_rate: tax_rate)
+      local_account = Account.new(
+        code: code,
+        name: name,
+        account_type: account_type,
+        tax_rate: tax_rate,
+        is_system_account: is_system_account || false
+      )
       company.accounts << local_account
       local_account
     end

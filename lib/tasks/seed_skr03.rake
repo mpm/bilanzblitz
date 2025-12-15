@@ -150,6 +150,30 @@ namespace :accounting do
 
         puts
         puts "Created #{created_count} account templates"
+
+        # Upsert closing accounts (9000-series) to ensure they have correct attributes
+        puts
+        puts "Upserting closing accounts (9000-series)..."
+
+        closing_accounts = [
+          { code: "9000", name: "Saldenvorträge, Sachkonten", account_type: "equity" },
+          { code: "9008", name: "Saldenvorträge, Debitoren", account_type: "equity" },
+          { code: "9009", name: "Saldenvorträge, Kreditoren", account_type: "equity" },
+          { code: "9090", name: "Summenvortragskonto", account_type: "equity" }
+        ]
+
+        closing_accounts.each do |account_data|
+          template = chart.account_templates.find_or_initialize_by(code: account_data[:code])
+          template.assign_attributes(
+            name: account_data[:name],
+            account_type: account_data[:account_type],
+            tax_rate: 0.0,
+            is_system_account: true,
+            description: account_data[:name]
+          )
+          template.save!
+          puts "  ✓ Upserted closing account template: #{account_data[:code]} - #{account_data[:name]}"
+        end
       end
 
       puts

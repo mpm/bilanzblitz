@@ -2,6 +2,7 @@ class FiscalYear < ApplicationRecord
   # Associations
   belongs_to :company
   has_many :journal_entries, dependent: :destroy
+  has_many :balance_sheets, dependent: :destroy
 
   # Validations
   validates :year, presence: true, uniqueness: { scope: :company_id }
@@ -34,6 +35,22 @@ class FiscalYear < ApplicationRecord
     else
       year
     end
+  end
+
+  # Instance methods
+  def opening_balance_posted?
+    opening_balance_posted_at.present?
+  end
+
+  def closing_balance_posted?
+    closing_balance_posted_at.present?
+  end
+
+  def workflow_state
+    return "closed" if closed?
+    return "closing_posted" if closing_balance_posted?
+    return "open_with_opening" if opening_balance_posted?
+    "open"
   end
 
   private
