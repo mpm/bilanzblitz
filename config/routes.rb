@@ -25,6 +25,18 @@ Rails.application.routes.draw do
     get "balance_sheet", to: "balance_sheets#index"
   end
 
+  # Fiscal Years
+  resources :fiscal_years, only: [ :index, :show ] do
+    member do
+      post :post_opening_balance
+      get :preview_closing
+      post :close
+    end
+  end
+
+  # Opening Balances
+  resources :opening_balances, only: [ :new, :create ]
+
   # Accounts API (for account search)
   resources :accounts, only: [ :index ] do
     collection do

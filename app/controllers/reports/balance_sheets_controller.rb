@@ -42,7 +42,10 @@ class Reports::BalanceSheetsController < ApplicationController
           year: fy.year,
           start_date: fy.start_date,
           end_date: fy.end_date,
-          closed: fy.closed
+          closed: fy.closed,
+          opening_balance_posted_at: fy.opening_balance_posted_at,
+          closing_balance_posted_at: fy.closing_balance_posted_at,
+          workflow_state: fy.workflow_state
         }
       },
       selected_fiscal_year_id: @fiscal_year&.id,
