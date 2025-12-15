@@ -1558,6 +1558,7 @@
 | | | 9550 Anteil für Konto 9810 Vollhafter |
 | | | 9601 ff. Statistische Anteile an den Posten Jahresüberschuss/-fehlbetrag |
 | | | 9802 Gesamthänderisch gebundene Rücklagen - andere Kapitalkontenanpassungen |
+| | | 9805 Gewinnvortrag/Verlustvortrag - Umbuchungen
 | | | 9806 Zuzurechnender Anteil am Jahresüberschuss/Jahresfehlbetrag - je Gesellschafter |
 | | | 9810 Kapitalkonto III (Vollhafter) |
 | | | 9820 Verlust-/Vortragskonto (Vollhafter) |
