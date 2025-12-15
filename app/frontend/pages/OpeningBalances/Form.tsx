@@ -50,7 +50,7 @@ export default function OpeningBalanceForm({
   }
 
   return (
-    <AppLayout company={company} currentPage="reports">
+    <AppLayout company={company} currentPage="fiscal-years">
       <Head title={`Create Opening Balance - ${fiscalYear.year}`} />
 
       <div className="container mx-auto py-6 max-w-4xl">

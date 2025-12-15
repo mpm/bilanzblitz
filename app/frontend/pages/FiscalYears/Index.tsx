@@ -28,7 +28,7 @@ export default function FiscalYearsIndex({
   fiscalYears,
 }: FiscalYearsIndexProps) {
   return (
-    <AppLayout company={company} currentPage="reports">
+    <AppLayout company={company} currentPage="fiscal-years">
       <Head title="Fiscal Years" />
 
       <div className="container mx-auto py-6">

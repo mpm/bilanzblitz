@@ -10,6 +10,8 @@ import {
   Wallet,
   FileText,
   BarChart3,
+  Calendar,
+  FileCheck,
   Settings,
   LogOut,
 } from 'lucide-react'
@@ -19,7 +21,7 @@ interface AppLayoutProps {
     id: number
     name: string
   }
-  currentPage: 'dashboard' | 'bank-accounts' | 'journal-entries' | 'documents' | 'reports' | 'balance-sheet'
+  currentPage: 'dashboard' | 'bank-accounts' | 'journal-entries' | 'documents' | 'reports' | 'balance-sheet' | 'fiscal-years' | 'tax-filings'
   children: React.ReactNode
 }
 
@@ -75,6 +77,8 @@ export function AppLayout({ company, currentPage, children }: AppLayoutProps) {
     { key: 'bank-accounts', label: 'Bank Accounts', icon: Wallet, href: '/bank_accounts', enabled: true },
     { key: 'documents', label: 'Documents', icon: FileText, href: '/documents', enabled: true },
     { key: 'reports', label: 'Reports', icon: BarChart3, href: '/reports/balance_sheet', enabled: true },
+    { key: 'fiscal-years', label: 'Fiscal Years', icon: Calendar, href: '/fiscal_years', enabled: true },
+    { key: 'tax-filings', label: 'Tax Filings', icon: FileCheck, href: '#', enabled: false },
   ]
 
   return (

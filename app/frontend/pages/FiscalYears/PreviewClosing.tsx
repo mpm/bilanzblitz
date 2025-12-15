@@ -115,7 +115,7 @@ export default function PreviewClosing({
   )
 
   return (
-    <AppLayout company={company} currentPage="reports">
+    <AppLayout company={company} currentPage="fiscal-years">
       <Head title={`Preview Closing - Fiscal Year ${fiscalYear.year}`} />
 
       <div className="container mx-auto py-6 max-w-6xl">
