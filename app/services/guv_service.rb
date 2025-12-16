@@ -74,15 +74,12 @@ class GuVService
   end
 
   def build_guv_structure(account_balances)
-    # Group accounts by SKR03 code ranges
-    revenue_accounts = account_balances.select { |a| a[:code].start_with?("4") }
-    material_accounts = account_balances.select { |a| a[:code].start_with?("5") }
-    personnel_accounts = account_balances.select { |a| a[:code].start_with?("6") }
-
-    # Split 7xxx accounts into depreciation and other expenses
-    seven_accounts = account_balances.select { |a| a[:code].start_with?("7") }
-    depreciation_accounts = seven_accounts.select { |a| a[:code].match?(/^76/) }
-    other_expense_accounts = seven_accounts.reject { |a| a[:code].match?(/^76/) }
+    # Use AccountMap to filter accounts by GuV section
+    revenue_accounts = AccountMap.find_accounts(account_balances, :umsatzerloese)
+    material_accounts = AccountMap.find_accounts(account_balances, :materialaufwand_roh_hilfs_betriebsstoffe)
+    personnel_accounts = AccountMap.find_accounts(account_balances, :personalaufwand_loehne_gehaelter)
+    depreciation_accounts = AccountMap.find_accounts(account_balances, :abschreibungen_anlagevermoegen)
+    other_expense_accounts = AccountMap.find_accounts(account_balances, :sonstige_betriebliche_aufwendungen)
 
     # Build sections array in Gesamtkostenverfahren order
     sections = []

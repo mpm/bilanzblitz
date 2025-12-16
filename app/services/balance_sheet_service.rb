@@ -19,11 +19,13 @@ class BalanceSheetService
     # Otherwise calculate on-the-fly
     account_balances = calculate_account_balances
     grouped_accounts = group_by_balance_sheet_sections(account_balances)
-    net_income = calculate_net_income(account_balances)
 
-    # Calculate GuV data
+    # Calculate GuV data (includes net_income calculation)
     guv_result = GuVService.new(company: @company, fiscal_year: @fiscal_year).call
     guv_data = guv_result.success? ? guv_result.data : nil
+
+    # Extract net_income from GuV calculation (reuse instead of recalculating)
+    net_income = guv_data ? guv_data[:net_income] : 0.0
 
     # Build balance sheet structure
     data = build_balance_sheet_data(grouped_accounts, net_income, guv_data)
@@ -118,19 +120,6 @@ class BalanceSheetService
         end
       end
     end
-  end
-
-  def calculate_net_income(account_balances)
-    # Revenue (4xxx) - Expenses (5xxx, 6xxx, 7xxx)
-    revenue = account_balances
-      .select { |a| a[:code].start_with?("4") }
-      .sum { |a| a[:balance] }
-
-    expenses = account_balances
-      .select { |a| a[:code].match?(/^[567]/) }
-      .sum { |a| a[:balance] }
-
-    revenue - expenses
   end
 
   def build_balance_sheet_data(grouped_accounts, net_income, guv_data = nil)
