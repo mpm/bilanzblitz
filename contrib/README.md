@@ -27,11 +27,12 @@ host machine context.
 
 1. Run `ruby pdfextract.rb` to convert all PDF pages into images (180dpi).
 2. Run `ruby process_pags.rb` to crop and slice the images into a format
-   that is suitable for OCR.
+   that is suitable for OCR. Actually, every table cell will be converted
+   into a separate image, so the OCR doesn't get confused.
    Check the directory (`kontenrahmen-pdf/results`) for valid output and
    remove the last couple of pages (that contain the footnotes and no
    tables.
 3. Run `ruby ocr_pages.rb` to submit each result page to OpenAI for
-   ocring (the results will be stored in `skr03-ocr-results.txt`)
+   ocring (the results will be stored in `skr03-ocr-results.json`)
 
 ### Treat the result

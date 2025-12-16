@@ -43,14 +43,21 @@ end
 positions = {}
 
 no = 0
-File.readlines("skr03-ocr-results.txt").each do |line|
+no = 0
+ocr_data = JSON.parse(File.read("skr03-ocr-results.json"))
+
+ocr_data.each do |row|
   no += 1
-  (r1, r2, r3) = line[1..-1].strip.split("|")
+  # row is [left_column_text, right_column_text]
+  # Left column is Position Description
+  # Right column is Items (semicolon separated)
+  
+  pos_desc = row[0]&.strip
+  r3 = row[1] # Right column text
 
-  pos_desc = r1&.strip
-
-  if !pos_desc
-    puts "Warning: seems like an empty line (#{no}): #{line.inspect}"
+  if !pos_desc || pos_desc.empty?
+    # puts "Warning: seems like an empty line (#{no}): #{row.inspect}"
+    # Just skip empty rows which might happen
   else
 
     pos_desc = "(none)" if pos_desc == "" || empty_positions.include?(pos_desc)
