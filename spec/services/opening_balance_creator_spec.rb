@@ -91,7 +91,7 @@ RSpec.describe OpeningBalanceCreator, type: :service do
 
   describe "#call" do
     context "with valid balance sheet data" do
-      it "creates a journal entry with correct line items", focus: true do
+      it "creates a journal entry with correct line items" do
         result = creator.call
 
         expect(result.success?).to be true
@@ -180,14 +180,17 @@ RSpec.describe OpeningBalanceCreator, type: :service do
         expect(balance_sheet.sheet_type).to eq("opening")
         expect(balance_sheet.source).to eq("carryforward")
         expect(balance_sheet.balance_date).to eq(fiscal_year_2021.start_date)
-        expect(balance_sheet.data).to eq(balance_sheet_data)
+
+        # JSONB data comes back with string keys, not symbol keys
+        expect(balance_sheet.data.deep_symbolize_keys).to eq(balance_sheet_data)
       end
     end
 
     context "with invalid data" do
       it "fails when balance sheet doesn't balance" do
         unbalanced_data = balance_sheet_data.deep_dup
-        unbalanced_data[:passiva][:total] = 9999.99
+        # Actually unbalance by changing an account balance (not just the total)
+        unbalanced_data[:passiva][:eigenkapital][0][:balance] = 9999.99
 
         creator = OpeningBalanceCreator.new(
           fiscal_year: fiscal_year_2021,
@@ -197,7 +200,7 @@ RSpec.describe OpeningBalanceCreator, type: :service do
 
         result = creator.call
         expect(result.success?).to be false
-        expect(result.errors).to include(/does not equal/)
+        expect(result.errors.first).to match(/does not equal/)
       end
 
       it "fails when aktiva section is missing" do

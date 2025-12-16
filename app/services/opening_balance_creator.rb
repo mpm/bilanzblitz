@@ -165,7 +165,9 @@ class OpeningBalanceCreator
       ebk_total_credit += balance
     end
 
-    # Process Passiva (Liabilities & Equity) - Credit the accounts, Debit EBK
+    # Process Passiva (Liabilities & Equity)
+    # Positive balances (liabilities, positive equity) = Credit the account
+    # Negative balances (losses, negative equity) = Debit the account
     process_section(@balance_data[:passiva], journal_entry) do |account_data|
       balance = account_data[:balance].to_f
       next if balance.abs < 0.01
@@ -173,15 +175,27 @@ class OpeningBalanceCreator
       account = find_or_create_account(account_data[:account_code])
       next unless account
 
-      # Credit liability/equity account
-      journal_entry.line_items.build(
-        account: account,
-        amount: balance,
-        direction: "credit"
-      )
+      if balance >= 0
+        # Positive balance: Credit liability/equity account (normal)
+        journal_entry.line_items.build(
+          account: account,
+          amount: balance,
+          direction: "credit"
+        )
 
-      # Track debit to EBK
-      ebk_total_debit += balance
+        # Track debit to EBK
+        ebk_total_debit += balance
+      else
+        # Negative balance (loss): Debit the account
+        journal_entry.line_items.build(
+          account: account,
+          amount: balance.abs,  # Use absolute value
+          direction: "debit"
+        )
+
+        # Track credit to EBK (negative balance means we credit EBK instead)
+        ebk_total_credit += balance.abs
+      end
     end
 
     # Create balancing EBK line items
