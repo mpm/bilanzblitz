@@ -16,6 +16,7 @@ BilanzBlitz is a comprehensive accounting and tax management application designe
 - **Fiscal Year Management**: Complete workflow from opening to closing with state tracking
 - **Balance Sheet Reports**: Generate balance sheets (Bilanz) following German GmbH standards with SKR03 account mapping
 - **Balance Sheet Persistence**: Store and retrieve opening and closing balance sheets
+- **GuV Reports**: Generate Profit & Loss statements (Gewinn- und Verlustrechnung) using Gesamtkostenverfahren (Total Cost Method) according to § 275 Abs. 2 HGB
 - **VAT Reports**: Generate periodic VAT reports (Umsatzsteuervoranmeldung)
 - **Annual Tax Returns**: Prepare and generate annual tax filings
 - **GoBD Compliance**: Immutable posted entries and balance sheets to comply with German accounting regulations
@@ -160,6 +161,7 @@ The application supports German-standard opening and closing balance sheets:
 - `OpeningBalanceCreator` - Creates opening balance entries
 - `FiscalYearClosingService` - Closes fiscal year and generates SBK entries
 - `BalanceSheetService` - Calculates balance sheets (updated to exclude closing entries and 9000-series accounts)
+- `GuVService` - Calculates Profit & Loss statements using SKR03 Gesamtkostenverfahren
 
 #### Balance Sheet Generation
 The `BalanceSheetService` generates balance sheets from posted journal entries:
@@ -172,9 +174,27 @@ The `BalanceSheetService` generates balance sheets from posted journal entries:
 - **Closing Entry Exclusion**: Entries with `entry_type: 'closing'` are excluded from calculations
 - **Posted Entries Only**: Only posted journal entries are included (GoBD compliance)
 - **Net Income Integration**: P&L is calculated from revenue (4xxx) and expense (5xxx-7xxx) accounts and included in equity
+- **GuV Integration**: Automatically calls `GuVService` to calculate detailed GuV data alongside balance sheet
 - **Account Balances**: Calculated using debit/credit logic appropriate to each account type
 - **Balance Verification**: Ensures Aktiva = Passiva (or flags data integrity issues)
 - **Stored Balance Sheets**: For closed fiscal years, loads stored balance sheet instead of recalculating
+- **Backward Compatibility**: Older balance sheets without GuV data will have GuV calculated on-the-fly
+
+#### GuV (Gewinn- und Verlustrechnung) Generation
+The `GuVService` generates Profit & Loss statements following German accounting standards:
+- **Gesamtkostenverfahren Format**: Implements § 275 Abs. 2 HGB (Total Cost Method)
+- **SKR03 Account Grouping**: Automatically categorizes accounts into GuV sections:
+  - **1. Umsatzerlöse** (Revenue) - 4xxx accounts
+  - **2. Materialaufwand** (Material expense) - 5xxx accounts
+  - **3. Personalaufwand** (Personnel expense) - 6xxx accounts
+  - **4. Abschreibungen** (Depreciation) - 76xx accounts
+  - **5. Sonstige betriebliche Aufwendungen** (Other operating expenses) - 70xx-75xx, 77xx-79xx accounts
+- **Net Income Calculation**: Calculates Jahresüberschuss (profit) or Jahresfehlbetrag (loss)
+- **Exclusion Rules**: Excludes closing entries and 9xxx accounts (same as balance sheet)
+- **Posted Entries Only**: Only posted journal entries are included (GoBD compliance)
+- **Section Subtotals**: Each GuV section includes accounts list and subtotal
+- **Display Type Hints**: Sections tagged as positive (revenue) or negative (expenses) for UI formatting
+- **Automatic Persistence**: GuV data stored in `balance_sheets.data` JSONB field when closing fiscal years
 
 ## Development Commands
 
@@ -271,7 +291,8 @@ usually a Vite process running during development.
 │   │   ├── account.rb                  # Chart of accounts
 │   │   └── account_template.rb         # Account templates for charts
 │   ├── services/            # Service classes (business logic)
-│   │   ├── balance_sheet_service.rb         # Balance sheet calculation
+│   │   ├── balance_sheet_service.rb         # Balance sheet calculation (integrates GuV)
+│   │   ├── guv_service.rb                   # GuV (P&L) calculation using Gesamtkostenverfahren
 │   │   ├── opening_balance_creator.rb       # Opening balance (EBK) creation
 │   │   ├── fiscal_year_closing_service.rb   # Fiscal year closing (SBK)
 │   │   ├── journal_entry_creator.rb         # Journal entry creation
@@ -279,6 +300,9 @@ usually a Vite process running during development.
 │   ├── frontend/            # React + TypeScript frontend
 │   │   ├── components/      # React components (including shadcn/ui)
 │   │   │   ├── FiscalYearStatusBadge.tsx  # Workflow state indicator
+│   │   │   ├── reports/                   # Report-specific components
+│   │   │   │   ├── BalanceSheetSection.tsx  # Reusable balance sheet section display
+│   │   │   │   └── GuVSection.tsx           # GuV display component
 │   │   │   └── ui/                        # shadcn/ui components
 │   │   ├── pages/          # Inertia page components
 │   │   │   ├── FiscalYears/              # Fiscal year management
@@ -288,10 +312,11 @@ usually a Vite process running during development.
 │   │   │   ├── OpeningBalances/
 │   │   │   │   └── Form.tsx              # Opening balance entry form
 │   │   │   ├── Reports/                  # Report pages
-│   │   │   │   └── BalanceSheet.tsx      # Balance sheet report
+│   │   │   │   └── BalanceSheet.tsx      # Balance sheet & GuV report
 │   │   │   ├── BankAccounts/
 │   │   │   └── Dashboard/
 │   │   ├── types/          # TypeScript type definitions
+│   │   │   └── accounting.ts             # Shared accounting types (BalanceSheetData, GuVData, etc.)
 │   │   └── utils/          # Shared utility functions (formatting, etc.)
 │   └── views/              # Minimal (Inertia uses React for views)
 ├── db/
@@ -335,6 +360,37 @@ formatCurrency(100.50)  // Returns: "100,50 €"
 - **Before creating new formatting functions**, always check if the functionality exists in `formatting.ts`
 - **All new formatting utilities** should be added to `formatting.ts` to avoid duplication
 - Use German locale (`de-DE`) for all date and number formatting to comply with local accounting standards
+
+### TypeScript Types
+
+The application uses centralized TypeScript type definitions for accounting data structures.
+
+**Location**: `app/frontend/types/accounting.ts`
+
+**Available Types**:
+- `AccountBalance` - Account with code, name, and balance (shared across components)
+- `FiscalYear` - Fiscal year with workflow state and metadata
+- `BalanceSheetData` - Complete balance sheet data structure including GuV
+- `GuVData` - GuV (P&L) data structure
+- `GuVSection` - Individual GuV section with accounts and subtotal
+
+**Usage**:
+```typescript
+import { BalanceSheetData, GuVData, AccountBalance } from '@/types/accounting'
+
+// Use in component props
+interface MyComponentProps {
+  balanceSheet: BalanceSheetData
+}
+
+// Access GuV data
+const guv: GuVData | undefined = balanceSheet.guv
+```
+
+**Important**:
+- **All accounting-related types** should be defined in `accounting.ts`
+- **Import types from this central location** to ensure consistency
+- **GuV data is optional** in `BalanceSheetData` for backward compatibility with older balance sheets
 
 ## Data Models
 
@@ -409,9 +465,11 @@ The Balance Sheet (Bilanz) report provides a snapshot of the company's financial
   - **Aktiva (Assets)**: Fixed Assets (Anlagevermögen) and Current Assets (Umlaufvermögen)
   - **Passiva (Liabilities & Equity)**: Equity (Eigenkapital) with net income/loss, and Liabilities (Fremdkapital)
 - **Automatic P&L Integration**: Net income (Jahresüberschuss) or loss (Jahresfehlbetrag) is calculated and included in equity
+- **GuV Display**: Detailed Profit & Loss statement displayed below balance sheet using Gesamtkostenverfahren format
 - **Balance Verification**: System verifies that Aktiva = Passiva and warns of data integrity issues
 - **Status Indicators**: Shows whether fiscal year is open or closed
 - **German Locale Formatting**: Amounts displayed in EUR with German number formatting
+- **Modular Components**: Uses extracted `BalanceSheetSection` and `GuVSection` components for clean, maintainable code
 
 **How It Works**:
 1. Service queries all journal entries for the selected fiscal year
@@ -419,14 +477,59 @@ The Balance Sheet (Bilanz) report provides a snapshot of the company's financial
 3. Line items are aggregated by account using SQL GROUP BY
 4. Accounts are automatically grouped by SKR03 code ranges (0xxx, 1xxx, 2xxx, 3xxx)
 5. Net income is calculated from revenue (4xxx) minus expenses (5xxx-7xxx)
-6. Zero-balance accounts are filtered out for cleaner reports
-7. Final balance sheet is validated (Aktiva = Passiva)
+6. GuVService calculates detailed GuV breakdown with section-wise grouping
+7. Zero-balance accounts are filtered out for cleaner reports
+8. Final balance sheet is validated (Aktiva = Passiva)
 
 **Implementation**:
-- **Service**: `BalanceSheetService` (`app/services/balance_sheet_service.rb`)
+- **Services**:
+  - `BalanceSheetService` (`app/services/balance_sheet_service.rb`) - Main service
+  - `GuVService` (`app/services/guv_service.rb`) - GuV calculation
 - **Controller**: `Reports::BalanceSheetsController` (`app/controllers/reports/balance_sheets_controller.rb`)
-- **Frontend**: `Reports/BalanceSheet.tsx` (`app/frontend/pages/Reports/BalanceSheet.tsx`)
+- **Frontend**:
+  - `Reports/BalanceSheet.tsx` (`app/frontend/pages/Reports/BalanceSheet.tsx`) - Main page
+  - `reports/BalanceSheetSection.tsx` (`app/frontend/components/reports/BalanceSheetSection.tsx`) - Balance sheet display
+  - `reports/GuVSection.tsx` (`app/frontend/components/reports/GuVSection.tsx`) - GuV display
+- **Types**: `accounting.ts` (`app/frontend/types/accounting.ts`) - Shared TypeScript interfaces
 - **Route**: `/reports/balance_sheet`
+
+### GuV (Gewinn- und Verlustrechnung) Report
+
+The GuV report provides a detailed breakdown of income and expenses following German accounting standards.
+
+**Access**: The GuV is automatically displayed below the balance sheet when viewing balance sheet reports.
+
+**Features**:
+- **Gesamtkostenverfahren Format**: Follows § 275 Abs. 2 HGB (Total Cost Method)
+- **Five Main Sections**: Revenue, Material Expense, Personnel Expense, Depreciation, Other Operating Expenses
+- **Account Details**: Shows individual accounts within each section with amounts
+- **Section Subtotals**: Displays subtotals for each GuV section
+- **Net Income/Loss**: Final result labeled as Jahresüberschuss (profit) or Jahresfehlbetrag (loss)
+- **Color Coding**: Expense sections displayed in red for visual clarity
+- **German Standards**: Complies with HGB § 275 Abs. 2 requirements
+- **Automatic Calculation**: Calculated on-the-fly for open fiscal years
+- **Persistent Storage**: Stored in balance sheet data when fiscal year is closed
+- **Backward Compatible**: Older balance sheets calculate GuV on-the-fly if not stored
+
+**How It Works**:
+1. `GuVService` queries posted journal entries for the fiscal year
+2. Accounts are grouped by SKR03 code ranges into GuV sections:
+   - 4xxx → Umsatzerlöse (Revenue)
+   - 5xxx → Materialaufwand (Material Expense)
+   - 6xxx → Personalaufwand (Personnel Expense)
+   - 76xx → Abschreibungen (Depreciation)
+   - 70xx-75xx, 77xx-79xx → Sonstige betriebliche Aufwendungen (Other Expenses)
+3. Each section calculates a subtotal
+4. Net income is calculated as sum of all section subtotals
+5. GuV data is included in balance sheet response
+6. Frontend displays GuV below balance sheet in scrollable layout
+
+**Implementation**:
+- **Service**: `GuVService` (`app/services/guv_service.rb`)
+- **Frontend Component**: `reports/GuVSection.tsx` (`app/frontend/components/reports/GuVSection.tsx`)
+- **Types**: `GuVData`, `GuVSection` in `accounting.ts`
+- **Storage**: Stored in `balance_sheets.data` JSONB field under `guv` key
+- **Tests**: Comprehensive test suite in `spec/services/guv_service_spec.rb`
 
 ## Fiscal Year Management
 
@@ -460,12 +563,12 @@ The application supports a complete fiscal year lifecycle with proper opening an
 
 **Closing Fiscal Year**:
 1. Navigate to fiscal year details → "Preview Closing"
-2. Review the calculated closing balance sheet
+2. Review the calculated closing balance sheet and GuV
 3. System validates that Aktiva = Passiva
 4. Click "Confirm Close Fiscal Year"
 5. System automatically:
    - Creates SBK (closing) journal entries
-   - Stores closing balance sheet
+   - Stores closing balance sheet with GuV data
    - Marks fiscal year as closed
    - Creates opening balance for next fiscal year
 
@@ -543,7 +646,7 @@ The application currently supports **Ist-Versteuerung** (cash accounting):
 - **Bank API Integration** - FinTS/HBCI or PSD2 for automatic bank sync
 - **OCR for Receipts** - Automatic extraction of invoice data
 - **Multi-currency Support** - Currently focuses on EUR
-- **Additional Reports** - P&L (Profit & Loss Statement), Cash Flow Statement
+- **Additional Reports** - Cash Flow Statement, expanded GuV sections
 - **Document Management** - Enhanced DMS with full-text search
 
 ## Getting Started
@@ -567,3 +670,6 @@ When working on this project:
 - Use shadcn/ui components for consistent UI design
 - **Always check `app/frontend/utils/formatting.ts` for existing formatting functions before creating new ones**
 - **Add all new formatting utilities to `formatting.ts` to maintain consistency and avoid duplication**
+- **Import accounting types from `app/frontend/types/accounting.ts`** instead of defining them locally
+- **Extract reusable components** to `app/frontend/components/` for better code organization
+- When adding GuV acronyms or similar, update `config/initializers/inflections.rb` to ensure Rails recognizes them correctly

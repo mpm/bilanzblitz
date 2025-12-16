@@ -21,8 +21,12 @@ class BalanceSheetService
     grouped_accounts = group_by_balance_sheet_sections(account_balances)
     net_income = calculate_net_income(account_balances)
 
+    # Calculate GuV data
+    guv_result = GuVService.new(company: @company, fiscal_year: @fiscal_year).call
+    guv_data = guv_result.success? ? guv_result.data : nil
+
     # Build balance sheet structure
-    data = build_balance_sheet_data(grouped_accounts, net_income)
+    data = build_balance_sheet_data(grouped_accounts, net_income, guv_data)
 
     Result.new(success?: true, data: data, errors: [])
   rescue StandardError => e
@@ -129,7 +133,7 @@ class BalanceSheetService
     revenue - expenses
   end
 
-  def build_balance_sheet_data(grouped_accounts, net_income)
+  def build_balance_sheet_data(grouped_accounts, net_income, guv_data = nil)
     # Build Aktiva (Assets) section
     aktiva_accounts = grouped_accounts[:anlagevermoegen] + grouped_accounts[:umlaufvermoegen]
     aktiva_total = aktiva_accounts.sum { |a| a[:balance] }
@@ -150,7 +154,7 @@ class BalanceSheetService
     # Check if balance sheet balances
     balanced = (aktiva_total - passiva_total).abs < 0.01
 
-    {
+    result = {
       fiscal_year: {
         id: @fiscal_year.id,
         year: @fiscal_year.year,
@@ -170,6 +174,11 @@ class BalanceSheetService
       },
       balanced: balanced
     }
+
+    # Add GuV data if available
+    result[:guv] = guv_data if guv_data
+
+    result
   end
 
   def format_accounts(accounts)
@@ -192,8 +201,16 @@ class BalanceSheetService
     return nil unless stored_sheet
 
     # Symbolize keys (JSONB returns string keys, but we work with symbols)
-    # and return with additional metadata
-    stored_sheet.data.deep_symbolize_keys.merge(
+    data = stored_sheet.data.deep_symbolize_keys
+
+    # Backward compatibility: if no GuV data, calculate it on-the-fly
+    unless data[:guv]
+      guv_result = GuVService.new(company: @company, fiscal_year: @fiscal_year).call
+      data[:guv] = guv_result.data if guv_result.success?
+    end
+
+    # Return with additional metadata
+    data.merge(
       stored: true,
       posted_at: stored_sheet.posted_at
     )

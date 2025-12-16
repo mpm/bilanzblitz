@@ -1,4 +1,3 @@
-import React from 'react'
 import { Head, router } from '@inertiajs/react'
 import { AppLayout } from '@/components/AppLayout'
 import { Card, CardContent } from '@/components/ui/card'
@@ -14,38 +13,9 @@ import { Badge } from '@/components/ui/badge'
 import { FiscalYearStatusBadge } from '@/components/FiscalYearStatusBadge'
 import { AlertCircle, FileText } from 'lucide-react'
 import { formatCurrency } from '@/utils/formatting'
-
-interface FiscalYear {
-  id: number
-  year: number
-  startDate: string
-  endDate: string
-  closed: boolean
-  openingBalancePostedAt: string | null
-  closingBalancePostedAt: string | null
-  workflowState: 'open' | 'open_with_opening' | 'closing_posted' | 'closed'
-}
-
-interface AccountBalance {
-  accountCode: string
-  accountName: string
-  balance: number
-}
-
-interface BalanceSheetData {
-  fiscalYear: FiscalYear
-  aktiva: {
-    anlagevermoegen: AccountBalance[]
-    umlaufvermoegen: AccountBalance[]
-    total: number
-  }
-  passiva: {
-    eigenkapital: AccountBalance[]
-    fremdkapital: AccountBalance[]
-    total: number
-  }
-  balanced: boolean
-}
+import { BalanceSheetSection } from '@/components/reports/BalanceSheetSection'
+import { GuVSection } from '@/components/reports/GuVSection'
+import { BalanceSheetData, FiscalYear } from '@/types/accounting'
 
 interface BalanceSheetProps {
   company: { id: number; name: string }
@@ -56,120 +26,6 @@ interface BalanceSheetProps {
 }
 
 const SHOW_PREVIOUS_YEAR = false // Feature flag for previous year column
-
-interface BalanceSheetTableProps {
-  title: string
-  sections: Array<{
-    label: string
-    accounts: AccountBalance[]
-  }>
-  total: number
-}
-
-const BalanceSheetTable = ({ title, sections, total }: BalanceSheetTableProps) => {
-  const hasAccounts = sections.some((section) => section.accounts.length > 0)
-
-  return (
-    <div className="flex flex-col h-full">
-      <h2 className="text-2xl font-semibold mb-4">{title}</h2>
-      <table className="w-full h-full" style={{ borderCollapse: 'collapse' }}>
-        <thead>
-          <tr className="border-b-2 border-border">
-            <th className="text-left py-2 font-semibold text-sm">Position</th>
-            <th className="text-right py-2 font-semibold text-sm w-32">
-              Current Year
-            </th>
-            {SHOW_PREVIOUS_YEAR && (
-              <th className="text-right py-2 font-semibold text-sm w-32">
-                Previous Year
-              </th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {!hasAccounts ? (
-            <tr>
-              <td
-                colSpan={SHOW_PREVIOUS_YEAR ? 3 : 2}
-                className="text-center py-6 text-muted-foreground text-sm"
-              >
-                No accounts with balances
-              </td>
-            </tr>
-          ) : (
-            <>
-              {sections.map((section, sectionIndex) => (
-                <React.Fragment key={sectionIndex}>
-                  {/* Section Header */}
-                  <tr className="border-t border-border">
-                    <td
-                      colSpan={SHOW_PREVIOUS_YEAR ? 3 : 2}
-                      className="py-3 pt-4 font-semibold text-base"
-                    >
-                      {section.label}
-                    </td>
-                  </tr>
-                  {/* Account Rows */}
-                  {section.accounts.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan={SHOW_PREVIOUS_YEAR ? 3 : 2}
-                        className="pl-6 py-2 text-sm text-muted-foreground italic"
-                      >
-                        No accounts
-                      </td>
-                    </tr>
-                  ) : (
-                    section.accounts.map((account) => (
-                      <tr
-                        key={account.accountCode}
-                        className="hover:bg-accent/50 transition-colors"
-                      >
-                        <td className="py-2 pl-6">
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-sm text-muted-foreground">
-                              {account.accountCode}
-                            </span>
-                            <span className="text-sm">{account.accountName}</span>
-                          </div>
-                        </td>
-                        <td className="py-2 text-right font-mono text-sm">
-                          {formatCurrency(account.balance)}
-                        </td>
-                        {SHOW_PREVIOUS_YEAR && (
-                          <td className="py-2 text-right font-mono text-sm text-muted-foreground">
-                            {formatCurrency(0)}
-                          </td>
-                        )}
-                      </tr>
-                    ))
-                  )}
-                </React.Fragment>
-              ))}
-              {/* Spacer row to push footer to bottom */}
-              <tr style={{ height: '100%' }}>
-                <td colSpan={SHOW_PREVIOUS_YEAR ? 3 : 2}></td>
-              </tr>
-            </>
-          )}
-        </tbody>
-        <tfoot>
-          <tr className="border-t-2 border-border font-bold">
-            <td className="py-3 text-lg">Total</td>
-            <td className="py-3 text-right font-mono text-lg">
-              {formatCurrency(total)}
-            </td>
-            {SHOW_PREVIOUS_YEAR && (
-              <td className="py-3 text-right font-mono text-lg text-muted-foreground">
-                {formatCurrency(0)}
-              </td>
-            )}
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  )
-}
 
 export default function BalanceSheet({
   company,
@@ -302,7 +158,7 @@ export default function BalanceSheet({
             {/* Two-Column Layout with Aligned Tables */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-stretch">
               {/* AKTIVA (Assets) */}
-              <BalanceSheetTable
+              <BalanceSheetSection
                 title="Aktiva (Assets)"
                 sections={[
                   {
@@ -315,10 +171,11 @@ export default function BalanceSheet({
                   },
                 ]}
                 total={balanceSheet.aktiva.total}
+                showPreviousYear={SHOW_PREVIOUS_YEAR}
               />
 
               {/* PASSIVA (Liabilities & Equity) */}
-              <BalanceSheetTable
+              <BalanceSheetSection
                 title="Passiva (Liabilities & Equity)"
                 sections={[
                   {
@@ -331,8 +188,24 @@ export default function BalanceSheet({
                   },
                 ]}
                 total={balanceSheet.passiva.total}
+                showPreviousYear={SHOW_PREVIOUS_YEAR}
               />
             </div>
+
+            {/* GuV Section - Display below balance sheet if available */}
+            {balanceSheet.guv && (
+              <GuVSection
+                guv={balanceSheet.guv}
+                showPreviousYear={SHOW_PREVIOUS_YEAR}
+              />
+            )}
+
+            {/* Missing GuV Notice for Backward Compatibility */}
+            {!balanceSheet.guv && (
+              <div className="mt-8 text-sm text-muted-foreground text-center">
+                GuV (Profit & Loss Statement) not available for this fiscal year.
+              </div>
+            )}
           </>
         )}
       </div>
