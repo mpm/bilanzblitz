@@ -258,7 +258,7 @@ export default function FiscalYearShow({
 
         {/* Quick Actions */}
         <div className="mt-6 flex gap-3">
-          <Link href="/reports/balance_sheet">
+          <Link href={`/reports/balance_sheet?fiscal_year_id=${fiscalYear.id}`}>
             <Button variant="outline">
               <FileText className="mr-2 h-4 w-4" />
               View Balance Sheet Report
