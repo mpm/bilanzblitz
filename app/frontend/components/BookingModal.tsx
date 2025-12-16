@@ -9,7 +9,13 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AccountSearch } from '@/components/AccountSearch'
 import { Loader2, AlertCircle } from 'lucide-react'
@@ -41,6 +47,8 @@ interface BookingModalProps {
   onSuccess: () => void
 }
 
+type VatMode = 'none' | 'vat_19' | 'vat_7' | 'reverse_charge'
+
 export function BookingModal({
   open,
   onOpenChange,
@@ -50,8 +58,7 @@ export function BookingModal({
 }: BookingModalProps) {
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null)
   const [description, setDescription] = useState('')
-  const [vatSplit, setVatSplit] = useState(false)
-  const [vatRate, setVatRate] = useState<number>(19)
+  const [vatMode, setVatMode] = useState<VatMode>('none')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -60,32 +67,50 @@ export function BookingModal({
     if (transaction) {
       setDescription(transaction.remittanceInformation || '')
       setSelectedAccount(null)
-      setVatSplit(false)
-      setVatRate(19)
+      setVatMode('none')
       setError(null)
     }
   }, [transaction])
 
-  // Auto-enable VAT split when selecting account with tax rate
+  // Auto-enable VAT when selecting account with tax rate
   useEffect(() => {
     if (selectedAccount && selectedAccount.taxRate > 0) {
-      setVatSplit(true)
-      setVatRate(selectedAccount.taxRate)
+      if (selectedAccount.taxRate >= 19) {
+        setVatMode('vat_19')
+      } else if (selectedAccount.taxRate >= 7) {
+        setVatMode('vat_7')
+      }
     }
   }, [selectedAccount])
 
   const calculateSplit = () => {
-    if (!transaction || !vatSplit) return null
+    if (!transaction || vatMode === 'none') return null
 
     const grossAmount = Math.abs(transaction.amount)
+
+    if (vatMode === 'reverse_charge') {
+      // Reverse charge: full amount to main account, plus separate VAT entries
+      const vatAmount = (grossAmount * 0.19).toFixed(2)
+      return {
+        mode: 'reverse_charge' as const,
+        gross: grossAmount,
+        mainAmount: grossAmount.toFixed(2),
+        vatAmount,
+      }
+    }
+
+    // Standard VAT: split gross into net + VAT
+    const vatRate = vatMode === 'vat_19' ? 19 : 7
     const vatRateDecimal = vatRate / 100
     const netAmount = grossAmount / (1 + vatRateDecimal)
     const vatAmount = grossAmount - netAmount
 
     return {
+      mode: 'standard' as const,
       gross: grossAmount,
       net: netAmount.toFixed(2),
       vat: vatAmount.toFixed(2),
+      vatRate,
     }
   }
 
@@ -96,6 +121,25 @@ export function BookingModal({
     setError(null)
 
     try {
+      // Prepare journal entry parameters based on VAT mode
+      const journalEntryParams: any = {
+        account_code: selectedAccount.code,
+        description,
+        vat_mode: vatMode,
+      }
+
+      // For backward compatibility, also send vat_split and vat_rate
+      if (vatMode === 'vat_19' || vatMode === 'vat_7') {
+        journalEntryParams.vat_split = true
+        journalEntryParams.vat_rate = vatMode === 'vat_19' ? 19 : 7
+      } else if (vatMode === 'reverse_charge') {
+        journalEntryParams.vat_split = false
+        journalEntryParams.vat_rate = 0
+      } else {
+        journalEntryParams.vat_split = false
+        journalEntryParams.vat_rate = 0
+      }
+
       const response = await fetch('/journal_entries', {
         method: 'POST',
         headers: {
@@ -104,12 +148,7 @@ export function BookingModal({
         },
         body: JSON.stringify({
           bank_transaction_id: transaction.id,
-          journal_entry: {
-            account_code: selectedAccount.code,
-            description,
-            vat_split: vatSplit,
-            vat_rate: vatSplit ? vatRate : 0,
-          },
+          journal_entry: journalEntryParams,
         }),
       })
 
@@ -130,10 +169,28 @@ export function BookingModal({
 
   const split = calculateSplit()
   const isExpense = transaction && transaction.amount < 0
-  const vatAccountCode = isExpense
-    ? (vatRate >= 19 ? '1576' : '1571')
-    : (vatRate >= 19 ? '1776' : '1771')
-  const vatAccountName = isExpense ? 'Vorsteuer' : 'Umsatzsteuer'
+
+  // Determine VAT account codes based on mode
+  const getVatAccountInfo = () => {
+    if (vatMode === 'reverse_charge') {
+      return {
+        inputCode: '1577',
+        inputName: 'Abziehbare Vorsteuer § 13b UStG 19%',
+        outputCode: '1787',
+        outputName: 'Umsatzsteuer nach § 13b UStG 19%',
+      }
+    }
+
+    const vatRate = (split && 'vatRate' in split ? split.vatRate : 19) ?? 19
+    const vatAccountCode = isExpense
+      ? (vatRate >= 19 ? '1576' : '1571')
+      : (vatRate >= 19 ? '1776' : '1771')
+    const vatAccountName = isExpense ? `Vorsteuer ${vatRate}%` : `Umsatzsteuer ${vatRate}%`
+
+    return { vatAccountCode, vatAccountName }
+  }
+
+  const vatInfo = getVatAccountInfo()
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -192,62 +249,73 @@ export function BookingModal({
               />
             </div>
 
-            {/* VAT Split Toggle */}
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="vat-split">Split VAT</Label>
-                <p className="text-sm text-muted-foreground">
-                  Automatically separate {isExpense ? 'input' : 'output'} tax
-                </p>
-              </div>
-              <Switch
-                id="vat-split"
-                checked={vatSplit}
-                onCheckedChange={setVatSplit}
-              />
+            {/* VAT Mode Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="vat-mode">VAT Handling</Label>
+              <Select value={vatMode} onValueChange={(value) => setVatMode(value as VatMode)}>
+                <SelectTrigger id="vat-mode">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No VAT</SelectItem>
+                  <SelectItem value="vat_19">19% VAT</SelectItem>
+                  <SelectItem value="vat_7">7% VAT</SelectItem>
+                  <SelectItem value="reverse_charge">Reverse Charge §13b (19%)</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground">
+                {vatMode === 'none' && 'Transaction without VAT handling'}
+                {vatMode === 'vat_19' && 'Split transaction with 19% VAT'}
+                {vatMode === 'vat_7' && 'Split transaction with 7% reduced VAT'}
+                {vatMode === 'reverse_charge' && 'Reverse charge procedure according to §13b UStG'}
+              </p>
             </div>
 
-            {/* VAT Rate Selection */}
-            {vatSplit && (
-              <div className="space-y-2">
-                <Label>VAT Rate</Label>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant={vatRate === 19 ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setVatRate(19)}
-                  >
-                    19%
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={vatRate === 7 ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setVatRate(7)}
-                  >
-                    7%
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Split Preview */}
-            {vatSplit && split && selectedAccount && (
+            {/* Booking Preview */}
+            {vatMode !== 'none' && split && selectedAccount && (
               <div className="rounded-lg border p-4 space-y-2 text-sm">
                 <div className="font-medium">Booking Preview</div>
-                <div className="flex justify-between">
-                  <span>{selectedAccount.code} {selectedAccount.name}</span>
-                  <span>{split.net} EUR</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>{vatAccountCode} {vatAccountName} {vatRate}%</span>
-                  <span>{split.vat} EUR</span>
-                </div>
-                <div className="border-t pt-2 flex justify-between font-medium">
-                  <span>Total</span>
-                  <span>{split.gross.toFixed(2)} EUR</span>
-                </div>
+
+                {split.mode === 'standard' && (
+                  <>
+                    <div className="flex justify-between">
+                      <span>{selectedAccount.code} {selectedAccount.name}</span>
+                      <span>{split.net} EUR</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{vatInfo.vatAccountCode} {vatInfo.vatAccountName}</span>
+                      <span>{split.vat} EUR</span>
+                    </div>
+                    <div className="border-t pt-2 flex justify-between font-medium">
+                      <span>Total</span>
+                      <span>{split.gross.toFixed(2)} EUR</span>
+                    </div>
+                  </>
+                )}
+
+                {split.mode === 'reverse_charge' && (
+                  <>
+                    <div className="flex justify-between">
+                      <span>{selectedAccount.code} {selectedAccount.name}</span>
+                      <span>{split.mainAmount} EUR</span>
+                    </div>
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>{vatInfo.inputCode} {vatInfo.inputName}</span>
+                      <span>{split.vatAmount} EUR</span>
+                    </div>
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>{vatInfo.outputCode} {vatInfo.outputName}</span>
+                      <span>-{split.vatAmount} EUR</span>
+                    </div>
+                    <div className="border-t pt-2 flex justify-between font-medium">
+                      <span>Total (Bank)</span>
+                      <span>{split.gross.toFixed(2)} EUR</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground italic mt-2">
+                      VAT entries offset each other (net zero VAT effect)
+                    </p>
+                  </>
+                )}
               </div>
             )}
 

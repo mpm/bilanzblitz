@@ -30,7 +30,7 @@ class GuVService
     results = @company.accounts
       .joins(line_items: :journal_entry)
       .where(journal_entries: { fiscal_year_id: @fiscal_year.id })
-      .where.not(journal_entries: { posted_at: nil })
+      #.where.not(journal_entries: { posted_at: nil })
       .where.not(journal_entries: { entry_type: "closing" })
       .where.not("accounts.code LIKE '9%'")
       .select(

@@ -163,7 +163,8 @@ class JournalEntriesController < ApplicationController
       :account_code,
       :description,
       :vat_split,
-      :vat_rate
+      :vat_rate,
+      :vat_mode
     )
   end
 

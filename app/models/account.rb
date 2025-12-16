@@ -6,7 +6,9 @@ class Account < ApplicationRecord
     input_19: "1576",  # Abziehbare Vorsteuer 19%
     input_7: "1571",   # Abziehbare Vorsteuer 7%
     output_19: "1776", # Umsatzsteuer 19%
-    output_7: "1771"   # Umsatzsteuer 7%
+    output_7: "1771",  # Umsatzsteuer 7%
+    reverse_charge_input_19: "1577",  # Abziehbare Vorsteuer § 13b UStG 19%
+    reverse_charge_output_19: "1787"  # Umsatzsteuer nach § 13b UStG 19%
   }.freeze
 
   # Associations

@@ -15,7 +15,10 @@ class JournalEntryCreator
     fiscal_year = find_fiscal_year
     return failure("No open fiscal year for booking date #{@bank_transaction.booking_date}") unless fiscal_year
 
-    if @params[:vat_split] && !vat_account
+    if reverse_charge?
+      return failure("Reverse charge input VAT account not found") unless reverse_charge_input_account
+      return failure("Reverse charge output VAT account not found") unless reverse_charge_output_account
+    elsif @params[:vat_split] && !vat_account
       return failure("VAT account not found - please ensure SKR03 accounts are set up")
     end
 
@@ -66,7 +69,9 @@ class JournalEntryCreator
     # For outflows: debit the expense/destination account
     counter_direction = @bank_transaction.amount >= 0 ? "credit" : "debit"
 
-    if @params[:vat_split] && vat_rate > 0
+    if reverse_charge?
+      create_reverse_charge_line_items(counter_direction)
+    elsif @params[:vat_split] && vat_rate > 0
       create_vat_split_line_items(counter_direction)
     else
       create_simple_counter_line_item(counter_direction)
@@ -102,6 +107,40 @@ class JournalEntryCreator
       account: main_account,
       amount: @bank_transaction.amount.abs,
       direction: direction
+    )
+  end
+
+  def create_reverse_charge_line_items(direction)
+    # Reverse charge creates 3 additional line items (bank account already created):
+    # 1. Main account (e.g., 4600 Werbungskosten) - full amount
+    # 2. Input VAT 1577 (Abziehbare Vorsteuer § 13b UStG 19%) - 19% of amount (debit)
+    # 3. Output VAT 1787 (Umsatzsteuer nach § 13b UStG 19%) - 19% of amount (credit)
+    gross_amount = @bank_transaction.amount.abs
+    vat_amount = (gross_amount * 0.19).round(2)
+
+    # Main account with full amount
+    LineItem.create!(
+      journal_entry: @journal_entry,
+      account: main_account,
+      amount: gross_amount,
+      direction: direction
+    )
+
+    # Input VAT (debit for expenses, credit for revenues)
+    LineItem.create!(
+      journal_entry: @journal_entry,
+      account: reverse_charge_input_account,
+      amount: vat_amount,
+      direction: direction
+    )
+
+    # Output VAT (opposite direction)
+    opposite_direction = direction == "debit" ? "credit" : "debit"
+    LineItem.create!(
+      journal_entry: @journal_entry,
+      account: reverse_charge_output_account,
+      amount: vat_amount,
+      direction: opposite_direction
     )
   end
 
@@ -164,6 +203,24 @@ class JournalEntryCreator
 
   def vat_rate
     @params[:vat_rate].to_f
+  end
+
+  def reverse_charge?
+    @params[:vat_mode] == "reverse_charge"
+  end
+
+  def reverse_charge_input_account
+    return @reverse_charge_input_account if defined?(@reverse_charge_input_account)
+
+    code = Account::VAT_ACCOUNTS[:reverse_charge_input_19]
+    @reverse_charge_input_account = find_or_create_account_by_code(code)
+  end
+
+  def reverse_charge_output_account
+    return @reverse_charge_output_account if defined?(@reverse_charge_output_account)
+
+    code = Account::VAT_ACCOUNTS[:reverse_charge_output_19]
+    @reverse_charge_output_account = find_or_create_account_by_code(code)
   end
 
   def update_bank_transaction_status
