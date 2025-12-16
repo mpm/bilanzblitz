@@ -392,6 +392,51 @@ const guv: GuVData | undefined = balanceSheet.guv
 - **Import types from this central location** to ensure consistency
 - **GuV data is optional** in `BalanceSheetData` for backward compatibility with older balance sheets
 
+### List Filter Component
+
+The application provides a reusable filter component for list views with filtering, sorting, and search capabilities.
+
+**Location**: `app/frontend/components/ListFilter.tsx`
+
+**Features**:
+- **Fiscal Year Filter** - Dropdown to filter by fiscal year or show all
+- **Sort Order Toggle** - Toggle between ascending/descending date sorting
+- **Status Filter** - Checkbox to hide specific statuses (e.g., booked transactions, posted entries)
+- **Text Search** - Live search input for filtering results
+
+**Usage**:
+```typescript
+import { ListFilter, FilterState } from '@/components/ListFilter'
+
+const [filterState, setFilterState] = useState<FilterState>({
+  fiscalYearId: null,
+  sortOrder: 'asc',
+  hideFilteredStatus: false,
+  searchText: ''
+})
+
+<ListFilter
+  config={{
+    showFiscalYearFilter: true,
+    showSortOrder: true,
+    showStatusFilter: true,
+    showTextSearch: true,
+    statusFilterLabel: 'Show only pending',
+    statusFilterDescription: 'Hiding booked and reconciled transactions',
+    searchPlaceholder: 'Search remittance info or counterparty...'
+  }}
+  fiscalYears={fiscalYears}
+  value={filterState}
+  onChange={setFilterState}
+/>
+```
+
+**Important**:
+- **Use this component for all list views** that need filtering/sorting capabilities
+- **The status filter is generic** - customize the label for your use case (e.g., "Show only unposted" for journal entries)
+- **Implement filtering logic** in a `useMemo` hook for performance
+- See `app/frontend/pages/BankAccounts/Show.tsx` for a complete implementation example
+
 ## Data Models
 
 ### Journal Entry Workflow

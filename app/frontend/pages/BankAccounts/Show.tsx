@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Head, router } from '@inertiajs/react'
 import { AppLayout } from '@/components/AppLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -29,6 +29,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { BookingModal } from '@/components/BookingModal'
 import { formatDate, formatAmount } from '@/utils/formatting'
+import { ListFilter, FilterState } from '@/components/ListFilter'
 
 interface Transaction {
   id: number
@@ -93,11 +94,12 @@ interface BankAccountShowProps {
   transactions: Transaction[]
   recentAccounts: Account[]
   fiscalYear: FiscalYear | null
+  fiscalYears: FiscalYear[]
 }
 
 type ImportStep = 'input' | 'preview' | 'success'
 
-export default function BankAccountShow({ company, bankAccount, transactions, recentAccounts, fiscalYear }: BankAccountShowProps) {
+export default function BankAccountShow({ company, bankAccount, transactions, recentAccounts, fiscalYear, fiscalYears }: BankAccountShowProps) {
   const [showImportModal, setShowImportModal] = useState(false)
   const [importStep, setImportStep] = useState<ImportStep>('input')
   const [csvData, setCsvData] = useState('')
@@ -111,6 +113,56 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
   const [bookingModalOpen, setBookingModalOpen] = useState(false)
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
   const [deletingId, setDeletingId] = useState<number | null>(null)
+
+  // Filter state
+  const [filterState, setFilterState] = useState<FilterState>({
+    fiscalYearId: null,
+    sortOrder: 'asc',
+    hideFilteredStatus: false,
+    searchText: ''
+  })
+
+  // Filtered and sorted transactions
+  const filteredTransactions = useMemo(() => {
+    let result = [...transactions]
+
+    // Filter by fiscal year
+    if (filterState.fiscalYearId) {
+      const selectedFiscalYear = fiscalYears.find(fy => fy.id === filterState.fiscalYearId)
+      if (selectedFiscalYear) {
+        const startDate = new Date(selectedFiscalYear.startDate)
+        const endDate = new Date(selectedFiscalYear.endDate)
+        result = result.filter(tx => {
+          const txDate = new Date(tx.bookingDate)
+          return txDate >= startDate && txDate <= endDate
+        })
+      }
+    }
+
+    // Filter by status (hide booked)
+    if (filterState.hideFilteredStatus) {
+      result = result.filter(tx => tx.status === 'pending')
+    }
+
+    // Filter by search text
+    if (filterState.searchText.trim()) {
+      const searchLower = filterState.searchText.toLowerCase()
+      result = result.filter(tx => {
+        const remittanceInfo = (tx.remittanceInformation || '').toLowerCase()
+        const counterpartyName = (tx.counterpartyName || '').toLowerCase()
+        return remittanceInfo.includes(searchLower) || counterpartyName.includes(searchLower)
+      })
+    }
+
+    // Sort by booking date
+    result.sort((a, b) => {
+      const dateA = new Date(a.bookingDate).getTime()
+      const dateB = new Date(b.bookingDate).getTime()
+      return filterState.sortOrder === 'asc' ? dateA - dateB : dateB - dateA
+    })
+
+    return result
+  }, [transactions, filterState, fiscalYears])
 
   const formatIban = (iban: string | null) => {
     if (!iban) return '-'
@@ -323,6 +375,29 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
         </Card>
       </div>
 
+      {/* Filter Toolbar */}
+      {transactions.length > 0 && (
+        <ListFilter
+          config={{
+            showFiscalYearFilter: true,
+            showSortOrder: true,
+            showStatusFilter: true,
+            showTextSearch: true,
+            statusFilterLabel: 'Show only pending',
+            statusFilterDescription: 'Hiding booked and reconciled transactions',
+            searchPlaceholder: 'Search remittance info or counterparty...'
+          }}
+          fiscalYears={fiscalYears.map(fy => ({
+            id: fy.id,
+            startDate: fy.startDate,
+            endDate: fy.endDate,
+            label: `${fy.year}`
+          }))}
+          value={filterState}
+          onChange={setFilterState}
+        />
+      )}
+
       {/* Transactions Card */}
       <Card>
         <CardHeader>
@@ -330,12 +405,22 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
           <CardDescription>
             {transactions.length === 0
               ? 'No transactions yet. Import transactions to get started.'
-              : `${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`
+              : `${filteredTransactions.length} of ${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`
             }
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {transactions.length === 0 ? (
+          {filteredTransactions.length === 0 && transactions.length > 0 ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="rounded-full bg-muted p-3 mb-4">
+                <AlertCircle className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <h3 className="font-semibold mb-1">No matching transactions</h3>
+              <p className="text-sm text-muted-foreground text-center max-w-sm">
+                Try adjusting your filters to see more results
+              </p>
+            </div>
+          ) : transactions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="rounded-full bg-muted p-3 mb-4">
                 <Upload className="h-6 w-6 text-muted-foreground" />
@@ -362,7 +447,7 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions.map((tx) => (
+                {filteredTransactions.map((tx) => (
                   <TableRow key={tx.id}>
                     <TableCell className="font-mono text-sm">
                       {formatDate(tx.bookingDate)}

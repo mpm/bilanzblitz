@@ -22,6 +22,7 @@ class BankAccountsController < ApplicationController
       .order(booking_date: :asc, created_at: :desc)
     @recent_accounts = @company.account_usages.recent.includes(:account).map(&:account).compact
     @fiscal_year = FiscalYear.current_for(company: @company)
+    @fiscal_years = @company.fiscal_years.order(year: :desc)
 
     render inertia: "BankAccounts/Show", props: {
       company: {
@@ -31,7 +32,8 @@ class BankAccountsController < ApplicationController
       bankAccount: bank_account_json(@bank_account),
       transactions: @transactions.map { |tx| transaction_json(tx) },
       recentAccounts: @recent_accounts.map { |a| account_json(a) },
-      fiscalYear: @fiscal_year ? fiscal_year_json(@fiscal_year) : nil
+      fiscalYear: @fiscal_year ? fiscal_year_json(@fiscal_year) : nil,
+      fiscalYears: @fiscal_years.map { |fy| fiscal_year_json(fy) }
     }
   end
 
