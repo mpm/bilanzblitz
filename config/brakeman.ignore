@@ -1,0 +1,52 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "81ee90778d61a12d18bd701bcb65262696275bca5ad1bbfa3dcf6789ff8151db",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/journal_entries_controller.rb",
+      "line": 162,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:journal_entry).permit(:account_id, :account_code, :description, :vat_split, :vat_rate)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "JournalEntriesController",
+        "method": "journal_entry_params"
+      },
+      "user_input": ":account_id",
+      "confidence": "High",
+      "cwe_id": [
+        915
+      ],
+      "note": "account_id refers to the accounting Account model (chart of accounts), not user accounts. This is safe for mass assignment."
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 70,
+      "fingerprint": "d2488e523cfa5201a889795ef505dcc60d13fa05251606af14e2b47a6132e4d9",
+      "check_name": "MassAssignment",
+      "message": "Specify exact keys allowed for mass assignment instead of using `permit!` which allows any keys",
+      "file": "app/controllers/opening_balances_controller.rb",
+      "line": 116,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:balance_data).permit!",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "OpeningBalancesController",
+        "method": "parse_manual_balance_data"
+      },
+      "user_input": null,
+      "confidence": "Medium",
+      "cwe_id": [
+        915
+      ],
+      "note": "permit! is used here for balance sheet data (assets/liabilities/equity with account codes and amounts). The structure is dynamic based on the chart of accounts. Input is validated in OpeningBalanceCreator service."
+    }
+  ],
+  "updated": "2025-12-16 00:00:00 +0000",
+  "brakeman_version": "6.2.2"
+}
