@@ -71,7 +71,7 @@ class FiscalYearsController < ApplicationController
       closing_balance = previous_year.balance_sheets.closing.posted.first
 
       if closing_balance && closing_balance.data.present?
-        # Symbolize keys for consistent hash access (JSONB data uses string keys)
+        # Symbolize keys for consistent hash access (JSONB returns string keys)
         balance_data = closing_balance.data.deep_symbolize_keys
 
         # Create opening balance via carryforward
@@ -108,8 +108,9 @@ class FiscalYearsController < ApplicationController
   def import_create
     @company = current_user.companies.first
 
-    # Parse the JSON string from frontend
+    # Parse the JSON string from frontend and normalize keys to snake_case
     balance_sheet_data = JSON.parse(params[:balance_sheet_data], symbolize_names: true)
+    balance_sheet_data = underscore_keys(balance_sheet_data)
 
     importer = FiscalYearImporter.new(
       company: @company,

@@ -95,8 +95,9 @@ class OpeningBalancesController < ApplicationController
     closing_balance = previous_year.balance_sheets.closing.posted.first
     return nil unless closing_balance
 
-    # Return the balance sheet data
-    closing_balance.data
+    # Return the balance sheet data with symbolized keys
+    # (JSONB returns string keys, but our services expect symbols)
+    closing_balance.data.deep_symbolize_keys
   end
 
   def parse_manual_balance_data
@@ -113,7 +114,8 @@ class OpeningBalancesController < ApplicationController
     #   }
     # }
 
-    balance_params = params.require(:balance_data).permit!
+    # Convert camelCase keys from frontend to snake_case for backend processing
+    balance_params = underscore_keys(params.require(:balance_data).permit!)
 
     {
       aktiva: {
@@ -134,8 +136,8 @@ class OpeningBalancesController < ApplicationController
 
     section_params.map do |account_params|
       {
-        account_code: account_params[:account_code] || account_params[:accountCode],
-        account_name: account_params[:account_name] || account_params[:accountName],
+        account_code: account_params[:account_code],
+        account_name: account_params[:account_name],
         balance: account_params[:balance].to_f
       }
     end

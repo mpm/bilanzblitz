@@ -191,8 +191,9 @@ class BalanceSheetService
     stored_sheet = @fiscal_year.balance_sheets.closing.posted.first
     return nil unless stored_sheet
 
-    # Return the stored data with a flag indicating it's from storage
-    stored_sheet.data.merge(
+    # Symbolize keys (JSONB returns string keys, but we work with symbols)
+    # and return with additional metadata
+    stored_sheet.data.deep_symbolize_keys.merge(
       stored: true,
       posted_at: stored_sheet.posted_at
     )
