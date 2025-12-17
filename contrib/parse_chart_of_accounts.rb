@@ -26,6 +26,8 @@
 require 'json'
 require 'digest'
 
+NO_CATEGORY = "NONE"
+
 # ParserTools provides stateless helper methods for parsing and matching
 # chart of accounts data.
 class ParserTools
@@ -107,6 +109,7 @@ class ParserTools
   # @param category [String] The category name to hash
   # @return [String] 7-character hex hash
   def self.category_hash(category)
+    return category if category == NO_CATEGORY
     Digest::SHA1.hexdigest(category)[0..6]
   end
 
@@ -322,7 +325,7 @@ class CharOfAccountsParser
         puts "INFO: ignoring row with category #{pos_desc}"
       else
 
-        pos_desc = "(none)" if pos_desc == ""
+        pos_desc = NO_CATEGORY if pos_desc == ""
 
         pdata = positions[pos_desc] ||= { name: pos_desc, items: [] }
 
