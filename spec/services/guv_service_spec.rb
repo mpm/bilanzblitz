@@ -23,12 +23,12 @@ RSpec.describe GuVService do
 
     context 'with valid posted journal entries' do
       before do
-        # Create accounts for each GuV section
-        @revenue_account = create(:account, company: company, code: "4000", name: "Erlöse", account_type: "revenue")
-        @material_account = create(:account, company: company, code: "5000", name: "Materialaufwand", account_type: "expense")
-        @personnel_account = create(:account, company: company, code: "6000", name: "Löhne", account_type: "expense")
-        @depreciation_account = create(:account, company: company, code: "7600", name: "Abschreibungen", account_type: "expense")
-        @other_expense_account = create(:account, company: company, code: "7000", name: "Sonstige Aufwendungen", account_type: "expense")
+        # Create accounts for each GuV section using correct account codes from AccountMap
+        @revenue_account = create(:account, company: company, code: "8000", name: "Erlöse", account_type: "revenue")
+        @material_account = create(:account, company: company, code: "3000", name: "Materialaufwand", account_type: "expense")
+        @personnel_account = create(:account, company: company, code: "4100", name: "Löhne", account_type: "expense")
+        @depreciation_account = create(:account, company: company, code: "2430", name: "Abschreibungen", account_type: "expense")
+        @other_expense_account = create(:account, company: company, code: "4500", name: "Sonstige Aufwendungen", account_type: "expense")
 
         # Create a bank account for balancing
         @bank_account = create(:account, company: company, code: "1200", name: "Bank", account_type: "asset")
@@ -94,13 +94,13 @@ RSpec.describe GuVService do
         expect(revenue_section[:label]).to eq("1. Umsatzerlöse")
         expect(revenue_section[:subtotal]).to eq(10000)
         expect(revenue_section[:display_type]).to eq(:positive)
-        expect(revenue_section[:accounts].map { |a| a[:account_code] }).to include("4000")
+        expect(revenue_section[:accounts].map { |a| a[:account_code] }).to include("8000")
 
         # Verify material expense section
         expect(material_section[:label]).to eq("2. Materialaufwand")
         expect(material_section[:subtotal]).to eq(-3000)
         expect(material_section[:display_type]).to eq(:negative)
-        expect(material_section[:accounts].map { |a| a[:account_code] }).to include("5000")
+        expect(material_section[:accounts].map { |a| a[:account_code] }).to include("3000")
 
         # Verify personnel expense section
         expect(personnel_section[:label]).to eq("3. Personalaufwand")
@@ -121,7 +121,7 @@ RSpec.describe GuVService do
 
     context 'with closing entries' do
       before do
-        @revenue_account = create(:account, company: company, code: "4000", name: "Erlöse", account_type: "revenue")
+        @revenue_account = create(:account, company: company, code: "8000", name: "Erlöse", account_type: "revenue")
         @bank_account = create(:account, company: company, code: "1200", name: "Bank", account_type: "asset")
 
         # Create normal entry
@@ -149,7 +149,7 @@ RSpec.describe GuVService do
 
     context 'with 9xxx closing accounts' do
       before do
-        @revenue_account = create(:account, company: company, code: "4000", name: "Erlöse", account_type: "revenue")
+        @revenue_account = create(:account, company: company, code: "8000", name: "Erlöse", account_type: "revenue")
         @closing_account = create(:account, company: company, code: "9000", name: "Saldenvorträge", account_type: "equity")
 
         je = create(:journal_entry, company: company, fiscal_year: fiscal_year)
@@ -181,8 +181,8 @@ RSpec.describe GuVService do
 
     context 'with net loss (negative net income)' do
       before do
-        @revenue_account = create(:account, company: company, code: "4000", name: "Erlöse", account_type: "revenue")
-        @material_account = create(:account, company: company, code: "5000", name: "Materialaufwand", account_type: "expense")
+        @revenue_account = create(:account, company: company, code: "8000", name: "Erlöse", account_type: "revenue")
+        @material_account = create(:account, company: company, code: "3000", name: "Materialaufwand", account_type: "expense")
 
         je = create(:journal_entry, company: company, fiscal_year: fiscal_year)
 
