@@ -36,3 +36,14 @@ host machine context.
    ocring (the results will be stored in `skr03-ocr-results.json`)
 
 ### Treat the result
+
+It is easiest to fix small inconsistencies manually in
+skr03-ocr-result.json.
+
+Run `parse_chart_of_accounts.rb`. Check for almost similarly written
+categories and fix spelling in JSON file.
+
+Fix account range artifacts (-09 suffixes at the end of descriptions or
+in separate lines (separate items). Also, remove spaces in account
+ranges (2000 -99 should become 2000-99). Use regex search in vim for
+this (/-\d\d/) to find all number suffixes whether with space or not.
