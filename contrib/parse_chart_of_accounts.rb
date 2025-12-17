@@ -196,6 +196,8 @@ def associate_guv_names(bdata, positions)
   end
 
   (matched, unmatched) = fuzzy_match(guv_categories, category_names)
+
+  # Print matching results for verification
   matched.each do |key, result|
     puts "\n#{key}"
     if result[:no_match]
@@ -203,12 +205,48 @@ def associate_guv_names(bdata, positions)
     else
       p = result[:partial] ? "[P] " : ""
       cid = category_hash(result[:original_category])
-      puts result[:original_category]
-      # TODO: guv_categories was extracted from the guv JSON structure (the nesting is gone).
-      # getting rid of the nesting was necessary because all keys need to be checked at once.
-      # However, how can I retain this info so that I can store the `cid` value back in my original guv JSON tree?
+      puts "  --> #{p}#{result[:original_category]} (cid: #{cid})"
     end
   end
+
+  # Build transformed structure
+  transformed_guv = {}
+
+  bdata.each do |section_name, children|
+    match_result = matched[section_name]
+
+    # Create section object with cid and matched_category
+    section_obj = {}
+    if match_result && !match_result[:no_match]
+      section_obj[:cid] = category_hash(match_result[:original_category])
+      section_obj[:matched_category] = match_result[:original_category]
+    else
+      section_obj[:cid] = nil
+      section_obj[:matched_category] = nil
+    end
+
+    # Add children if they exist
+    if children && children.size > 0
+      section_obj[:children] = children.map do |child_name|
+        child_match = matched[child_name]
+        child_obj = { name: child_name }
+
+        if child_match && !child_match[:no_match]
+          child_obj[:cid] = category_hash(child_match[:original_category])
+          child_obj[:matched_category] = child_match[:original_category]
+        else
+          child_obj[:cid] = nil
+          child_obj[:matched_category] = nil
+        end
+
+        child_obj
+      end
+    end
+
+    transformed_guv[section_name] = section_obj
+  end
+
+  transformed_guv
 end
 
 def create_skr03_accounts_csv(all_codes)
@@ -368,6 +406,12 @@ positions.keys.sort.each { |p| puts "#{p}: #{positions[p][:items].size}" }
 
 puts "--- associate_balance_sheet_names:"
 # associate_balance_sheet_names(bilanz_aktiva.merge(bilanz_passiva), positions)
-associate_guv_names(guv, positions)
+transformed_guv = associate_guv_names(guv, positions)
+
+# Save the transformed structure
+File.open("guv-with-categories.json", "w") do |f|
+  f.puts JSON.pretty_generate(transformed_guv)
+end
+puts "\nUpdated guv-with-categories.json"
 
 create_skr03_accounts_csv(all_codes)

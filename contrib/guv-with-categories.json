@@ -1,0 +1,106 @@
+{
+  "Umsatzerlöse": {
+    "cid": "71e9b34",
+    "matched_category": "Umsatzerlöse"
+  },
+  "Erhöhung oder Verminderung des Bestands an fertigen und unfertigen Erzeugnissen": {
+    "cid": null,
+    "matched_category": null
+  },
+  "andere aktivierte Eigenleistungen": {
+    "cid": "89823b6",
+    "matched_category": "Andere aktivierte Eigenleistungen"
+  },
+  "sonstige betriebliche Erträge": {
+    "cid": "025b099",
+    "matched_category": "Sonstige betriebliche Erträge"
+  },
+  "Materialaufwand": {
+    "cid": null,
+    "matched_category": null,
+    "children": [
+      {
+        "name": "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
+        "cid": "70b8f68",
+        "matched_category": "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren"
+      },
+      {
+        "name": "Aufwendungen für bezogene Leistungen",
+        "cid": "9eb6168",
+        "matched_category": "Aufwendungen für bezogene Leistungen"
+      }
+    ]
+  },
+  "Personalaufwand": {
+    "cid": null,
+    "matched_category": null,
+    "children": [
+      {
+        "name": "Löhne und Gehälter",
+        "cid": "ab916d8",
+        "matched_category": "Löhne und Gehälter"
+      },
+      {
+        "name": "soziale Abgaben und Aufwendungen für Altersversorgung und für Unterstützung, davon für Altersversorgung",
+        "cid": "4fbd2f6",
+        "matched_category": "Soziale Abgaben und Aufwendungen für Altersversorgung und für Unterstützung"
+      }
+    ]
+  },
+  "Abschreibungen": {
+    "cid": "df5d0f3",
+    "matched_category": "Abschreibungen auf Vermögensgegenstände des Umlaufvermögens, soweit diese die in der Kapitalgesellschaft üblichen Abschreibungen überschreiten",
+    "children": [
+      {
+        "name": "auf immaterielle Vermögensgegenstände des Anlagevermögens und Sachanlagen",
+        "cid": null,
+        "matched_category": null
+      },
+      {
+        "name": "auf Vermögensgegenstände des Umlaufvermögens, soweit diese die in der Kapitalgesellschaft üblichen Abschreibungen überschreiten",
+        "cid": null,
+        "matched_category": null
+      }
+    ]
+  },
+  "sonstige betriebliche Aufwendungen": {
+    "cid": "a08a930",
+    "matched_category": "Sonstige betriebliche Aufwendungen"
+  },
+  "Erträge aus Beteiligungen, davon aus verbundenen Unternehmen": {
+    "cid": "845aafe",
+    "matched_category": "Erträge aus Beteiligungen"
+  },
+  "Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens, davon aus verbundenen Unternehmen": {
+    "cid": "db92d20",
+    "matched_category": "Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens"
+  },
+  "sonstige Zinsen und ähnliche Erträge, davon aus verbundenen Unternehmen": {
+    "cid": "a2be938",
+    "matched_category": "Sonstige Zinsen und ähnliche Erträge"
+  },
+  "Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens": {
+    "cid": "0c22907",
+    "matched_category": "Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens"
+  },
+  "Zinsen und ähnliche Aufwendungen, davon an verbundene Unternehmen": {
+    "cid": "b1eb29f",
+    "matched_category": "Zinsen und ähnliche Aufwendungen"
+  },
+  "Steuern vom Einkommen und vom Ertrag": {
+    "cid": null,
+    "matched_category": null
+  },
+  "Ergebnis nach Steuern": {
+    "cid": null,
+    "matched_category": null
+  },
+  "sonstige Steuern": {
+    "cid": "f470b40",
+    "matched_category": "Sonstige Steuern"
+  },
+  "Jahresüberschuss/Jahresfehlbetrag": {
+    "cid": null,
+    "matched_category": null
+  }
+}
