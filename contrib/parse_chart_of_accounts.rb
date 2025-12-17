@@ -1,9 +1,32 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
+#
+# Chart of Accounts Parser for SKR03
+# ===================================
+#
+# This script parses OCR-extracted SKR03 chart of accounts data and generates
+# structured JSON files that map German accounting standard categories (GuV and Bilanz)
+# to their corresponding account codes.
+#
+# Input Files:
+# - skr03-ocr-results.json: OCR results from SKR03 PDF (category → account codes)
+# - bilanz-aktiva.json: Balance sheet structure (Aktiva/Assets)
+# - bilanz-passiva.json: Balance sheet structure (Passiva/Liabilities & Equity)
+# - guv.json: Profit & Loss (GuV) structure according to § 275 Abs. 2 HGB
+#
+# Output Files:
+# - skr03-accounts.csv: All account codes with descriptions and category hashes
+# - bilanz-with-categories.json: Balance sheet with category IDs and account codes
+# - guv-with-categories.json: GuV with category IDs and account codes
+#
+# The script uses fuzzy matching to associate parsed category names with official
+# German accounting category names, then maps them to account codes.
 
 require 'json'
 require 'digest'
 
+# ParserTools provides stateless helper methods for parsing and matching
+# chart of accounts data.
 class ParserTools
   # These flags are used in the "Programmfunktion" Spalte (which should be ignored).
   # However, they indicate some of the account numbers listed in black framed boxes in the right column
@@ -11,6 +34,17 @@ class ParserTools
   # for these account codes.
   PROG_FUNC_FLAGS = %w[KU V M]
 
+  # Parses an account code string from the OCR results.
+  #
+  # @param str [String] The raw string containing account code, optional range, and description
+  # @return [Hash] Hash with :flags, :code, :range, and :description keys
+  #
+  # Examples:
+  #   parse_code_string("4000-4999 Sales Revenue")
+  #   # => { flags: "", code: "4000", range: "4000-4999", description: "Sales Revenue" }
+  #
+  #   parse_code_string("1320-26 Trade Receivables")
+  #   # => { flags: "", code: "1320", range: "1320-1326", description: "Trade Receivables" }
   def self.parse_code_string(str)
     result = {
       flags: "",
@@ -66,10 +100,23 @@ class ParserTools
     result
   end
 
+  # Generates a 7-character hash ID for a category name.
+  # This is used as a unique identifier (cid) for categories.
+  #
+  # @param category [String] The category name to hash
+  # @return [String] 7-character hex hash
   def self.category_hash(category)
     Digest::SHA1.hexdigest(category)[0..6]
   end
 
+  # Performs fuzzy matching between official category names and parsed category names.
+  # Uses case-insensitive prefix matching, prioritizing longer overlaps and exact matches.
+  #
+  # @param official_names [Array<String>] Official category names from GuV/Bilanz structures
+  # @param category_names [Array<String>] Parsed category names from OCR results
+  # @return [Array<Hash, Array>] Tuple of [matched_hash, unmatched_categories]
+  #   - matched_hash: Maps official names to match results (:original_category, :partial, :no_match)
+  #   - unmatched_categories: Array of category names that weren't matched
   def self.fuzzy_match(official_names, category_names)
     matches = []
 
@@ -193,9 +240,22 @@ class ParserTools
   end
 end
 
+# CharOfAccountsParser orchestrates the parsing workflow:
+# 1. Loads input JSON files (bilanz-aktiva, bilanz-passiva, guv, skr03-ocr-results)
+# 2. Parses and categorizes account codes from OCR results
+# 3. Performs fuzzy matching between official names and parsed categories
+# 4. Generates output files with category IDs (cid) and account code mappings
+#
+# The output files enable the BilanzBlitz application to map account codes
+# to their corresponding GuV and balance sheet positions.
 class CharOfAccountsParser
+  # @return [Array<Array>] All parsed account codes as [category_name, code_info] tuples
   attr_reader :all_codes
+
+  # @return [Array<Hash>] Deduplicated account codes with :code, :cat, :description, etc.
   attr_reader :parsed_codes
+
+  # @return [Hash] Mapping of category names to their parsed items
   attr_reader :positions
 
   # These position keys are from obvious parsing fails, they all map to the "empty" positional key.
@@ -282,6 +342,14 @@ class CharOfAccountsParser
     end
   end
 
+  # Associates balance sheet official names with parsed categories via fuzzy matching.
+  # Builds a transformed structure with category IDs (cid), matched category names,
+  # and associated account codes for each section, item, and child.
+  #
+  # @param bdata [Hash] Balance sheet data (from bilanz-aktiva.json or bilanz-passiva.json)
+  # @param positions [Hash] Parsed category positions from OCR results
+  # @param cid_to_codes [Hash] Mapping from category ID to account codes
+  # @return [Hash] Transformed balance sheet structure with cid and codes attributes
   def associate_balance_sheet_names(bdata, positions, cid_to_codes = {})
     category_names = positions.keys
 
@@ -389,6 +457,14 @@ class CharOfAccountsParser
     transformed_bilanz
   end
 
+  # Associates GuV (Profit & Loss) official names with parsed categories via fuzzy matching.
+  # Builds a transformed structure with category IDs (cid), matched category names,
+  # and associated account codes for each section and child.
+  #
+  # @param bdata [Hash] GuV data (from guv.json) following § 275 Abs. 2 HGB structure
+  # @param positions [Hash] Parsed category positions from OCR results
+  # @param cid_to_codes [Hash] Mapping from category ID to account codes
+  # @return [Hash] Transformed GuV structure with cid and codes attributes
   def associate_guv_names(bdata, positions, cid_to_codes = {})
     category_names = positions.keys
 
@@ -484,6 +560,10 @@ class CharOfAccountsParser
     puts "Updated skr03-accounts.csv"
   end
 
+  # Builds a mapping from category ID (cid) to account codes.
+  # This allows looking up all account codes that belong to a specific category.
+  #
+  # @return [Hash<String, Array<String>>] Hash mapping cid to sorted array of account codes
   def build_cid_to_codes_mapping
     # Build a hash that maps from cid (cat) to array of account codes
     mapping = Hash.new { |h, k| h[k] = [] }
@@ -502,6 +582,15 @@ class CharOfAccountsParser
     mapping
   end
 
+  # Generates bilanz-with-categories.json and guv-with-categories.json files.
+  # These files contain the complete mapping from German accounting standard
+  # categories to their category IDs (cid) and associated SKR03 account codes.
+  #
+  # Output structure includes:
+  # - cid: 7-character hash identifying the category
+  # - matched_category: The original parsed category name
+  # - codes: Array of account codes belonging to this category
+  # - children: Nested sub-categories (where applicable)
   def create_balance_sheet_and_guv_with_categories!
     # Build mapping from cid to list of account codes
     cid_to_codes = build_cid_to_codes_mapping
