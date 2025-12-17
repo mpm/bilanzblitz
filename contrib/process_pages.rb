@@ -54,13 +54,13 @@ def find_vertical_split_points(image_path)
   pixels = img.get_pixels
 
   puts "  Scanning for vertical dividers (Right to Left)..."
-  
+
   col_split_points = []
-  
+
   # Scan from right to left
-  # We expect 2 lines. 
+  # We expect 2 lines.
   # A vertical line should be mostly black (or at least non-white)
-  
+
   (width - 1).downto(0) do |x|
     non_white_count = 0
     (0...height).each do |y|
@@ -69,7 +69,7 @@ def find_vertical_split_points(image_path)
         non_white_count += 1
       end
     end
-    
+
     # If > 50% of column is non-white, consider it a line
     if non_white_count > (height * 0.5)
       # Optimization: Debounce lines. If we just found a line at x+1, ignore this one or group it.
@@ -80,11 +80,11 @@ def find_vertical_split_points(image_path)
          col_split_points << x
       end
     end
-    
+
     break if col_split_points.size >= 2
   end
-  
-  # The scan was Right-to-Left, so the first found point is the Right line (higher X), 
+
+  # The scan was Right-to-Left, so the first found point is the Right line (higher X),
   # second found point is the Left line (lower X).
   # We want them sorted [x1, x2]
   col_split_points.sort
@@ -114,21 +114,21 @@ def find_row_split_points(image_path)
 
     rows_to_split << y if should_split
   end
-  
+
   # Filter consecutive lines to single split points (take the middle or first of a block)
-  # Simple approach: if we have 100, 101, 102 -> just take 101. 
+  # Simple approach: if we have 100, 101, 102 -> just take 101.
   # For now, let's just take all of them and filter during processing if they create tiny rows?
   # Better: group them.
   grouped_splits = []
   current_group = []
-  
+
   rows_to_split.each do |y|
     if current_group.empty? || (y - current_group.last).abs <= 2
        current_group << y
     else
        # Finish group
        grouped_splits << (current_group.sum / current_group.size) # Midpoint
-       current_group = [y]
+       current_group = [ y ]
     end
   end
   grouped_splits << (current_group.sum / current_group.size) unless current_group.empty?
@@ -141,37 +141,37 @@ def process_split_rows(image_path, row_split_points, col_split_points, page_num,
   img = MiniMagick::Image.open(image_path)
   width = img.width
   height = img.height
-  
+
   # Define row segments. Start at 0.
   # split points are the lines themselves.
   # segment 1: 0 ... split_point_1
   # segment 2: split_point_1 ... split_point_2
   # ...
   # last segment: split_point_N ... height
-  
+
   # Add 0 and height to points to make loop generic
-  boundaries = [0] + row_split_points + [height]
-  
+  boundaries = [ 0 ] + row_split_points + [ height ]
+
   # Remove duplicates and sort
   boundaries = boundaries.uniq.sort
-  
+
   puts "    Slicing into #{boundaries.size - 1} potential rows..."
-  
+
   row_idx = 0
-  
+
   (0...(boundaries.size - 1)).each do |i|
     y_start = boundaries[i]
     y_end = boundaries[i+1]
-    
+
     # Calculate height
     h = y_end - y_start
-    
+
     # Check for empty/tiny rows (often just the divider line itself)
     if h < 21
        # puts "      Skipping row starting at #{y_start} (height #{h} < 21)"
        next
     end
-    
+
     # Crop the row
     # We open fresh because we don't want to destructively edit the original object in loop (though clone is better)
     # Using combine_options on a fresh open is safest
@@ -180,17 +180,17 @@ def process_split_rows(image_path, row_split_points, col_split_points, page_num,
       c.crop "#{width}x#{h}+0+#{y_start}"
       c << "+repage"
     end
-    
+
     # Split Columns
     # If we didn't find columns, fallback?
     # User said: "The middle column is always about 95px wide"
     # If detection fail, we might want to warn.
-    
+
     cols = []
-    
+
     if col_split_points.size == 2
        x1, x2 = col_split_points
-       
+
        # Left Column: 0 .. x1
        left_width = x1
        if left_width > 10
@@ -201,7 +201,7 @@ def process_split_rows(image_path, row_split_points, col_split_points, page_num,
          end
          cols << left_img
        end
-       
+
        # Right Column: x2 .. width
        right_width = width - x2
        if right_width > 10
@@ -212,22 +212,22 @@ def process_split_rows(image_path, row_split_points, col_split_points, page_num,
          end
          cols << right_img
        end
-       
+
     else
        puts "      WARNING: Could not detect 2 vertical lines. Keeping full row."
        cols << row_img
     end
-    
+
     # Save Columns
     cols.each_with_index do |col_img, col_idx|
        # 0 is Left, 1 is Right (effectively)
        side = (col_idx == 0) ? "L" : "R"
-       
+
        out_name = format('result-%02d%s-%03d-%s.png', page_num, suffix, row_idx, side)
        out_path = File.join(OUTPUT_DIR, out_name)
        col_img.write(out_path)
     end
-    
+
     row_idx += 1
   end
   puts "      Generated #{row_idx} actual rows."
@@ -310,7 +310,7 @@ def process_page(page_num, input_file)
 
   # Step 5: Process Rows and Columns (Replacing horizontal dividers)
   puts "  Step 4: Splitting rows and columns..."
-  
+
   puts "    Processing part A..."
   rows_a = find_row_split_points(temp_a) # Find horizontal lines
   cols_a = find_vertical_split_points(temp_a) # Find vertical lines

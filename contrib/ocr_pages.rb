@@ -100,9 +100,9 @@ row_keys.each_with_index do |row_key_path, index|
   # Construct paths
   left_file = "#{row_key_path}-L.png"
   right_file = "#{row_key_path}-R.png"
-  
+
   row_result = []
-  
+
   # Process Left
   if File.exist?(left_file)
     puts "[#{index+1}/#{row_keys.size}] Processing Left: #{File.basename(left_file)}"
@@ -134,16 +134,16 @@ row_keys.each_with_index do |row_key_path, index|
     puts "WARNING: Missing right file #{right_file}"
     row_result << ""
   end
-  
+
   all_results << row_result
-  
+
   # Incremental Save every 10 rows
   if (index + 1) % 10 == 0
     save_results(all_results)
   end
-  
+
   # Sleep briefly to be nice to API? (Optional)
-  # sleep 0.5 
+  # sleep 0.5
 end
 
 # Final Save
