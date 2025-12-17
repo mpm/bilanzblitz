@@ -88,38 +88,11 @@ class BalanceSheetService
 
   def group_by_balance_sheet_sections(account_balances)
     {
-      anlagevermoegen: [], # Fixed assets (0xxx)
-      umlaufvermoegen: [], # Current assets (1xxx)
-      eigenkapital: [],    # Equity (2xxx)
-      fremdkapital: [],    # Liabilities (3xxx)
-      revenue: [],         # Revenue (4xxx) - for P&L calculation
-      expenses: []         # Expenses (5xxx, 6xxx, 7xxx) - for P&L calculation
-    }.tap do |groups|
-      account_balances.each do |account|
-        c = account[:code]
-
-        if c == "0800"
-          groups[:eigenkapital] << account
-        else
-          code_prefix = account[:code][0] # First digit of account code
-
-          case code_prefix
-          when "0"
-            groups[:anlagevermoegen] << account
-          when "1"
-            groups[:umlaufvermoegen] << account
-          when "2"
-            groups[:eigenkapital] << account
-          when "3"
-            groups[:fremdkapital] << account
-          when "4"
-            groups[:revenue] << account
-          when "5", "6", "7"
-            groups[:expenses] << account
-          end
-        end
-      end
-    end
+      anlagevermoegen: AccountMap.find_balance_sheet_accounts(account_balances, :anlagevermoegen),
+      umlaufvermoegen: AccountMap.find_balance_sheet_accounts(account_balances, :umlaufvermoegen),
+      eigenkapital: AccountMap.find_balance_sheet_accounts(account_balances, :eigenkapital),
+      fremdkapital: AccountMap.find_balance_sheet_accounts(account_balances, :fremdkapital)
+    }
   end
 
   def build_balance_sheet_data(grouped_accounts, net_income, guv_data = nil)
