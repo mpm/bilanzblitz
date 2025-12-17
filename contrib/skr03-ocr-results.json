@@ -193,7 +193,7 @@
   ],
   [
     "Nicht eingeforderte ausstehende Einlagen",
-    "0820 Ausstehende Einlagen auf das gezeichnete Kapital, nicht eingefordert (Passivausweis, vom gezeichneten Kapital offen abgesetzt; eingeforderte ausstehende Einlagen s. Konten 0830-0838)"
+    "0820 Ausstehende Einlagen auf das gezeichnete Kapital, nicht eingefordert (Passivausweis, vom gezeichneten Kapital offen abgesetzt. Eingeforderte ausstehende Einlagen s. Konten 0830-0838)"
   ],
   [
     "Eingeforderte, noch ausstehende Kapitaleinlagen",
@@ -244,7 +244,7 @@
     "0858 Gewinnrücklagen aus den Übergangsvorschriften BilMoG (Auflösung der Sonderposten mit Rücklageanteil);0859 Latente Steuern (Gewinnrücklage Haben) aus erfolgsneutralen Verrechnungen"
   ],
   [
-    "Gewinnvortrag o. Verlustvortrag",
+    "Gewinnvortrag oder Verlustvortrag",
     "0860 Gewinnvortrag vor Verwendung"
   ],
   [
@@ -252,12 +252,12 @@
     "F 0865 Gewinnvortrag vor Verwendung (mit Aufteilung für Kapitalkontenentwicklung); F 0867 Verlustvortrag vor Verwendung (mit Aufteilung für Kapitalkontenentwicklung)"
   ],
   [
-    "Gewinnvortrag o. Verlustvortrag",
+    "Gewinnvortrag oder Verlustvortrag",
     "0868 Verlustvortrag vor Verwendung"
   ],
   [
     "",
-    "Kapital Eigenkapital Vollhafter/Einzelunternehmer F 0870 Festkapital; F 0871 Kapital (fester Anteil, nur Einzelunternehmer); F 0880 Variables Kapital; F 0881 Kapital (variabler Anteil, nur Einzelunternehmer) Fremdkapital Vollhafter F 0890 Gesellschafter-Darlehen; R 0891-99 Eigenkapital Teilhafter F 0900 Kommandit-Kapital; R 0901-09; F 0910 Verlustausgleichskonto; R 0911-19 Fremdkapital Teilhafter F 0920 Gesellschafter-Darlehen; R 0921-29 Sonderposten mit Rücklageanteil"
+    "Kapital Eigenkapital Vollhafter/Einzelunternehmer; F 0870 Festkapital; F 0871 Kapital (fester Anteil, nur Einzelunternehmer); F 0880 Variables Kapital; F 0881 Kapital (variabler Anteil, nur Einzelunternehmer) Fremdkapital Vollhafter; F 0890 Gesellschafter-Darlehen; R 0891-99 Eigenkapital Teilhafter; F 0900 Kommandit-Kapital; R 0901-09; F 0910 Verlustausgleichskonto; R 0911-19 Fremdkapital Teilhafter; F 0920 Gesellschafter-Darlehen; R 0921-29 Sonderposten mit Rücklageanteil"
   ],
   [
     "Sonderposten mit Rücklageanteil",
@@ -381,7 +381,7 @@
   ],
   [
     "Forderungen gegen verbundene Unternehmen oder Verbindlichkeiten gegenüber verbundenen Unternehmen",
-    "R 1310 -19"
+    "R 1310-19"
   ],
   [
     "",
@@ -389,7 +389,7 @@
   ],
   [
     "Forderungen gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht oder Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
-    "R 1320 -26"
+    "R 1320-26"
   ],
   [
     "Sonstige Wertpapiere",
@@ -465,7 +465,7 @@
   ],
   [
     "Forderungen aus Lieferungen und Leistungen oder sonstige Verbindlichkeiten",
-    "S 1400 Forderungen aus Lieferungen und Leistungen R 1401 Forderungen aus Lieferungen und Leistungen F 1410 Forderungen aus Lieferungen und Leistungen ohne Kontokorrent F 1445 Forderungen aus Lieferungen und Leistungen zum allgemeinen Umsatzsteuersatz oder eines Kleinunternehmers (EÜR) F 1446 Forderungen aus Lieferungen und Leistungen zum ermäßigten Umsatzsteuersatz (EÜR) F 1447 Forderungen aus steuerfreien oder nicht steuerbaren Lieferungen und Leistungen (EÜR) F 1448 Forderungen aus Lieferungen und Leistungen nach Durchschnittssätzen nach § 24 UStG (EÜR) F 1449 Gegenkonto 1445-1448 bei Aufteilung der Forderungen nach Steuersätzen (EÜR)"
+    "S 1400 Forderungen aus Lieferungen und Leistungen; R 1401 Forderungen aus Lieferungen und Leistungen; F 1410 Forderungen aus Lieferungen und Leistungen ohne Kontokorrent; F 1445 Forderungen aus Lieferungen und Leistungen zum allgemeinen Umsatzsteuersatz oder eines Kleinunternehmers (EÜR); F 1446 Forderungen aus Lieferungen und Leistungen zum ermäßigten Umsatzsteuersatz (EÜR); F 1447 Forderungen aus steuerfreien oder nicht steuerbaren Lieferungen und Leistungen (EÜR); F 1448 Forderungen aus Lieferungen und Leistungen nach Durchschnittssätzen nach § 24 UStG (EÜR); F 1449 Gegenkonto 1445-1448 bei Aufteilung der Forderungen nach Steuersätzen (EÜR)"
   ],
   [
     "Forderungen aus Lieferungen und Leistungen oder sonstige Verbindlichkeiten",
@@ -521,7 +521,7 @@
   ],
   [
     "Sonstige Vermögensgegenstände oder sonstige Verbindlichkeiten",
-    "F1556 Nachträglich abziehbare Vorsteuer nach §15a Abs.1 UStG, bewegliche Wirtschaftsgüter;F1557 Zurückzuzahlende Vorsteuer nach §15a Abs.1 UStG, bewegliche Wirtschaftsgüter;F1558 Nachträglich abziehbare Vorsteuer nach §15a Abs.1 UStG, unbewegliche Wirtschaftsgüter;F1559 Zurückzuzahlende Vorsteuer nach §15a Abs.1 UStG, unbewegliche Wirtschaftsgüter;S1560 Aufzuteilende Vorsteuer;S1561 Aufzuteilende Vorsteuer 7%;S1562 Aufzuteilende Vorsteuer aus innergemeinschaftlichem Erwerb;S1563 Aufzuteilende Vorsteuer aus innergemeinschaftlichem Erwerb 19%;R1564 -65;S1566 Aufzuteilende Vorsteuer 19%;S1567 Aufzuteilende Vorsteuer nach §§13a und 13b UStG;R1568;S1569 Aufzuteilende Vorsteuer nach §§13a und 13b UStG 19%;S1570 Abziehbare Vorsteuer;S1571 Abziehbare Vorsteuer 7%;S1572 Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb;S1573 Vorsteuer aus Erwerb als letzter Abnehmer innerhalb eines Dreiecksgeschäfts;S1574 Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb 19%;R1575;S1576 Abziehbare Vorsteuer 19%;S1577 Abziehbare Vorsteuer nach §13b UStG 19%;S1578 Abziehbare Vorsteuer nach §13b UStG;R1579;S1580 Gegenkonto Vorsteuer §4 Abs.3 EStG;S1581 Auflösung Vorsteuer aus Vorjahr §4 Abs.3 EStG;S1582 Vorsteuer aus Investitionen §4 Abs.3 EStG;R1583;S1584 Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb von Neufahrzeugen von Lieferanten ohne USt-Id-Nr.;S1585 Abziehbare Vorsteuer aus der Auslagerung von Gegenständen aus einem Umsatzsteuerlager;R1587;F1588 Entstandene Einfuhrumsatzsteuer;R1589;1590 Durchlaufende Posten;1592 Fremdgeld"
+    "F1556 Nachträglich abziehbare Vorsteuer nach §15a Abs.1 UStG, bewegliche Wirtschaftsgüter;F1557 Zurückzuzahlende Vorsteuer nach §15a Abs.1 UStG, bewegliche Wirtschaftsgüter;F1558 Nachträglich abziehbare Vorsteuer nach §15a Abs.1 UStG, unbewegliche Wirtschaftsgüter;F1559 Zurückzuzahlende Vorsteuer nach §15a Abs.1 UStG, unbewegliche Wirtschaftsgüter;S1560 Aufzuteilende Vorsteuer;S1561 Aufzuteilende Vorsteuer 7%;S1562 Aufzuteilende Vorsteuer aus innergemeinschaftlichem Erwerb;S1563 Aufzuteilende Vorsteuer aus innergemeinschaftlichem Erwerb 19%;R 1564-65;S 1566 Aufzuteilende Vorsteuer 19%;S1567 Aufzuteilende Vorsteuer nach §§13a und 13b UStG;R1568;S1569 Aufzuteilende Vorsteuer nach §§13a und 13b UStG 19%;S1570 Abziehbare Vorsteuer;S1571 Abziehbare Vorsteuer 7%;S1572 Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb;S1573 Vorsteuer aus Erwerb als letzter Abnehmer innerhalb eines Dreiecksgeschäfts;S1574 Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb 19%;R1575;S1576 Abziehbare Vorsteuer 19%;S1577 Abziehbare Vorsteuer nach §13b UStG 19%;S1578 Abziehbare Vorsteuer nach §13b UStG;R1579;S1580 Gegenkonto Vorsteuer §4 Abs.3 EStG;S1581 Auflösung Vorsteuer aus Vorjahr §4 Abs.3 EStG;S1582 Vorsteuer aus Investitionen §4 Abs.3 EStG;R1583;S1584 Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb von Neufahrzeugen von Lieferanten ohne USt-Id-Nr.;S1585 Abziehbare Vorsteuer aus der Auslagerung von Gegenständen aus einem Umsatzsteuerlager;R1587;F1588 Entstandene Einfuhrumsatzsteuer;R1589;1590 Durchlaufende Posten;1592 Fremdgeld"
   ],
   [
     "Sonstige Verbindlichkeiten S-Saldo",
@@ -545,7 +545,7 @@
   ],
   [
     "Verbindlichkeiten aus Lieferungen und Leistungen oder sonstige Vermögensgegenstände",
-    "S 1600 Verbindlichkeiten aus Lieferungen und Leistungen;R 1601 Verbindlichkeiten aus Lieferungen und Leistungen;-03 und Leistungen;F 1605 Verbindlichkeiten aus Lieferungen und Leistungen zum allgemeinen Umsatzsteuersatz (EÜR);F 1606 Verbindlichkeiten aus Lieferungen und Leistungen zum ermäßigten Umsatzsteuersatz (EÜR);F 1607 Verbindlichkeiten aus Lieferungen und Leistungen ohne Vorsteuerabzug (EÜR);F 1609 Gegenkonto 1605-1607 bei Aufteilung der Verbindlichkeiten nach Steuersätzen (EÜR);F 1610 Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent;-23 und Leistungen ohne Kontokorrent;F 1624 Verbindlichkeiten aus Lieferungen und Leistungen für Investitionen für § 4 Abs. 3 EStG;F 1625 Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent - Restlaufzeit bis 1 Jahr;F 1626 - Restlaufzeit 1 bis 5 Jahre;F 1628 - Restlaufzeit größer 5 Jahre"
+    "S 1600 Verbindlichkeiten aus Lieferungen und Leistungen;R 1601-03 Verbindlichkeiten aus Lieferungen und Leistungen;F 1605 Verbindlichkeiten aus Lieferungen und Leistungen zum allgemeinen Umsatzsteuersatz (EÜR);F 1606 Verbindlichkeiten aus Lieferungen und Leistungen zum ermäßigten Umsatzsteuersatz (EÜR);F 1607 Verbindlichkeiten aus Lieferungen und Leistungen ohne Vorsteuerabzug (EÜR);F 1609 Gegenkonto 1605-1607 bei Aufteilung der Verbindlichkeiten nach Steuersätzen (EÜR);F 1610-23 Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent;F 1624 Verbindlichkeiten aus Lieferungen und Leistungen für Investitionen für § 4 Abs. 3 EStG;F 1625 Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent - Restlaufzeit bis 1 Jahr;F 1626 - Restlaufzeit 1 bis 5 Jahre;F 1628 - Restlaufzeit größer 5 Jahre"
   ],
   [
     "Verbindlichkeiten gegenüber verbundenen Unternehmen oder Forderungen gegen verbundene Unternehmen",
@@ -565,7 +565,7 @@
   ],
   [
     "Verbindlichkeiten aus der Annahme gezogener Wechsel und aus der Ausstellung eigener Wechsel",
-    "R 1660 -64"
+    "R 1660-64"
   ],
   [
     "Sonstige Verbindlichkeiten",
@@ -768,7 +768,7 @@
     "2490 Aufwendungen aus Verlustübernahme"
   ],
   [
-    "Auf Grund einer Gewinn­gemeinschaft, eines Gewinn- oder Teilgewinnabführungsvertrags abgeführte Gewinne oder Erträge aus Verlustübernahme",
+    "Auf Grund einer Gewinngemeinschaft, eines Gewinn- oder Teilgewinnabführungsvertrags abgeführte Gewinne oder Erträge aus Verlustübernahme",
     "2491 Abgeführte Gewinnanteile (Soll) / ausgeglichene Verlustanteile (Haben) bei atypisch stiller Beteiligung"
   ],
   [
@@ -780,7 +780,7 @@
     "2493 Abgeführte Gewinnanteile (Soll) / ausgeglichene Verlustanteile (Haben) bei typisch stiller Beteiligung § 8 GewStG"
   ],
   [
-    "Auf Grund einer Gewinn­gemeinschaft, eines Gewinn- oder Teilgewinnabführungsvertrags abgeführte Gewinne",
+    "Auf Grund einer Gewinngemeinschaft, eines Gewinn- oder Teilgewinnabführungsvertrags abgeführte Gewinne",
     "2494 Abgeführte Gewinne auf Grund eines Gewinn- oder Teilgewinnabführungsvertrags"
   ],
   [
@@ -873,7 +873,7 @@
   ],
   [
     "Umsatzerlöse",
-    "2750 Grundstückserträge;AM 2751 Erlöse aus Vermietung und Verpachtung, umsatzsteuerfrei § 4 Nr. 12 UStG;AM 2752 Erlöse aus Vermietung und Verpachtung 19 % USt;R 2753 -54"
+    "2750 Grundstückserträge;AM 2751 Erlöse aus Vermietung und Verpachtung, umsatzsteuerfrei § 4 Nr. 12 UStG;AM 2752 Erlöse aus Vermietung und Verpachtung 19 % USt;R 2753-54"
   ],
   [
     "Sonstige betriebliche Erträge",
@@ -961,19 +961,19 @@
   ],
   [
     "Aufwendungen für bezogene Leistungen",
-    "AV 3106 Fremdleistungen 19 % Vorsteuer;R 3107;AV 3108 Fremdleistungen 7 % Vorsteuer;3109 Fremdleistungen ohne Vorsteuer;AV 3110 Bauleistungen eines im Inland ansässigen Unternehmers 7 % Vorsteuer und 7 % Umsatzsteuer;R 3111 -12;AV 3113 Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers 7 % Vorsteuer und 7 % Umsatzsteuer;R 3114;AV 3115 Leistungen eines im Ausland ansässigen Unternehmers 7 % Vorsteuer und 7 % Umsatzsteuer;R 3116 -19;AV 3120 Bauleistungen eines im Inland ansässigen Unternehmers 19 % Vorsteuer und 19 % Umsatzsteuer;R 3122;AV 3123 Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers 19 % Vorsteuer und 19 % Umsatzsteuer;R 3124;AV 3125 Leistungen eines im Ausland ansässigen Unternehmers 19 % Vorsteuer und 19 % Umsatzsteuer;R 3127 -29;AV 3130 Bauleistungen eines im Inland ansässigen Unternehmers ohne Vorsteuer und 7 % Umsatzsteuer;R 3131 -32;AV 3133 Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers ohne Vorsteuer und 7 % Umsatzsteuer;R 3134;AV 3135 Leistungen eines im Ausland ansässigen Unternehmers ohne Vorsteuer und 7 % Umsatzsteuer;R 3136 -39;AV 3140 Bauleistungen eines im Inland ansässigen Unternehmers ohne Vorsteuer und 19 % Umsatzsteuer;R 3142;AV 3143 Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers ohne Vorsteuer und 19 % Umsatzsteuer;R 3144;AV 3145 Leistungen eines im Ausland ansässigen Unternehmers ohne Vorsteuer und 19 % Umsatzsteuer;R 3147 -49;S/AV 3150 Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird"
+    "AV 3106 Fremdleistungen 19 % Vorsteuer;R 3107;AV 3108 Fremdleistungen 7 % Vorsteuer;3109 Fremdleistungen ohne Vorsteuer;AV 3110 Bauleistungen eines im Inland ansässigen Unternehmers 7 % Vorsteuer und 7 % Umsatzsteuer;R 3111-12;AV 3113 Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers 7 % Vorsteuer und 7 % Umsatzsteuer;R 3114;AV 3115 Leistungen eines im Ausland ansässigen Unternehmers 7 % Vorsteuer und 7 % Umsatzsteuer;R 3116-19;AV 3120 Bauleistungen eines im Inland ansässigen Unternehmers 19 % Vorsteuer und 19 % Umsatzsteuer;R 3122;AV 3123 Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers 19 % Vorsteuer und 19 % Umsatzsteuer;R 3124;AV 3125 Leistungen eines im Ausland ansässigen Unternehmers 19 % Vorsteuer und 19 % Umsatzsteuer;R 3127-29;AV 3130 Bauleistungen eines im Inland ansässigen Unternehmers ohne Vorsteuer und 7 % Umsatzsteuer;R 3131-32;AV 3133 Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers ohne Vorsteuer und 7 % Umsatzsteuer;R 3134;AV 3135 Leistungen eines im Ausland ansässigen Unternehmers ohne Vorsteuer und 7 % Umsatzsteuer;R 3136-39;AV 3140 Bauleistungen eines im Inland ansässigen Unternehmers ohne Vorsteuer und 19 % Umsatzsteuer;R 3142;AV 3143 Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers ohne Vorsteuer und 19 % Umsatzsteuer;R 3144;AV 3145 Leistungen eines im Ausland ansässigen Unternehmers ohne Vorsteuer und 19 % Umsatzsteuer;R 3147-49;S/AV 3150 Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird"
   ],
   [
     "Aufwendungen für bezogene Leistungen",
-    "S/AV 3151 Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird 19 % Vorsteuer und 19 % Umsatzsteuer;R 3152;S/AV 3153 Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird ohne Vorsteuer aber mit Umsatzsteuer;S/AV 3154 Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird ohne Vorsteuer, mit 19 % Umsatzsteuer;R 3155;-59;3160 Leistungen nach § 13b UStG mit Vorsteuerabzug;3165 Leistungen nach § 13b UStG ohne Vorsteuerabzug;3170 Fremdleistungen (Miet- und Pachtzinsen bewegliche Wirtschaftsgüter);3175 Fremdleistungen (Miet- und Pachtzinsen unbewegliche Wirtschaftsgüter);3180 Fremdleistungen (Entgelte für Rechte und Lizenzen);3185 Fremdleistungen (Vergütungen für die Überlassung von Wirtschaftsgütern - mit Sonderbetriebseinnahme korrespondierend)"
+    "S/AV 3151 Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird 19 % Vorsteuer und 19 % Umsatzsteuer;R 3152;S/AV 3153 Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird ohne Vorsteuer aber mit Umsatzsteuer;S/AV 3154 Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird ohne Vorsteuer, mit 19 % Umsatzsteuer;R 3155-59;3160 Leistungen nach § 13b UStG mit Vorsteuerabzug;3165 Leistungen nach § 13b UStG ohne Vorsteuerabzug;3170 Fremdleistungen (Miet- und Pachtzinsen bewegliche Wirtschaftsgüter);3175 Fremdleistungen (Miet- und Pachtzinsen unbewegliche Wirtschaftsgüter);3180 Fremdleistungen (Entgelte für Rechte und Lizenzen);3185 Fremdleistungen (Vergütungen für die Überlassung von Wirtschaftsgütern - mit Sonderbetriebseinnahme korrespondierend)"
   ],
   [
     "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
-    "AV 3300 Wareneingang 7 % Vorsteuer-09;R 3310-46;AV 3347 Wareneingang 7 % Vorsteuer;R 3348;3349 Wareneingang ohne Vorsteuerabzug;AV 3400 Wareneingang 19 % Vorsteuer-09;R 3410-17;AV 3418 Wareneingang 19 % Vorsteuer;R 3419;AV 3420 Innergemeinschaftlicher Erwerb 7 % -24 Vorsteuer und 7 % Umsatzsteuer;AV 3425 Innergemeinschaftlicher Erwerb-29 19 % Vorsteuer und 19 % Umsatzsteuer;AV 3430 Innergemeinschaftlicher Erwerb ohne Vorsteuer und 7 % Umsatzsteuer;R 3431-34;AV 3435 Innergemeinschaftlicher Erwerb ohne Vorsteuer und 19 % Umsatzsteuer"
+    "AV 3300-09 Wareneingang 7 % Vorsteuer;R 3310-46;AV 3347 Wareneingang 7 % Vorsteuer;R 3348;3349 Wareneingang ohne Vorsteuerabzug;AV 3400-09 Wareneingang 19 % Vorsteuer;R 3410-17;AV 3418 Wareneingang 19 % Vorsteuer;R 3419;AV 3420-24 Innergemeinschaftlicher Erwerb 7 % Vorsteuer und 7 % Umsatzsteuer;AV 3425-29 Innergemeinschaftlicher Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer;AV 3430 Innergemeinschaftlicher Erwerb ohne Vorsteuer und 7 % Umsatzsteuer;R 3431-34;AV 3435 Innergemeinschaftlicher Erwerb ohne Vorsteuer und 19 % Umsatzsteuer"
   ],
   [
     "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
-    "R 3436 -39; AV 3440 Innergemeinschaftlicher Erwerb von Neufahrzeugen von Lieferanten ohne USt-Id-Nr. 19 % Vorsteuer und 19 % Umsatzsteuer; R 3441 -49; R 3500 -04; AV 3505 Wareneingang 5,5 % Vorsteuer -09; R 3510 -39; AV 3540 Wareneingang zum Durchschnittssatz nach § 24 UStG 9,0 % / 7,8 % Vorsteuer; AV 3550 Steuerfreier innergemeinschaftlicher Erwerb; 3551 Wareneingang im Drittland steuerbar; 3552 Erwerb 1. Abnehmer innerhalb eines Dreiecksgeschäftes; AV 3553 Erwerb Waren als letzter Abnehmer innerhalb Dreiecksgeschäft 19 % Vorsteuer und 19 % Umsatzsteuer; R 3554 -57; 3558 Wareneingang im anderen EU-Land steuerbar; 3559 Steuerfreie Einfuhren; AV 3560 Waren aus einem Umsatzsteuerlager, § 13a UStG 7 % Vorsteuer und 7 % Umsatzsteuer; R 3561 -64; AV 3565 Waren aus einem Umsatzsteuerlager, § 13a UStG 19 % Vorsteuer und 19 % Umsatzsteuer; R 3566 -69; 3600 Nicht abziehbare Vorsteuer -09; 3610 Nicht abziehbare Vorsteuer 7 % -19; R 3620 -29; R 3650 -59; 3660 Nicht abziehbare Vorsteuer 19 % -69; 3700 Nachlässe; 3701 Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe; AV 3710 Nachlässe 7 % Vorsteuer -11; R 3712 -13; AV 3714 Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe 7 % Vorsteuer; AV 3715 Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe 19 % Vorsteuer; R 3716; AV 3717 Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe, innergemeinschaftlicher Erwerb 7 % Vorsteuer und 7 % Umsatzsteuer; AV 3718 Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe, innergemeinschaftlicher Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer"
+    "R 3436-39; AV 3440 Innergemeinschaftlicher Erwerb von Neufahrzeugen von Lieferanten ohne USt-Id-Nr. 19 % Vorsteuer und 19 % Umsatzsteuer; R 3441-49; R 3500-04; AV 3505-09 Wareneingang 5,5 % Vorsteuer; R 3510-39; AV 3540 Wareneingang zum Durchschnittssatz nach § 24 UStG 9,0 % / 7,8 % Vorsteuer; AV 3550 Steuerfreier innergemeinschaftlicher Erwerb; 3551 Wareneingang im Drittland steuerbar; 3552 Erwerb 1. Abnehmer innerhalb eines Dreiecksgeschäftes; AV 3553 Erwerb Waren als letzter Abnehmer innerhalb Dreiecksgeschäft 19 % Vorsteuer und 19 % Umsatzsteuer; R 3554-57; 3558 Wareneingang im anderen EU-Land steuerbar; 3559 Steuerfreie Einfuhren; AV 3560 Waren aus einem Umsatzsteuerlager, § 13a UStG 7 % Vorsteuer und 7 % Umsatzsteuer; R 3561-64; AV 3565 Waren aus einem Umsatzsteuerlager, § 13a UStG 19 % Vorsteuer und 19 % Umsatzsteuer; R 3566-69; 3600-09 Nicht abziehbare Vorsteuer; 3610-19 Nicht abziehbare Vorsteuer 7 %; R 3620-29; R 3650-59; 3660-69 Nicht abziehbare Vorsteuer 19 %; 3700 Nachlässe; 3701 Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe; AV 3710-11 Nachlässe 7 % Vorsteuer; R 3712-13; AV 3714 Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe 7 % Vorsteuer; AV 3715 Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe 19 % Vorsteuer; R 3716; AV 3717 Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe, innergemeinschaftlicher Erwerb 7 % Vorsteuer und 7 % Umsatzsteuer; AV 3718 Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe, innergemeinschaftlicher Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer"
   ],
   [
     "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
@@ -981,7 +981,7 @@
   ],
   [
     "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
-    "3762-68;3769 Erhaltene Boni;3770 Erhaltene Rabatte;AV 3780 Erhaltene Rabatte 7 % Vorsteuer-81;3782;3783 Erhaltene Rabatte aus Einkauf Roh-, Hilfs- und Betriebsstoffe;AV 3784 Erhaltene Rabatte aus Einkauf Roh-, Hilfs- und Betriebsstoffe 7 % Vorsteuer;AV 3785 Erhaltene Rabatte aus Einkauf Roh-, Hilfs- und Betriebsstoffe 19 % Vorsteuer;3786;S/AV 3787 Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe 9,0 % Vorsteuer;3788-89;AV 3790 Erhaltene Rabatte 19 % Vorsteuer-91;AV 3792 Erhaltene Skonti aus Erwerb Roh-, Hilfs- und Betriebsstoffe als letzter Abnehmer innerhalb Dreiecksgeschäft 19 % Vorsteuer und 19 % Umsatzsteuer;AV 3793 Erhaltene Skonti aus Erwerb Waren als letzter Abnehmer innerhalb Dreiecksgeschäft 19 % Vorsteuer und 19 % Umsatzsteuer;S/AV 3794 Erhaltene Skonti 5,5 % Vorsteuer;S/AV 3795 Erhaltene Skonti 9,0 % Vorsteuer;3796-97;S/AV 3798 Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe 5,5 % Vorsteuer;3799;3800 Bezugsnebenkosten;3830 Leergut;3850 Zölle und Einfuhrabgaben;3950 Bestandsveränderungen Waren-54;3955 Bestandsveränderungen Roh-, Hilfs- und Betriebsstoffe;3960 Bestandsveränderungen Roh-, Hilfs- und Betriebsstoffe sowie bezogene Waren"
+    "3762-68;3769 Erhaltene Boni;3770 Erhaltene Rabatte;AV 3780-81 Erhaltene Rabatte 7 % Vorsteuer;3782;3783 Erhaltene Rabatte aus Einkauf Roh-, Hilfs- und Betriebsstoffe;AV 3784 Erhaltene Rabatte aus Einkauf Roh-, Hilfs- und Betriebsstoffe 7 % Vorsteuer;AV 3785 Erhaltene Rabatte aus Einkauf Roh-, Hilfs- und Betriebsstoffe 19 % Vorsteuer;3786;S/AV 3787 Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe 9,0 % Vorsteuer;3788-89;AV 3790-91 Erhaltene Rabatte 19 % Vorsteuer;AV 3792 Erhaltene Skonti aus Erwerb Roh-, Hilfs- und Betriebsstoffe als letzter Abnehmer innerhalb Dreiecksgeschäft 19 % Vorsteuer und 19 % Umsatzsteuer;AV 3793 Erhaltene Skonti aus Erwerb Waren als letzter Abnehmer innerhalb Dreiecksgeschäft 19 % Vorsteuer und 19 % Umsatzsteuer;S/AV 3794 Erhaltene Skonti 5,5 % Vorsteuer;S/AV 3795 Erhaltene Skonti 9,0 % Vorsteuer;3796-97;S/AV 3798 Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe 5,5 % Vorsteuer;3799;3800 Bezugsnebenkosten;3830 Leergut;3850 Zölle und Einfuhrabgaben;3950-54 Bestandsveränderungen Waren;3955 Bestandsveränderungen Roh-, Hilfs- und Betriebsstoffe;3960 Bestandsveränderungen Roh-, Hilfs- und Betriebsstoffe sowie bezogene Waren"
   ],
   [
     "",
@@ -989,11 +989,11 @@
   ],
   [
     "Roh-, Hilfs- und Betriebsstoffe",
-    "3970 Roh-, Hilfs- und Betriebsstoffe -79 (Bestand)"
+    "3970-79 Roh-, Hilfs- und Betriebsstoffe (Bestand)"
   ],
   [
     "Fertige Erzeugnisse und Waren",
-    "3980 Waren (Bestand) -89"
+    "3980-89 Waren (Bestand)"
   ],
   [
     "",
@@ -1001,7 +1001,7 @@
   ],
   [
     "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
-    "3990 Verrechnete Stoffkosten -99 (Gegenkonto zu 4000-99)"
+    "3990-99 Verrechnete Stoffkosten (Gegenkonto zu 4000-99)"
   ],
   [
     "",
@@ -1013,7 +1013,7 @@
   ],
   [
     "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
-    "4000 Material- und Stoffverbrauch -99"
+    "4000-99 Material- und Stoffverbrauch"
   ],
   [
     "",
@@ -1073,7 +1073,7 @@
   ],
   [
     "Sonstige betriebliche Aufwendungen",
-    "4360 Versicherungen;4366 Versicherungen für Gebäude;4370 Netto-Prämie für Rückdeckung künftiger Versorgungsleistungen;4380 Beiträge;4390 Sonstige Abgaben;4396 Steuerlich abzugsfähige Verspätungszuschläge und Zwangsgelder;4397 Steuerlich nicht abzugsfähige Verspätungszuschläge und Zwangsgelder;4400 (zur freien Verfügung)-99;4500 Fahrzeugkosten"
+    "4360 Versicherungen;4366 Versicherungen für Gebäude;4370 Netto-Prämie für Rückdeckung künftiger Versorgungsleistungen;4380 Beiträge;4390 Sonstige Abgaben;4396 Steuerlich abzugsfähige Verspätungszuschläge und Zwangsgelder;4397 Steuerlich nicht abzugsfähige Verspätungszuschläge und Zwangsgelder;4400-99 (zur freien Verfügung);4500 Fahrzeugkosten"
   ],
   [
     "Sonstige Steuern",
@@ -1205,7 +1205,7 @@
   ],
   [
     "Umsatzerlöse",
-    "8000 Umsatzerlöse; -99 (Zur freien Verfügung); AM 8100 Steuerfreie Umsätze; -04 § 4 Nr. 8 ff. UStG; AM 8105 Steuerfreie Umsätze nach § 4 Nr. 12 UStG (Vermietung und Verpachtung); AM 8110 Sonstige steuerfreie Umsätze Inland; AM 8120 Steuerfreie Umsätze nach § 4 Nr. 1a UStG; AM 8125 Steuerfreie innergemeinschaftliche Lieferungen nach § 4 Nr. 1b UStG; R 8128 Lieferungen des ersten Abnehmers bei innergemeinschaftlichen Dreiecksgeschäften § 25b Abs. 2 UStG; AM 8135 Steuerfreie innergemeinschaftliche Lieferungen von Neufahrzeugen an Abnehmer ohne USt-Id.-Nr.; AM 8140 Steuerfreie Umsätze Offshore usw.; AM 8150 Sonstige steuerfreie Umsätze (z. B. § 4 Nr. 2 bis 7 UStG); AM 8160 Steuerfreie Umsätze ohne Vorsteuerabzug zum Gesamtumsatz gehörend, § 4 UStG; AM 8165 Steuerfreie Umsätze ohne Vorsteuerabzug zum Gesamtumsatz gehörend; 8190 Erlöse, die mit den Durchschnittssätzen des § 24 UStG versteuert werden; AM 8191 Umsatzerlöse nach §§ 25 und 25a UStG 19 % USt; AM 8192 Steuerfreie Erlöse Kleinunternehmer nach § 19 Abs. 1 UStG; 8193 Umsatzerlöse nach §§ 25 und 25a UStG ohne USt; AM 8194 Umsatzerlöse aus Reiseleistungen § 25 Abs. 2 UStG, steuerfrei; 8195 Erlöse als Kleinunternehmer nach § 19 Abs. 1 UStG a. F.; AM 8196 Erlöse aus Geldspielautomaten 19 % USt; R 8197; -98; 8200 Erlöse; AM 8290 Erlöse 0 % USt; AM 8300 Erlöse 7 % USt; -09; AM 8310 Erlöse aus im Inland steuerpflich"
+    "8000-99 Umsatzerlöse (Zur freien Verfügung); AM 8100-04 Steuerfreie Umsätze § 4 Nr. 8 ff. UStG; AM 8105 Steuerfreie Umsätze nach § 4 Nr. 12 UStG (Vermietung und Verpachtung); AM 8110 Sonstige steuerfreie Umsätze Inland; AM 8120 Steuerfreie Umsätze nach § 4 Nr. 1a UStG; AM 8125 Steuerfreie innergemeinschaftliche Lieferungen nach § 4 Nr. 1b UStG; R 8128 Lieferungen des ersten Abnehmers bei innergemeinschaftlichen Dreiecksgeschäften § 25b Abs. 2 UStG; AM 8135 Steuerfreie innergemeinschaftliche Lieferungen von Neufahrzeugen an Abnehmer ohne USt-Id.-Nr.; AM 8140 Steuerfreie Umsätze Offshore usw.; AM 8150 Sonstige steuerfreie Umsätze (z. B. § 4 Nr. 2 bis 7 UStG); AM 8160 Steuerfreie Umsätze ohne Vorsteuerabzug zum Gesamtumsatz gehörend, § 4 UStG; AM 8165 Steuerfreie Umsätze ohne Vorsteuerabzug zum Gesamtumsatz gehörend; 8190 Erlöse, die mit den Durchschnittssätzen des § 24 UStG versteuert werden; AM 8191 Umsatzerlöse nach §§ 25 und 25a UStG 19 % USt; AM 8192 Steuerfreie Erlöse Kleinunternehmer nach § 19 Abs. 1 UStG; 8193 Umsatzerlöse nach §§ 25 und 25a UStG ohne USt; AM 8194 Umsatzerlöse aus Reiseleistungen § 25 Abs. 2 UStG, steuerfrei; 8195 Erlöse als Kleinunternehmer nach § 19 Abs. 1 UStG a. F.; AM 8196 Erlöse aus Geldspielautomaten 19 % USt; R 8197-98; 8200 Erlöse; AM 8290 Erlöse 0 % USt; AM 8300-09 Erlöse 7 % USt; AM 8310-14 Erlöse aus im Inland steuerpflichtigen EU-Lieferungen 7 % USt"
   ],
   [
     "Umsatzerlöse",
@@ -1213,15 +1213,15 @@
   ],
   [
     "",
-    "Konten für die Verbuchung von Sonderbetriebseinnahmen 8500 Sonderbetriebseinnahmen, Tätigkeitsvergütung; 8501 Sonderbetriebseinnahmen, Miet-/Pachteinnahmen; 8502 Sonderbetriebseinnahmen, Zinseinnahmen; 8503 Sonderbetriebseinnahmen, Haftungsvergütung; 8504 Sonderbetriebseinnahmen, Pensionszahlungen; 8505 Sonderbetriebseinnahmen, sonstige Sonderbetriebseinnahmen"
+    "Konten für die Verbuchung von Sonderbetriebseinnahmen; 8500 Sonderbetriebseinnahmen, Tätigkeitsvergütung; 8501 Sonderbetriebseinnahmen, Miet-/Pachteinnahmen; 8502 Sonderbetriebseinnahmen, Zinseinnahmen; 8503 Sonderbetriebseinnahmen, Haftungsvergütung; 8504 Sonderbetriebseinnahmen, Pensionszahlungen; 8505 Sonderbetriebseinnahmen, sonstige Sonderbetriebseinnahmen"
   ],
   [
     "Umsatzerlöse",
-    "8510 Provisionsumsätze;R 8511;-13;AM 8514 Provisionsumsätze steuerfrei § 4 Nr. 8 ff. UStG;AM 8515 Provisionsumsätze steuerfrei § 4 Nr. 5 UStG;R 8516;-18;AM 8519 Provisionsumsätze 19 % USt;8520 Erlöse Abfallverwertung;8540 Erlöse Leergut"
+    "8510 Provisionsumsätze;R 8511-13;AM 8514 Provisionsumsätze steuerfrei § 4 Nr. 8 ff. UStG;AM 8515 Provisionsumsätze steuerfrei § 4 Nr. 5 UStG;R 8516-18;AM 8519 Provisionsumsätze 19 % USt;8520 Erlöse Abfallverwertung;8540 Erlöse Leergut"
   ],
   [
     "Umsatzerlöse",
-    "8570 Sonstige Erträge aus Provisionen, Lizenzen und Patenten;R 8571 -73;AM 8574 Sonstige Erträge aus Provisionen, Lizenzen und Patenten, steuerfrei § 4 Nr. 8f. UStG;AM 8575 Sonstige Erträge aus Provisionen, Lizenzen und Patenten, steuerfrei § 4 Nr. 5 UStG;AM 8576 Sonstige Erträge aus Provisionen, Lizenzen und Patenten 7 % USt;R 8577 -78;AM 8579 Sonstige Erträge aus Provisionen, Lizenzen und Patenten 19 % USt;8580 Statistisches Konto Erlöse zum allgemeinen Umsatzsteuersatz (EÜR);8581 Statistisches Konto Erlöse zum ermäßigten Umsatzsteuersatz (EÜR);8582 Statistisches Konto Erlöse steuerfrei und nicht steuerbar (EÜR);8589 Gegenkonto 8580-8582 bei Aufteilung der Erlöse nach Steuersätzen (EÜR)"
+    "8570 Sonstige Erträge aus Provisionen, Lizenzen und Patenten;R 8571-73;AM 8574 Sonstige Erträge aus Provisionen, Lizenzen und Patenten, steuerfrei § 4 Nr. 8f. UStG;AM 8575 Sonstige Erträge aus Provisionen, Lizenzen und Patenten, steuerfrei § 4 Nr. 5 UStG;AM 8576 Sonstige Erträge aus Provisionen, Lizenzen und Patenten 7 % USt;R 8577-78;AM 8579 Sonstige Erträge aus Provisionen, Lizenzen und Patenten 19 % USt;8580 Statistisches Konto Erlöse zum allgemeinen Umsatzsteuersatz (EÜR);8581 Statistisches Konto Erlöse zum ermäßigten Umsatzsteuersatz (EÜR);8582 Statistisches Konto Erlöse steuerfrei und nicht steuerbar (EÜR);8589 Gegenkonto 8580-8582 bei Aufteilung der Erlöse nach Steuersätzen (EÜR)"
   ],
   [
     "Sonstige betriebliche Erträge",
@@ -1233,7 +1233,7 @@
   ],
   [
     "Sonstige betriebliche Erträge",
-    "AM 8609 Sonstige Erträge betrieblich und regelmäßig, steuerfrei § 4 Nr. 8 ff. UStG;8610 Verrechnete sonstige Sachbezüge;AM 8611 Verrechnete sonstige Sachbezüge aus Fahrzeug-Gestellung 19 % USt;R 8612;AM 8613 Verrechnete sonstige Sachbezüge 19 % USt;8614 Verrechnete sonstige Sachbezüge ohne Umsatzsteuer;AM 8625 Sonstige betriebliche Erträge, steuerfrei z. B. § 4 Nr. 2 bis 7 UStG;-29;AM 8630 Sonstige Erträge betrieblich und regelmäßig 7 % USt;-34;R 8635;-39;AM 8640 Sonstige Erträge betrieblich und regelmäßig 19 % USt;-44;R 8645;-48;AM 8649 Sonstige Erträge betrieblich und regelmäßig 16 % USt"
+    "AM 8609 Sonstige Erträge betrieblich und regelmäßig, steuerfrei § 4 Nr. 8 ff. UStG;8610 Verrechnete sonstige Sachbezüge;AM 8611 Verrechnete sonstige Sachbezüge aus Fahrzeug-Gestellung 19 % USt;R 8612;AM 8613 Verrechnete sonstige Sachbezüge 19 % USt;8614 Verrechnete sonstige Sachbezüge ohne Umsatzsteuer;AM 8625-29 Sonstige betriebliche Erträge, steuerfrei z. B. § 4 Nr. 2 bis 7 UStG;AM 8630-34 Sonstige Erträge betrieblich und regelmäßig 7 % USt;R 8635-39;AM 8640-44 Sonstige Erträge betrieblich und regelmäßig 19 % USt;R 8645-48;AM 8649 Sonstige Erträge betrieblich und regelmäßig 16 % USt"
   ],
   [
     "Sonstige Zinsen und ähnliche Erträge",
@@ -1241,11 +1241,11 @@
   ],
   [
     "Umsatzerlöse",
-    "8700 Erlösschmälerungen;AM 8701 Erlösschmälerungen für steuerfreie Umsätze nach § 4 Nr. 8 ff. UStG;AM 8702 Erlösschmälerungen für steuerfreie Umsätze nach § 4 Nr. 2 bis 7 UStG;AM 8703 Erlösschmälerungen für sonstige steuerfreie Umsätze ohne Vorsteuerabzug;AM 8704 Erlösschmälerungen für sonstige steuerfreie Umsätze mit Vorsteuerabzug;AM 8705 Erlösschmälerungen aus steuerfreien Umsätzen § 4 Nr. 1a UStG;AM 8706 Erlösschmälerungen für steuerfreie innergemeinschaftliche Dreiecksgeschäfte nach § 25b Abs. 2 und 4 UStG;AM 8710 Erlösschmälerungen 7 % USt;R 8711;-11;R 8712;-18;AM 8719 Erlösschmälerungen 0 % USt;AM 8720 Erlösschmälerungen 19 % USt;R 8721;-21;R 8722;-23;AM 8724 Erlösschmälerungen aus steuerfreien innergemeinschaftlichen Lieferungen;AM 8725 Erlösschmälerungen aus im Inland steuerpflichtigen EU-Lieferungen 7 % USt;AM 8726 Erlösschmälerungen aus im Inland steuerpflichtigen EU-Lieferungen 19 % USt;8727 Erlösschmälerungen aus im anderen EU-Land steuerpflichtigen Lieferungen;R 8728;-29;S/AM 8730 Gewährte Skonti;S/AM 8731 Gewährte Skonti 7 % USt;R 8732;-33;S/AM 8734 Gewährte Skonti 0 % USt;R 8735;S/AM 8736 Gewährte Skonti 19 % USt;R 8737;S/AM 8738 Gewährte Skonti aus Lieferungen von Mobilfunkgeräten etc., für die der Leistungsempfänger die Umsatzsteuer nach § 13b Abs. 2 Nr. 10 UStG schuldet;S/AM 8741 Gewährte Skonti aus Leistungen, für die der Leistungsempfänger die Umsatzsteuer nach § 13b UStG schuldet;S/AM 8742 Gewährte Skonti aus Erlösen aus im anderen EU-Land steuerpflichtigen sonstigen Leistungen, für die der Leistungsempfänger die Umsatzsteuer schuldet;S/AM 8743 Gewährte Skonti aus steuerfreien innergemeinschaftlichen Lieferungen § 4 Nr. 1b UStG;R 8744;S/AM 8745 Gewährte Skonti aus im Inland"
+    "8700 Erlösschmälerungen;AM 8701 Erlösschmälerungen für steuerfreie Umsätze nach § 4 Nr. 8 ff. UStG;AM 8702 Erlösschmälerungen für steuerfreie Umsätze nach § 4 Nr. 2 bis 7 UStG;AM 8703 Erlösschmälerungen für sonstige steuerfreie Umsätze ohne Vorsteuerabzug;AM 8704 Erlösschmälerungen für sonstige steuerfreie Umsätze mit Vorsteuerabzug;AM 8705 Erlösschmälerungen aus steuerfreien Umsätzen § 4 Nr. 1a UStG;AM 8706 Erlösschmälerungen für steuerfreie innergemeinschaftliche Dreiecksgeschäfte nach § 25b Abs. 2 und 4 UStG;AM 8710 Erlösschmälerungen 7 % USt;R 8711-11;R 8712-18;AM 8719 Erlösschmälerungen 0 % USt;AM 8720 Erlösschmälerungen 19 % USt;R 8721-21;R 8722-23;AM 8724 Erlösschmälerungen aus steuerfreien innergemeinschaftlichen Lieferungen;AM 8725 Erlösschmälerungen aus im Inland steuerpflichtigen EU-Lieferungen 7 % USt;AM 8726 Erlösschmälerungen aus im Inland steuerpflichtigen EU-Lieferungen 19 % USt;8727 Erlösschmälerungen aus im anderen EU-Land steuerpflichtigen Lieferungen;R 8728-29;S/AM 8730 Gewährte Skonti;S/AM 8731 Gewährte Skonti 7 % USt;R 8732-33;S/AM 8734 Gewährte Skonti 0 % USt;R 8735;S/AM 8736 Gewährte Skonti 19 % USt;R 8737;S/AM 8738 Gewährte Skonti aus Lieferungen von Mobilfunkgeräten etc., für die der Leistungsempfänger die Umsatzsteuer nach § 13b Abs. 2 Nr. 10 UStG schuldet;S/AM 8741 Gewährte Skonti aus Leistungen, für die der Leistungsempfänger die Umsatzsteuer nach § 13b UStG schuldet;S/AM 8742 Gewährte Skonti aus Erlösen aus im anderen EU-Land steuerpflichtigen sonstigen Leistungen, für die der Leistungsempfänger die Umsatzsteuer schuldet;S/AM 8743 Gewährte Skonti aus steuerfreien innergemeinschaftlichen Lieferungen § 4 Nr. 1b UStG;R 8744;S/AM 8745 Gewährte Skonti aus im Inland"
   ],
   [
     "Umsatzerlöse",
-    "S/AM 8746 Gewährte Skonti aus im Inland steuerpflichtigen EU-Lieferungen 7 % USt;R 8747;S/AM 8748 Gewährte Skonti aus im Inland steuerpflichtigen EU-Lieferungen 19 % USt;R 8749;AM 8750 Gewährte Boni 7 % USt;-51;R 8752;-59;AM 8760 Gewährte Boni 19 % USt;-61;R 8762;-68;8769 Gewährte Boni;8770 Gewährte Rabatte;AM 8780 Gewährte Rabatte 7 % USt;-81;R 8782;-89;AM 8790 Gewährte Rabatte 19 % USt;-91;R 8792;-99"
+    "S/AM 8746 Gewährte Skonti aus im Inland steuerpflichtigen EU-Lieferungen 7 % USt;R 8747;S/AM 8748 Gewährte Skonti aus im Inland steuerpflichtigen EU-Lieferungen 19 % USt;R 8749;AM 8750-51 Gewährte Boni 7 % USt;R 8752-59;AM 8760-61 Gewährte Boni 19 % USt;R 8762-68;8769 Gewährte Boni;8770 Gewährte Rabatte;AM 8780-81 Gewährte Rabatte 7 % USt;R 8782-89;AM 8790-91 Gewährte Rabatte 19 % USt;R 8792-99"
   ],
   [
     "Sonstige betriebliche Aufwendungen",
@@ -1293,11 +1293,11 @@
   ],
   [
     "",
-    "KU 9000-9998 Vortragkonten S 9000 Saldenvorträge, Sachkonten; F 9001 Saldenvorträge, Sachkonten-07; S 9008 Saldenvorträge, Debitoren; S 9009 Saldenvorträge, Kreditoren; F 9050 Offene Posten aus 2020; F 9051 Offene Posten aus 2021; F 9052 Offene Posten aus 2022; F 9053 Offene Posten aus 2023; F 9054 Offene Posten aus 2024; F 9055 Offene Posten aus 2025; R 9056-69; F 9070 Offene Posten aus 2000; F 9071 Offene Posten aus 2001; F 9072 Offene Posten aus 2002; F 9073 Offene Posten aus 2003; F 9074 Offene Posten aus 2004; F 9075 Offene Posten aus 2005; F 9076 Offene Posten aus 2006; F 9077 Offene Posten aus 2007; F 9078 Offene Posten aus 2008; F 9079 Offene Posten aus 2009; F 9080 Offene Posten aus 2010; F 9081 Offene Posten aus 2011; F 9082 Offene Posten aus 2012; F 9083 Offene Posten aus 2013; F 9084 Offene Posten aus 2014; F 9085 Offene Posten aus 2015; F 9086 Offene Posten aus 2016; F 9087 Offene Posten aus 2017; F 9088 Offene Posten aus 2018; F 9089 Offene Posten aus 2019; F 9090 Summenvortragskonto; R 9091-9100 Statistische Konten für Betriebswirtschaftliche Auswertungen (BWA) F 9101 Verkaufstage; F 9102 Anzahl der Barkunden; F 9103 Beschäftigte Personen; F 9104 Unbezahlte Personen; F 9105 Verkaufskräfte; F 9106 Geschäftsraum qm; F 9107 Verkaufsraum qm; F 9116 Anzahl Rechnungen; F 9117 Anzahl Kreditkunden monatlich; F 9118 Anzahl Kreditkunden aufgelaufen; 9120 Erweiterungsinvestitionen; F 9130-31; 9135 Auftragseingang im Geschäftsjahr; 9140 Auftragsbestand Variables Kapital Teilhafter F 9141 Variables Kapital TH; F 9142 Variables Kapital - Anteil Teilhafter Sammelposten anrechenbare Privatsteuern 9143 Privatsteuern Kapitalertragsteuer (Sammelposten); 9144 Privatsteuern Solidaritätszuschlag (Sammelposten)"
+    "KU 9000-9998 Vortragkonten; S 9000 Saldenvorträge, Sachkonten; F 9001-07 Saldenvorträge, Sachkonten; S 9008 Saldenvorträge, Debitoren; S 9009 Saldenvorträge, Kreditoren; F 9050 Offene Posten aus 2020; F 9051 Offene Posten aus 2021; F 9052 Offene Posten aus 2022; F 9053 Offene Posten aus 2023; F 9054 Offene Posten aus 2024; F 9055 Offene Posten aus 2025; R 9056-69; F 9070 Offene Posten aus 2000; F 9071 Offene Posten aus 2001; F 9072 Offene Posten aus 2002; F 9073 Offene Posten aus 2003; F 9074 Offene Posten aus 2004; F 9075 Offene Posten aus 2005; F 9076 Offene Posten aus 2006; F 9077 Offene Posten aus 2007; F 9078 Offene Posten aus 2008; F 9079 Offene Posten aus 2009; F 9080 Offene Posten aus 2010; F 9081 Offene Posten aus 2011; F 9082 Offene Posten aus 2012; F 9083 Offene Posten aus 2013; F 9084 Offene Posten aus 2014; F 9085 Offene Posten aus 2015; F 9086 Offene Posten aus 2016; F 9087 Offene Posten aus 2017; F 9088 Offene Posten aus 2018; F 9089 Offene Posten aus 2019; F 9090 Summenvortragskonto; R 9091-9100 Statistische Konten für Betriebswirtschaftliche Auswertungen (BWA); F 9101 Verkaufstage; F 9102 Anzahl der Barkunden; F 9103 Beschäftigte Personen; F 9104 Unbezahlte Personen; F 9105 Verkaufskräfte; F 9106 Geschäftsraum qm; F 9107 Verkaufsraum qm; F 9116 Anzahl Rechnungen; F 9117 Anzahl Kreditkunden monatlich; F 9118 Anzahl Kreditkunden aufgelaufen; 9120 Erweiterungsinvestitionen; F 9130-31; 9135 Auftragseingang im Geschäftsjahr; 9140 Auftragsbestand Variables Kapital Teilhafter; F 9141 Variables Kapital TH; F 9142 Variables Kapital - Anteil Teilhafter Sammelposten anrechenbare Privatsteuern; 9143 Privatsteuern Kapitalertragsteuer (Sammelposten); 9144 Privatsteuern Solidaritätszuschlag (Sammelposten)"
   ],
   [
     "",
-    "9145 Privatsteuern Kirchensteuer (Sammelposten) Kapitaländerungen durch Übertragung einer § 6b EStG Rücklage F 9146 Variables Kapital Vollhafter - Übertragung einer § 6b EStG-Rücklage F 9147 Variables Kapital Teilhafter - Übertragung einer § 6b EStG-Rücklage R 9148-49 Andere Kapitalkontenanpassungen: Vollhafter F 9150 Festkapital - andere Kapitalkontenanpassungen VH F 9151 Variables Kapital - andere Kapitalkontenanpassungen VH F 9152 Verlust-/Vertragskonto - andere Kapitalkontenanpassungen VH F 9153 Kapitalkonto III - andere Kapitalkontenanpassungen VH F 9154 Ausstehende Einlagen auf das Komplementär-Kapital, nicht eingefordert - andere Kapitalkontenanpassungen VH F 9155 Verrechnungskonto für Einzahlungsverpflichtungen - andere Kapitalkontenanpassungen VH R 9156 Anrechenbare Privatsteuern Vollhafter, Eigenkapital F 9157 Privatsteuern Kapitalertragsteuer (VH) F 9158 Privatsteuern Solidaritätszuschlag (VH) F 9159 Privatsteuern Kirchensteuer (VH) Andere Kapitalkontenanpassungen: Teilhafter F 9160 Kommandit-Kapital - andere Kapitalkontenanpassungen TH F 9161 Variables Kapital - andere Kapitalkontenanpassungen TH F 9162 Verlustausgleichskonto - andere Kapitalkontenanpassungen TH F 9163 Kapitalkonto III - andere Kapitalkontenanpassungen TH F 9164 Ausstehende Einlagen auf das Kommandit-Kapital, nicht eingefordert - andere Kapitalkontenanpassungen TH F 9165 Verrechnungskonto für Einzahlungsverpflichtungen - andere Kapitalkontenanpassungen TH R 9166 Anrechenbare Privatsteuern Teilhafter, Eigenkapital F 9167 Privatsteuern Kapitalertragsteuer (TH), EK F 9168 Privatsteuern Solidaritätszuschlag (TH), EK F 9169 Privatsteuern Kirchensteuer (TH), EK Umbuchungen auf andere Kapitalkonten: Vollhafter F 9170 Festkapital - Umbuchungen VH F 9171 Variables Kapital - Umbuchungen VH F 9172 Verlust-/Vertragskonto - Umbuchungen VH"
+    "9145 Privatsteuern Kirchensteuer (Sammelposten) Kapitaländerungen durch Übertragung einer § 6b EStG Rücklage F 9146 Variables Kapital Vollhafter - Übertragung einer § 6b EStG-Rücklage; F 9147 Variables Kapital Teilhafter - Übertragung einer § 6b EStG-Rücklage; R 9148-49 Andere Kapitalkontenanpassungen: Vollhafter; F 9150 Festkapital - andere Kapitalkontenanpassungen VH; F 9151 Variables Kapital - andere Kapitalkontenanpassungen VH; F 9152 Verlust-/Vertragskonto - andere Kapitalkontenanpassungen VH F; 9153 Kapitalkonto III - andere Kapitalkontenanpassungen VH F; 9154 Ausstehende Einlagen auf das Komplementär-Kapital, nicht eingefordert - andere Kapitalkontenanpassungen VH; F 9155 Verrechnungskonto für Einzahlungsverpflichtungen - andere Kapitalkontenanpassungen VH; R 9156 Anrechenbare Privatsteuern Vollhafter, Eigenkapital; F 9157 Privatsteuern Kapitalertragsteuer (VH); F 9158 Privatsteuern Solidaritätszuschlag (VH); F 9159 Privatsteuern Kirchensteuer (VH) Andere Kapitalkontenanpassungen: Teilhafter; F 9160 Kommandit-Kapital - andere Kapitalkontenanpassungen TH; F 9161 Variables Kapital - andere Kapitalkontenanpassungen TH; F 9162 Verlustausgleichskonto - andere Kapitalkontenanpassungen TH; F 9163 Kapitalkonto III - andere Kapitalkontenanpassungen TH; F 9164 Ausstehende Einlagen auf das Kommandit-Kapital, nicht eingefordert - andere Kapitalkontenanpassungen TH; F 9165 Verrechnungskonto für Einzahlungsverpflichtungen - andere Kapitalkontenanpassungen TH; R 9166 Anrechenbare Privatsteuern Teilhafter, Eigenkapital; F 9167 Privatsteuern Kapitalertragsteuer (TH), EK; F 9168 Privatsteuern Solidaritätszuschlag (TH), EK; F 9169 Privatsteuern Kirchensteuer (TH), EK Umbuchungen auf andere Kapitalkonten: Vollhafter; F 9170 Festkapital - Umbuchungen VH; F 9171 Variables Kapital - Umbuchungen VH; F 9172 Verlust-/Vertragskonto - Umbuchungen VH"
   ],
   [
     "",
@@ -1317,7 +1317,7 @@
   ],
   [
     "",
-    "Statistische Konten für die im Anhang anzugebenden sonstigen finanziellen Verpflichtungen 9280 Gegenkonto zu 9281-9284;9281 Verpflichtungen aus Miet- und Leasingverträgen;9282 Verpflichtungen aus Miet- und Leasingverträgen gegenüber verbundenen Unternehmen;9283 Andere Verpflichtungen nach § 285 Nr. 3a HGB;9284 Andere Verpflichtungen nach § 285 Nr. 3a HGB gegenüber verbundenen Unternehmen Unterschiedsbetrag aus der Abzinsung von Altersversorgungsverpflichtungen nach § 253 Abs. 6 HGB 9285 Unterschiedsbetrag aus der Abzinsung von Altersversorgungsverpflichtungen nach § 253 Abs. 6 HGB (Haben);9286 Gegenkonto zu 9285 Statistische Konten für § 4 Abs. 3 EStG 9287 Zinsen bei Buchungen über Debitoren bei § 4 Abs. 3 EStG;9288 Mahngebühren bei Buchungen über Debitoren bei § 4 Abs. 3 EStG;9289 Gegenkonto zu 9287 und 9288;9290 Statistisches Konto steuerfreie Auslagen;9291 Gegenkonto zu 9290;9292 Statistisches Konto Fremdgeld;9293 Gegenkonto zu 9292"
+    "Statistische Konten für die im Anhang anzugebenden sonstigen finanziellen Verpflichtungen; 9280 Gegenkonto zu 9281-9284;9281 Verpflichtungen aus Miet- und Leasingverträgen;9282 Verpflichtungen aus Miet- und Leasingverträgen gegenüber verbundenen Unternehmen;9283 Andere Verpflichtungen nach § 285 Nr. 3a HGB;9284 Andere Verpflichtungen nach § 285 Nr. 3a HGB gegenüber verbundenen Unternehmen Unterschiedsbetrag aus der Abzinsung von Altersversorgungsverpflichtungen nach § 253 Abs. 6 HGB 9285 Unterschiedsbetrag aus der Abzinsung von Altersversorgungsverpflichtungen nach § 253 Abs. 6 HGB (Haben);9286 Gegenkonto zu 9285 Statistische Konten für § 4 Abs. 3 EStG 9287 Zinsen bei Buchungen über Debitoren bei § 4 Abs. 3 EStG;9288 Mahngebühren bei Buchungen über Debitoren bei § 4 Abs. 3 EStG;9289 Gegenkonto zu 9287 und 9288;9290 Statistisches Konto steuerfreie Auslagen;9291 Gegenkonto zu 9290;9292 Statistisches Konto Fremdgeld;9293 Gegenkonto zu 9292"
   ],
   [
     "Einlagen stiller Gesellschafter",
@@ -1325,7 +1325,7 @@
   ],
   [
     "",
-    "9297 Steuerlicher Ausgleichsposten (Körperschaften);9298 Steuerlicher Ausgleichsposten VH (Personengesellschaften, Einzelunternehmen);9299 Steuerlicher Ausgleichsposten TH (Personengesellschaften);9300;-20;9326;-43;9346;-49;9357;-60;9365;-67;9371;-72;9390 (Zur freien Verfügung);-94;9395 (Zur freien Verfügung);-99"
+    "9297 Steuerlicher Ausgleichsposten (Körperschaften);9298 Steuerlicher Ausgleichsposten VH (Personengesellschaften, Einzelunternehmen);9299 Steuerlicher Ausgleichsposten TH (Personengesellschaften);9300-20;9326-43;9346-49;9357-60;9365-67;9371-72;9390-94 (Zur freien Verfügung);9395-99 (Zur freien Verfügung)"
   ],
   [
     "",
@@ -1333,11 +1333,11 @@
   ],
   [
     "",
-    "R 9601-09 F 9610 Tätigkeitsvergütung Vollhafter R 9611-19 F 9620 Tantieme Vollhafter R 9621-29 F 9630 Darlehensverzinsung Vollhafter R 9631-39 F 9640 Gebrauchsüberlassung Vollhafter R 9641-49 F 9650 Sonstige Vergütungen Vollhafter R 9651-59 F 9660 Sonstige Vergütungen Vollhafter R 9661-69 F 9670 Sonstige Vergütungen Vollhafter R 9671-79 F 9680 Sonstige Vergütungen Vollhafter R 9681-89 F 9690 Restanteil Vollhafter R 9691-99 F 9700 Name des Gesellschafters Teilhafter R 9701-09 F 9710 Tätigkeitsvergütung Teilhafter R 9711-19 F 9720 Tantieme Teilhafter R 9721-29 F 9730 Darlehensverzinsung Teilhafter R 9731-39 F 9740 Gebrauchsüberlassung Teilhafter R 9741-49 F 9750 Sonstige Vergütungen Teilhafter R 9751-59 F 9760 Sonstige Vergütungen Teilhafter R 9761-69 F 9770 Sonstige Vergütungen Teilhafter R 9771-79 F 9780 Anteil für Konto 9840 Teilhafter R 9781-89 F 9790 Restanteil Teilhafter R 9791-99 F 9802 Gesamthänderisch gebundene Rücklagen - andere Kapitalkonten- anpassungen; F 9803 Gewinnvortrag/Verlustvortrag - andere Kapitalkontenanpassungen; F 9804 Gesamthänderisch gebundene Rücklagen - Umbuchungen; F 9805 Gewinnvortrag/Verlustvortrag – Umbuchungen"
+    "R 9601-09; F 9610 Tätigkeitsvergütung Vollhafter; R 9611-19; F 9620 Tantieme Vollhafter; R 9621-29; F 9630 Darlehensverzinsung Vollhafter; R 9631-39; F 9640 Gebrauchsüberlassung Vollhafter; R 9641-49; F 9650 Sonstige Vergütungen Vollhafter; R 9651-59; F 9660 Sonstige Vergütungen Vollhafter; R 9661-69; F 9670 Sonstige Vergütungen Vollhafter; R 9671-79; F 9680 Sonstige Vergütungen Vollhafter; R 9681-89; F 9690 Restanteil Vollhafter; R 9691-99; F 9700 Name des Gesellschafters Teilhafter; R 9701-09; F 9710 Tätigkeitsvergütung Teilhafter; R 9711-19; F 9720 Tantieme Teilhafter; R 9721-29; F 9730 Darlehensverzinsung Teilhafter; R 9731-39; F 9740 Gebrauchsüberlassung Teilhafter; R 9741-49; F 9750 Sonstige Vergütungen Teilhafter; R 9751-59; F 9760 Sonstige Vergütungen Teilhafter; R 9761-69; F 9770 Sonstige Vergütungen Teilhafter; R 9771-79; F 9780 Anteil für Konto 9840 Teilhafter; R 9781-89; F 9790 Restanteil Teilhafter; R 9791-99; F 9802 Gesamthänderisch gebundene Rücklagen - andere Kapitalkonten- anpassungen; F 9803 Gewinnvortrag/Verlustvortrag - andere Kapitalkontenanpassungen; F 9804 Gesamthänderisch gebundene Rücklagen - Umbuchungen; F 9805 Gewinnvortrag/Verlustvortrag – Umbuchungen"
   ],
   [
     "",
-    "F 9806 Zuzurechnender Anteil am Jahresüberschuss/Jahresfehlbetrag - je Gesellschafter; F 9807 Zuzurechnender Anteil am Bilanzgewinn/Bilanzverlust - je Gesellschafter; F 9808 Gegenkonto für zuzurechnenden Anteil am Jahresüberschuss/Jahresfehlbetrag; F 9809 Gegenkonto für zuzurechnenden Anteil am Bilanzgewinn/Bilanzverlust; F 9810 Kapitalkonto III; R 9811 -19; F 9820 Verlust-/Vortragskonto; R 9821 -29; F 9830 Verrechnungskonto für Einzahlungsverpflichtungen; R 9831 -39; F 9840 Kapitalkonto III; R 9841 -49; F 9850 Verrechnungskonto für Einzahlungsverpflichtungen; R 9851 -59; F 9860 Einzahlungsverpflichtungen persönlich haftender Gesellschafter; R 9861 -69; F 9870 Einzahlungsverpflichtungen Kommanditisten; R 9871 -79; 9880 Ausgleichsposten für aktivierte eigene Anteile; F 9883 Nicht durch Vermögenseinlagen gedeckte Entnahmen persönlich haftender Gesellschafter; F 9884 Nicht durch Vermögenseinlagen gedeckte Entnahmen Kommanditisten; F 9885 Verrechnungskonto für nicht durch Vermögenseinlagen gedeckte Entnahmen persönlich haftender Gesellschafter; F 9886 Verrechnungskonto für nicht durch Vermögenseinlagen gedeckte Entnahmen Kommanditisten"
+    "F 9806 Zuzurechnender Anteil am Jahresüberschuss/Jahresfehlbetrag - je Gesellschafter; F 9807 Zuzurechnender Anteil am Bilanzgewinn/Bilanzverlust - je Gesellschafter; F 9808 Gegenkonto für zuzurechnenden Anteil am Jahresüberschuss/Jahresfehlbetrag; F 9809 Gegenkonto für zuzurechnenden Anteil am Bilanzgewinn/Bilanzverlust; F 9810 Kapitalkonto III; R 9811-19; F 9820 Verlust-/Vortragskonto; R 9821-29; F 9830 Verrechnungskonto für Einzahlungsverpflichtungen; R 9831-39; F 9840 Kapitalkonto III; R 9841-49; F 9850 Verrechnungskonto für Einzahlungsverpflichtungen; R 9851-59; F 9860 Einzahlungsverpflichtungen persönlich haftender Gesellschafter; R 9861-69; F 9870 Einzahlungsverpflichtungen Kommanditisten; R 9871-79; 9880 Ausgleichsposten für aktivierte eigene Anteile; F 9883 Nicht durch Vermögenseinlagen gedeckte Entnahmen persönlich haftender Gesellschafter; F 9884 Nicht durch Vermögenseinlagen gedeckte Entnahmen Kommanditisten; F 9885 Verrechnungskonto für nicht durch Vermögenseinlagen gedeckte Entnahmen persönlich haftender Gesellschafter; F 9886 Verrechnungskonto für nicht durch Vermögenseinlagen gedeckte Entnahmen Kommanditisten"
   ],
   [
     "",
@@ -1385,7 +1385,7 @@
   ],
   [
     "Sollsalden: Forderungen aus Lieferungen und Leistungen",
-    "10000;-69999 Debitoren"
+    "10000-69999 Debitoren"
   ],
   [
     "Habensalden: Sonstige Verbindlichkeiten",
@@ -1393,7 +1393,7 @@
   ],
   [
     "Habensalden: Verbindlichkeiten aus Lieferungen und Leistungen",
-    "70000;-99999 Kreditoren"
+    "70000-99999 Kreditoren"
   ],
   [
     "Sollsalden: Sonstige Vermögensgegenstände",
