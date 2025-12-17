@@ -170,16 +170,85 @@ def associate_balance_sheet_names(bdata, positions)
   end
 
   (matched, unmatched) = fuzzy_match(balance_categories, category_names)
+
+  # Print matching results for verification
   matched.each do |key, result|
     puts "\n#{key}"
     if result[:no_match]
       puts "  --> (keine Kategorie gefunden)"
     else
       p = result[:partial] ? "[P] " : ""
-      #puts "  --> #{p}#{result[:original_category]}"
-      puts result[:original_category]
+      cid = category_hash(result[:original_category])
+      puts "  --> #{p}#{result[:original_category]} (cid: #{cid})"
     end
   end
+
+  # Build transformed structure
+  transformed_bilanz = {}
+
+  bdata.keys.each do |section_name|
+    section_match = matched[section_name]
+
+    # Create section object with cid and matched_category
+    section_obj = {}
+    if section_match && !section_match[:no_match]
+      section_obj[:cid] = category_hash(section_match[:original_category])
+      section_obj[:matched_category] = section_match[:original_category]
+    else
+      section_obj[:cid] = nil
+      section_obj[:matched_category] = nil
+    end
+
+    # Process items in this section
+    items_array = bdata[section_name]
+    if items_array && items_array.size > 0
+      section_obj[:items] = items_array.map do |item|
+        item_name = item["name"]
+        item_match = matched[item_name]
+
+        item_obj = {}
+        if item_name && !item_name.empty?
+          item_obj[:name] = item_name
+
+          if item_match && !item_match[:no_match]
+            item_obj[:cid] = category_hash(item_match[:original_category])
+            item_obj[:matched_category] = item_match[:original_category]
+          else
+            item_obj[:cid] = nil
+            item_obj[:matched_category] = nil
+          end
+        end
+
+        # Process children if they exist
+        children_array = item["children"]
+        if children_array && children_array.size > 0
+          item_obj[:children] = children_array.map do |child_name|
+            # Remove trailing semicolon
+            clean_child_name = child_name.gsub(/;$/, '')
+            child_match = matched[clean_child_name]
+
+            child_obj = { name: clean_child_name }
+
+            if child_match && !child_match[:no_match]
+              child_obj[:cid] = category_hash(child_match[:original_category])
+              child_obj[:matched_category] = child_match[:original_category]
+            else
+              child_obj[:cid] = nil
+              child_obj[:matched_category] = nil
+            end
+
+            child_obj
+          end
+        end
+
+        item_obj
+      end
+    end
+
+    transformed_bilanz[section_name] = section_obj
+  end
+
+  transformed_bilanz
 end
 
 def associate_guv_names(bdata, positions)
@@ -405,7 +474,22 @@ puts "--- Listing all parsed account categories:"
 positions.keys.sort.each { |p| puts "#{p}: #{positions[p][:items].size}" }
 
 puts "--- associate_balance_sheet_names:"
-# associate_balance_sheet_names(bilanz_aktiva.merge(bilanz_passiva), positions)
+transformed_aktiva = associate_balance_sheet_names(bilanz_aktiva, positions)
+transformed_passiva = associate_balance_sheet_names(bilanz_passiva, positions)
+
+# Create unified balance sheet structure
+transformed_bilanz = {
+  aktiva: transformed_aktiva,
+  passiva: transformed_passiva
+}
+
+# Save the transformed balance sheet structure
+File.open("bilanz-with-categories.json", "w") do |f|
+  f.puts JSON.pretty_generate(transformed_bilanz)
+end
+puts "\nUpdated bilanz-with-categories.json"
+
+puts "\n--- associate_guv_names:"
 transformed_guv = associate_guv_names(guv, positions)
 
 # Save the transformed structure
