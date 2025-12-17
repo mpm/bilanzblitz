@@ -160,8 +160,9 @@ The application supports German-standard opening and closing balance sheets:
 **Service Classes**:
 - `OpeningBalanceCreator` - Creates opening balance entries
 - `FiscalYearClosingService` - Closes fiscal year and generates SBK entries
-- `BalanceSheetService` - Calculates balance sheets (updated to exclude closing entries and 9000-series accounts)
-- `GuVService` - Calculates Profit & Loss statements using SKR03 Gesamtkostenverfahren
+- `BalanceSheetService` - Calculates balance sheets (uses GuVService for net income calculation)
+- `GuVService` - Calculates Profit & Loss statements using AccountMap for section categorization
+- `AccountMap` - Centralized mapping service for account categorization (GuV sections and balance sheet categories)
 
 #### Balance Sheet Generation
 The `BalanceSheetService` generates balance sheets from posted journal entries:
@@ -183,18 +184,85 @@ The `BalanceSheetService` generates balance sheets from posted journal entries:
 #### GuV (Gewinn- und Verlustrechnung) Generation
 The `GuVService` generates Profit & Loss statements following German accounting standards:
 - **Gesamtkostenverfahren Format**: Implements § 275 Abs. 2 HGB (Total Cost Method)
-- **SKR03 Account Grouping**: Automatically categorizes accounts into GuV sections:
-  - **1. Umsatzerlöse** (Revenue) - 4xxx accounts
-  - **2. Materialaufwand** (Material expense) - 5xxx accounts
-  - **3. Personalaufwand** (Personnel expense) - 6xxx accounts
-  - **4. Abschreibungen** (Depreciation) - 76xx accounts
-  - **5. Sonstige betriebliche Aufwendungen** (Other operating expenses) - 70xx-75xx, 77xx-79xx accounts
+- **AccountMap Integration**: Uses `AccountMap` service for account-to-section categorization (see AccountMap section below)
 - **Net Income Calculation**: Calculates Jahresüberschuss (profit) or Jahresfehlbetrag (loss)
 - **Exclusion Rules**: Excludes closing entries and 9xxx accounts (same as balance sheet)
 - **Posted Entries Only**: Only posted journal entries are included (GoBD compliance)
 - **Section Subtotals**: Each GuV section includes accounts list and subtotal
 - **Display Type Hints**: Sections tagged as positive (revenue) or negative (expenses) for UI formatting
 - **Automatic Persistence**: GuV data stored in `balance_sheets.data` JSONB field when closing fiscal years
+- **Net Income Reuse**: BalanceSheetService reuses the net income calculated by GuVService instead of recalculating it
+
+#### Account Mapping Service (AccountMap)
+The `AccountMap` service provides centralized configuration for categorizing accounts into GuV sections and balance sheet categories:
+
+**Purpose**:
+- Decouples account categorization logic from business logic
+- Provides single source of truth for account-to-section mappings
+- Enables easy customization of account ranges without code changes
+- Supports German accounting standards (§ 275 Abs. 2 HGB for GuV)
+
+**GuV Section Mapping**:
+All 17 GuV sections according to § 275 Abs. 2 HGB (Gesamtkostenverfahren) are defined:
+1. Umsatzerlöse (Revenue)
+2. Bestandsveränderungen (Inventory changes)
+3. Aktivierte Eigenleistungen (Capitalized own work)
+4. Sonstige betriebliche Erträge (Other operating income)
+5. Materialaufwand (Material expenses) - with subsections a) and b)
+6. Personalaufwand (Personnel expenses) - with subsections a) and b)
+7. Abschreibungen (Depreciation) - with subsections a) and b)
+8. Sonstige betriebliche Aufwendungen (Other operating expenses)
+9. Erträge aus Beteiligungen (Income from investments)
+10. Erträge aus Wertpapieren (Income from securities)
+11. Sonstige Zinsen und ähnliche Erträge (Other interest income)
+12. Abschreibungen auf Finanzanlagen (Depreciation on financial assets)
+13. Zinsen und ähnliche Aufwendungen (Interest expenses)
+14. Steuern vom Einkommen und Ertrag (Income taxes)
+15. Ergebnis nach Steuern (Result after taxes) - calculated, not mapped
+16. Sonstige Steuern (Other taxes)
+17. Jahresüberschuss/Jahresfehlbetrag (Net income/loss) - calculated, not mapped
+
+Each section can have:
+- Individual account codes (e.g., "4000", "5120")
+- Account ranges (e.g., "4000-4999", "7600-7699")
+- Empty configuration for sections not currently in use
+
+**Balance Sheet Category Mapping** (stub for future implementation):
+- Anlagevermögen (Fixed Assets) - 0xxx accounts
+- Umlaufvermögen (Current Assets) - 1xxx accounts
+- Eigenkapital (Equity) - 2xxx accounts
+- Fremdkapital (Liabilities) - 3xxx accounts
+
+**Key Methods**:
+```ruby
+# Get section title
+AccountMap.section_title(:umsatzerloese)
+# => "1. Umsatzerlöse"
+
+# Get expanded list of account codes (ranges are expanded to individual codes)
+AccountMap.account_codes(:umsatzerloese)
+# => ["4000", "4001", "4002", ..., "4999"]
+
+# Filter accounts by section
+accounts = [
+  { code: "4000", name: "Revenue", balance: 1000.0 },
+  { code: "5000", name: "Material", balance: 500.0 }
+]
+AccountMap.find_accounts(accounts, :umsatzerloese)
+# => [{ code: "4000", name: "Revenue", balance: 1000.0 }]
+```
+
+**Error Handling**:
+- All methods validate section IDs and raise `ArgumentError` for unknown sections
+- This ensures typos and invalid configurations are caught early
+
+**Usage in Services**:
+- `GuVService` uses `AccountMap.find_accounts()` to filter accounts into GuV sections
+- `BalanceSheetService` reuses net income from GuVService calculation
+- Future services can use `AccountMap` for balance sheet categorization
+
+**Configuration**:
+To customize account mappings, edit the `GUV_SECTIONS` or `BALANCE_SHEET_CATEGORIES` hashes in `app/services/account_map.rb`. Changes take effect immediately without requiring code changes in consuming services.
 
 ## Development Commands
 
@@ -291,6 +359,7 @@ usually a Vite process running during development.
 │   │   ├── account.rb                  # Chart of accounts
 │   │   └── account_template.rb         # Account templates for charts
 │   ├── services/            # Service classes (business logic)
+│   │   ├── account_map.rb                   # Centralized account-to-section mapping (GuV & balance sheet)
 │   │   ├── balance_sheet_service.rb         # Balance sheet calculation (integrates GuV)
 │   │   ├── guv_service.rb                   # GuV (P&L) calculation using Gesamtkostenverfahren
 │   │   ├── opening_balance_creator.rb       # Opening balance (EBK) creation
@@ -558,23 +627,21 @@ The GuV report provides a detailed breakdown of income and expenses following Ge
 
 **How It Works**:
 1. `GuVService` queries posted journal entries for the fiscal year
-2. Accounts are grouped by SKR03 code ranges into GuV sections:
-   - 4xxx → Umsatzerlöse (Revenue)
-   - 5xxx → Materialaufwand (Material Expense)
-   - 6xxx → Personalaufwand (Personnel Expense)
-   - 76xx → Abschreibungen (Depreciation)
-   - 70xx-75xx, 77xx-79xx → Sonstige betriebliche Aufwendungen (Other Expenses)
-3. Each section calculates a subtotal
-4. Net income is calculated as sum of all section subtotals
-5. GuV data is included in balance sheet response
-6. Frontend displays GuV below balance sheet in scrollable layout
+2. Accounts are categorized using `AccountMap` service into GuV sections according to § 275 Abs. 2 HGB
+3. `AccountMap.find_accounts()` filters accounts by configured code ranges for each section
+4. Each section calculates a subtotal
+5. Net income is calculated as sum of all section subtotals
+6. GuV data is included in balance sheet response
+7. Frontend displays GuV below balance sheet in scrollable layout
 
 **Implementation**:
-- **Service**: `GuVService` (`app/services/guv_service.rb`)
+- **Services**:
+  - `GuVService` (`app/services/guv_service.rb`) - Main GuV calculation
+  - `AccountMap` (`app/services/account_map.rb`) - Account categorization
 - **Frontend Component**: `reports/GuVSection.tsx` (`app/frontend/components/reports/GuVSection.tsx`)
 - **Types**: `GuVData`, `GuVSection` in `accounting.ts`
 - **Storage**: Stored in `balance_sheets.data` JSONB field under `guv` key
-- **Tests**: Comprehensive test suite in `spec/services/guv_service_spec.rb`
+- **Tests**: Comprehensive test suites in `spec/services/guv_service_spec.rb` and `spec/services/account_map_spec.rb`
 
 ## Fiscal Year Management
 
@@ -717,4 +784,6 @@ When working on this project:
 - **Add all new formatting utilities to `formatting.ts` to maintain consistency and avoid duplication**
 - **Import accounting types from `app/frontend/types/accounting.ts`** instead of defining them locally
 - **Extract reusable components** to `app/frontend/components/` for better code organization
+- **Use `AccountMap` service for account categorization** instead of hardcoding account ranges in business logic
+- **Customize account ranges in `AccountMap`** (`app/services/account_map.rb`) rather than modifying GuVService or BalanceSheetService
 - When adding GuV acronyms or similar, update `config/initializers/inflections.rb` to ensure Rails recognizes them correctly
