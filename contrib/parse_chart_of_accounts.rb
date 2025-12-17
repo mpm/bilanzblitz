@@ -191,7 +191,6 @@ class ParserTools
 
     result
   end
-
 end
 
 class CharOfAccountsParser
@@ -277,13 +276,13 @@ class CharOfAccountsParser
             puts "WARNING! Ignoring items (no account code found) [fix this in skr03-ocr-results.json]: #{non_account_codes.inspect}"
           end
           pdata[:items] += account_codes
-          account_codes.each { |ac| all_codes << [pos_desc, ac] }
+          account_codes.each { |ac| all_codes << [ pos_desc, ac ] }
         end
       end
     end
   end
 
-  def associate_balance_sheet_names(bdata, positions)
+  def associate_balance_sheet_names(bdata, positions, cid_to_codes = {})
     category_names = positions.keys
 
     balance_categories = []
@@ -322,11 +321,14 @@ class CharOfAccountsParser
       # Create section object with cid and matched_category
       section_obj = {}
       if section_match && !section_match[:no_match]
-        section_obj[:cid] = ParserTools.category_hash(section_match[:original_category])
+        cid = ParserTools.category_hash(section_match[:original_category])
+        section_obj[:cid] = cid
         section_obj[:matched_category] = section_match[:original_category]
+        section_obj[:codes] = cid_to_codes[cid] || []
       else
         section_obj[:cid] = nil
         section_obj[:matched_category] = nil
+        section_obj[:codes] = []
       end
 
       # Process items in this section
@@ -341,11 +343,14 @@ class CharOfAccountsParser
             item_obj[:name] = item_name
 
             if item_match && !item_match[:no_match]
-              item_obj[:cid] = ParserTools.category_hash(item_match[:original_category])
+              cid = ParserTools.category_hash(item_match[:original_category])
+              item_obj[:cid] = cid
               item_obj[:matched_category] = item_match[:original_category]
+              item_obj[:codes] = cid_to_codes[cid] || []
             else
               item_obj[:cid] = nil
               item_obj[:matched_category] = nil
+              item_obj[:codes] = []
             end
           end
 
@@ -360,11 +365,14 @@ class CharOfAccountsParser
               child_obj = { name: clean_child_name }
 
               if child_match && !child_match[:no_match]
-                child_obj[:cid] = ParserTools.category_hash(child_match[:original_category])
+                cid = ParserTools.category_hash(child_match[:original_category])
+                child_obj[:cid] = cid
                 child_obj[:matched_category] = child_match[:original_category]
+                child_obj[:codes] = cid_to_codes[cid] || []
               else
                 child_obj[:cid] = nil
                 child_obj[:matched_category] = nil
+                child_obj[:codes] = []
               end
 
               child_obj
@@ -381,7 +389,7 @@ class CharOfAccountsParser
     transformed_bilanz
   end
 
-  def associate_guv_names(bdata, positions)
+  def associate_guv_names(bdata, positions, cid_to_codes = {})
     category_names = positions.keys
 
     guv_categories = []
@@ -416,11 +424,14 @@ class CharOfAccountsParser
       # Create section object with cid and matched_category
       section_obj = {}
       if match_result && !match_result[:no_match]
-        section_obj[:cid] = ParserTools.category_hash(match_result[:original_category])
+        cid = ParserTools.category_hash(match_result[:original_category])
+        section_obj[:cid] = cid
         section_obj[:matched_category] = match_result[:original_category]
+        section_obj[:codes] = cid_to_codes[cid] || []
       else
         section_obj[:cid] = nil
         section_obj[:matched_category] = nil
+        section_obj[:codes] = []
       end
 
       # Add children if they exist
@@ -430,11 +441,14 @@ class CharOfAccountsParser
           child_obj = { name: child_name }
 
           if child_match && !child_match[:no_match]
-            child_obj[:cid] = ParserTools.category_hash(child_match[:original_category])
+            cid = ParserTools.category_hash(child_match[:original_category])
+            child_obj[:cid] = cid
             child_obj[:matched_category] = child_match[:original_category]
+            child_obj[:codes] = cid_to_codes[cid] || []
           else
             child_obj[:cid] = nil
             child_obj[:matched_category] = nil
+            child_obj[:codes] = []
           end
 
           child_obj
@@ -470,10 +484,31 @@ class CharOfAccountsParser
     puts "Updated skr03-accounts.csv"
   end
 
+  def build_cid_to_codes_mapping
+    # Build a hash that maps from cid (cat) to array of account codes
+    mapping = Hash.new { |h, k| h[k] = [] }
+
+    parsed_codes.each do |pc|
+      cat = pc[:cat]
+      code = pc[:code]
+      mapping[cat] << code if cat && code
+    end
+
+    # Sort codes for each category
+    mapping.each do |cat, codes|
+      codes.sort!
+    end
+
+    mapping
+  end
+
   def create_balance_sheet_and_guv_with_categories!
+    # Build mapping from cid to list of account codes
+    cid_to_codes = build_cid_to_codes_mapping
+
     puts "--- associate_balance_sheet_names:"
-    transformed_aktiva = associate_balance_sheet_names(@bilanz_aktiva, positions)
-    transformed_passiva = associate_balance_sheet_names(@bilanz_passiva, positions)
+    transformed_aktiva = associate_balance_sheet_names(@bilanz_aktiva, positions, cid_to_codes)
+    transformed_passiva = associate_balance_sheet_names(@bilanz_passiva, positions, cid_to_codes)
 
     # Create unified balance sheet structure
     transformed_bilanz = {
@@ -488,7 +523,7 @@ class CharOfAccountsParser
     puts "\nUpdated bilanz-with-categories.json"
 
     puts "\n--- associate_guv_names:"
-    transformed_guv = associate_guv_names(@guv, positions)
+    transformed_guv = associate_guv_names(@guv, positions, cid_to_codes)
 
     # Save the transformed structure
     File.open("guv-with-categories.json", "w") do |f|
@@ -503,7 +538,6 @@ parser.create_skr03_accounts_csv!
 parser.create_balance_sheet_and_guv_with_categories!
 
 puts "categories: #{parser.positions.keys.size}. total items (account code [ranges]): #{parser.all_codes.size}\n"
-#puts "--- Listing all parsed account categories:"
+# puts "--- Listing all parsed account categories:"
 # Use this to output a summary to check for reasonable keys (or misspellings and failed parsings):
 # positions.keys.sort.each { |p| puts "#{p}: #{positions[p][:items].size}" }
-
