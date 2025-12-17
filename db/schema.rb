@@ -10,19 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_15_104007) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_17_222106) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "account_templates", force: :cascade do |t|
     t.string "account_type", null: false
     t.bigint "chart_of_accounts_id", null: false
+    t.string "cid"
     t.string "code", null: false
     t.jsonb "config", default: {}
     t.datetime "created_at", null: false
     t.text "description"
     t.boolean "is_system_account", default: false
     t.string "name", null: false
+    t.string "range"
     t.decimal "tax_rate", precision: 5, scale: 2, default: "0.0"
     t.datetime "updated_at", null: false
     t.index ["chart_of_accounts_id", "code"], name: "index_account_templates_on_chart_and_code", unique: true

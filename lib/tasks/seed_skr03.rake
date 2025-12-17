@@ -1,9 +1,9 @@
 namespace :accounting do
-  desc "Seed SKR03 chart of accounts from contrib/skr03-extract.txt"
+  desc "Seed SKR03 chart of accounts from contrib/skr03-accounts.csv"
   task seed_skr03: :environment do
     dry_run = ENV["DRY_RUN"] == "true"
 
-    file_path = Rails.root.join("contrib", "skr03-extract.txt")
+    file_path = Rails.root.join("contrib", "skr03-accounts.csv")
 
     unless File.exist?(file_path)
       puts "Error: File not found at #{file_path}"
@@ -23,56 +23,63 @@ namespace :accounting do
     File.readlines(file_path).each_with_index do |line, index|
       line_number = index + 1
 
-      # Skip comment lines and non-table lines
-      next if line.start_with?("#") || !line.start_with?("|")
+      # Skip comment lines
+      next if line.start_with?("#")
 
-      # Split by pipe character
-      parts = line.split("|").map(&:strip)
+      # Strip whitespace
+      line = line.strip
+      next if line.empty?
 
-      # Need at least 4 parts (empty, col1, col2, col3)
-      next if parts.length < 4
+      # Split by semicolon: code;flags;range;category;description
+      parts = line.split(";", 5)
 
-      # Skip header row
-      next if parts[3] == "Konto & Bezeichnung" || parts[3].start_with?(":---")
+      # Need exactly 5 parts
+      if parts.length != 5
+        raise "Non-empty line with more than five columns: #{parts.inspect}"
+      end
 
-      col1 = parts[1] # Bilanz-/GuV-Posten (ignored)
-      col2 = parts[2] # Programmverbindung (flags)
-      col3 = parts[3] # Konto & Bezeichnung
+      code = parts[0].strip
+      flags = parts[1].strip
+      range = parts[2].strip
+      category = parts[3].strip
+      description = parts[4].strip
 
-      # Skip if column 3 is empty
-      next if col3.empty?
+      description = "Unbenannt #{code}" if description.empty?
 
-      # Parse column 3 to extract account number and description
-      account_code, description = parse_account_column(col3)
-
-      # Skip if we couldn't parse an account code
-      next if account_code.nil?
+      # Skip if code is empty
+      raise "Code is empty for this line #{parts.inspect}" if code.empty?
 
       # Track this account code and where it appears
-      seen_codes[account_code] << { line: line_number, description: description }
+      seen_codes[code] << { line: line_number, description: description }
 
       # Determine account type based on account number
-      account_type = determine_account_type(account_code)
+      account_type = determine_account_type(code)
 
       # Extract tax rate from description if present
       tax_rate = extract_tax_rate(description)
 
       # Store flags in config hash
       config = {}
-      config["_flags"] = col2 unless col2.empty?
+      config["_flags"] = flags unless flags.empty?
+
+      # Check if this is a system account (closing accounts have flag "S")
+      is_system_account = flags.include?("S")
 
       if dry_run
         # In dry mode, just print the parsed data
-        puts "#{account_code.ljust(6)} | #{account_type.ljust(10)} | #{tax_rate.to_s.ljust(5)} | #{description}"
+        puts "#{code.ljust(6)} | #{account_type.ljust(10)} | #{tax_rate.to_s.ljust(5)} | #{range.ljust(12)} | #{category.ljust(8)} | #{description}"
       else
         # Store template data for creation
         templates_data << {
-          code: account_code,
+          code: code,
           name: description,
           account_type: account_type,
           tax_rate: tax_rate,
           description: description,
-          config: config
+          config: config,
+          range: range.presence,
+          cid: category == "NONE" ? nil : category,
+          is_system_account: is_system_account
         }
       end
     end
@@ -150,30 +157,6 @@ namespace :accounting do
 
         puts
         puts "Created #{created_count} account templates"
-
-        # Upsert closing accounts (9000-series) to ensure they have correct attributes
-        puts
-        puts "Upserting closing accounts (9000-series)..."
-
-        closing_accounts = [
-          { code: "9000", name: "Saldenvorträge, Sachkonten", account_type: "equity" },
-          { code: "9008", name: "Saldenvorträge, Debitoren", account_type: "equity" },
-          { code: "9009", name: "Saldenvorträge, Kreditoren", account_type: "equity" },
-          { code: "9090", name: "Summenvortragskonto", account_type: "equity" }
-        ]
-
-        closing_accounts.each do |account_data|
-          template = chart.account_templates.find_or_initialize_by(code: account_data[:code])
-          template.assign_attributes(
-            name: account_data[:name],
-            account_type: account_data[:account_type],
-            tax_rate: 0.0,
-            is_system_account: true,
-            description: account_data[:name]
-          )
-          template.save!
-          puts "  ✓ Upserted closing account template: #{account_data[:code]} - #{account_data[:name]}"
-        end
       end
 
       puts
@@ -182,36 +165,6 @@ namespace :accounting do
   end
 
   private
-
-  # Parse the account column to extract code and description
-  def parse_account_column(text)
-    text = text.strip
-    return [ nil, nil ] if text.empty?
-
-    # Split at first space
-    parts = text.split(" ", 2)
-
-    if parts.length == 1
-      # No space found, this is either a single account or a range
-      account_part = parts[0]
-    else
-      account_part = parts[0]
-      description = parts[1]
-    end
-
-    # Handle account ranges (e.g., "1610-23" or "8925-8928")
-    if account_part.include?("-")
-      # Take the first number before the dash
-      account_code = account_part.split("-").first
-    else
-      account_code = account_part
-    end
-
-    # If no description was found, use "Konto XXXX" as default
-    description ||= "Konto #{account_code}"
-
-    [ account_code, description ]
-  end
 
   # Determine account type based on SKR03 (Prozessgliederungsprinzip) structure
   # Klasse 0: Anlage- und Kapitalkonten (fixed assets and capital/equity)
