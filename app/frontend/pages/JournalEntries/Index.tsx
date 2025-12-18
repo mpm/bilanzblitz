@@ -1,7 +1,9 @@
-import { router } from '@inertiajs/react'
-import { Fragment, useState } from 'react'
+import { router, usePage } from '@inertiajs/react'
+import { useState } from 'react'
 import { AppLayout } from '@/components/AppLayout'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -12,16 +14,15 @@ import {
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { PenLine, Trash2, FileText, Plus } from 'lucide-react'
+import { FileText, Plus } from 'lucide-react'
 import { JournalEntryModal } from '@/components/JournalEntryModal'
-import { formatDate, formatCurrency } from '@/utils/formatting'
+import { JournalEntryRow } from '@/components/journal-entries/JournalEntryRow'
+import type { JournalEntry, UserConfig } from '@/types/journal-entries'
 
 interface FiscalYear {
   id: number
@@ -29,25 +30,6 @@ interface FiscalYear {
   startDate: string
   endDate: string
   closed: boolean
-}
-
-interface LineItem {
-  id: number
-  accountCode: string
-  accountName: string
-  amount: number
-  direction: 'debit' | 'credit'
-  bankTransactionId: number | null
-}
-
-interface JournalEntry {
-  id: number
-  bookingDate: string
-  description: string
-  postedAt: string | null
-  fiscalYearId: number
-  fiscalYearClosed: boolean
-  lineItems: LineItem[]
 }
 
 interface Account {
@@ -73,8 +55,14 @@ export default function JournalEntriesIndex({
   journalEntries,
   recentAccounts,
 }: JournalEntriesIndexProps) {
+  const { props } = usePage()
+  const userConfig = (props.userConfig || {}) as UserConfig
+
   const [modalOpen, setModalOpen] = useState(false)
   const [editEntryId, setEditEntryId] = useState<number | null>(null)
+  const [simplifiedMode, setSimplifiedMode] = useState<boolean>(
+    userConfig.ui?.simplified_journal_view !== false // Default: true
+  )
 
   const handleFiscalYearChange = (value: string) => {
     if (value === 'all') {
@@ -130,16 +118,25 @@ export default function JournalEntriesIndex({
     setEditEntryId(null)
   }
 
-  const calculateDebits = (entry: JournalEntry) => {
-    return entry.lineItems
-      .filter((li) => li.direction === 'debit')
-      .reduce((sum, li) => sum + li.amount, 0)
-  }
+  const handleSimplifiedModeToggle = async (checked: boolean) => {
+    setSimplifiedMode(checked)
 
-  const calculateCredits = (entry: JournalEntry) => {
-    return entry.lineItems
-      .filter((li) => li.direction === 'credit')
-      .reduce((sum, li) => sum + li.amount, 0)
+    try {
+      const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute('content')
+
+      await fetch('/user_preferences', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken || '',
+        },
+        body: JSON.stringify({ simplified_journal_view: checked }),
+      })
+    } catch (error) {
+      console.error('Failed to update simplified view preference:', error)
+    }
   }
 
   const hasOpenFiscalYear = fiscalYears.some((fy) => !fy.closed)
@@ -194,6 +191,21 @@ export default function JournalEntriesIndex({
           )}
         </div>
 
+        {/* Simplified View Toggle */}
+        <div className="flex items-center gap-3">
+          <Label htmlFor="simplified-view" className="text-sm font-medium">
+            Simplified View:
+          </Label>
+          <Switch
+            id="simplified-view"
+            checked={simplifiedMode}
+            onCheckedChange={handleSimplifiedModeToggle}
+          />
+          <span className="text-xs text-muted-foreground">
+            Automatically detect and simplify VAT entries
+          </span>
+        </div>
+
         {/* Warning if no open fiscal years */}
         {!hasOpenFiscalYear && fiscalYears.length > 0 && (
           <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
@@ -239,94 +251,14 @@ export default function JournalEntriesIndex({
                 </TableHeader>
                 <TableBody>
                   {journalEntries.map((entry, entryIdx) => (
-                    <Fragment key={entry.id}>
-                      {/* Entry header row */}
-                      <TableRow
-                        className={`border-t-2 ${
-                          entryIdx % 2 === 0 ? 'bg-muted/30' : 'bg-background'
-                        }`}
-                      >
-                        <TableCell className="font-medium" colSpan={2}>
-                          {formatDate(entry.bookingDate)}
-                        </TableCell>
-                        <TableCell colSpan={2}>{entry.description}</TableCell>
-                        <TableCell colSpan={2}></TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            {!entry.postedAt && !entry.fiscalYearClosed && (
-                              <>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => handleEdit(entry.id)}
-                                  title="Edit journal entry"
-                                >
-                                  <PenLine className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => handleDelete(entry.id)}
-                                  title="Delete journal entry"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </>
-                            )}
-                            {entry.postedAt && <Badge variant="secondary">Posted</Badge>}
-                            {entry.fiscalYearClosed && !entry.postedAt && (
-                              <Badge variant="secondary">Closed FY</Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-
-                      {/* Line item rows */}
-                      {entry.lineItems.map((lineItem) => (
-                        <TableRow
-                          key={lineItem.id}
-                          className={
-                            entryIdx % 2 === 0 ? 'bg-muted/30' : 'bg-background'
-                          }
-                        >
-                          <TableCell></TableCell>
-                          <TableCell className="pl-8 font-mono text-sm">
-                            {lineItem.accountCode}
-                          </TableCell>
-                          <TableCell>{lineItem.accountName}</TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {lineItem.bankTransactionId && '(Bank transaction)'}
-                          </TableCell>
-                          <TableCell className="text-right font-mono text-red-600">
-                            {lineItem.direction === 'debit' &&
-                              formatCurrency(lineItem.amount)}
-                          </TableCell>
-                          <TableCell className="text-right font-mono text-green-600">
-                            {lineItem.direction === 'credit' &&
-                              formatCurrency(lineItem.amount)}
-                          </TableCell>
-                          <TableCell></TableCell>
-                        </TableRow>
-                      ))}
-
-                      {/* Subtotal row */}
-                      <TableRow
-                        className={`border-b ${
-                          entryIdx % 2 === 0 ? 'bg-muted/30' : 'bg-background'
-                        }`}
-                      >
-                        <TableCell colSpan={4} className="text-right text-sm font-medium">
-                          Subtotal:
-                        </TableCell>
-                        <TableCell className="text-right font-mono text-sm">
-                          {formatCurrency(calculateDebits(entry))}
-                        </TableCell>
-                        <TableCell className="text-right font-mono text-sm">
-                          {formatCurrency(calculateCredits(entry))}
-                        </TableCell>
-                        <TableCell></TableCell>
-                      </TableRow>
-                    </Fragment>
+                    <JournalEntryRow
+                      key={entry.id}
+                      entry={entry}
+                      index={entryIdx}
+                      globalSimplifiedMode={simplifiedMode}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                    />
                   ))}
                 </TableBody>
               </Table>

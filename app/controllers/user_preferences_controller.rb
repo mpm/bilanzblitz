@@ -11,6 +11,12 @@ class UserPreferencesController < ApplicationController
       config["ui"]["theme"] = %w[light dark].include?(params[:theme]) ? params[:theme] : "light"
     end
 
+    # Update simplified journal view preference
+    if params[:simplified_journal_view].present?
+      config["ui"] ||= {}
+      config["ui"]["simplified_journal_view"] = ActiveModel::Type::Boolean.new.cast(params[:simplified_journal_view])
+    end
+
     # Update fiscal year preference for a company
     if params[:fiscal_year].present? && params[:company_id].present?
       config["fiscal_years"] ||= {}

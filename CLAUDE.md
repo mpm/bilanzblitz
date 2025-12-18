@@ -211,8 +211,9 @@ When working on this project:
   - Service classes: `app/services/`
 - Use `AccountMap` service for account categorization (don't hardcode ranges)
 - Use `TaxFormFieldMap` service for tax form field definitions
-- Import types from centralized locations (`types/accounting.ts`, `types/tax-reports.ts`)
+- Import types from centralized locations (`types/accounting.ts`, `types/journal-entries.ts`, `types/tax-reports.ts`)
 - Extract reusable components to `app/frontend/components/`
+- Journal entries support simplified view (detects VAT patterns automatically) - use `JournalEntryRow` component
 - UStVA reports use absolute values (VAT amounts always positive)
 - When adding GuV acronyms, update `config/initializers/inflections.rb`
 

@@ -14,16 +14,19 @@
 app/frontend/
 ├── components/          # Reusable React components
 │   ├── ui/             # shadcn/ui components
+│   ├── journal-entries/ # Journal entry components
 │   ├── reports/        # Report-specific components
 │   ├── tax-reports/    # Tax report components
 │   └── ...
 ├── pages/              # Inertia page components
 │   ├── FiscalYears/
+│   ├── JournalEntries/
 │   ├── Reports/
 │   ├── TaxReports/
 │   └── ...
 ├── types/              # TypeScript type definitions
 │   ├── accounting.ts
+│   ├── journal-entries.ts
 │   └── tax-reports.ts
 └── utils/              # Shared utility functions
     ├── formatting.ts
@@ -44,6 +47,12 @@ All shared types should be defined in centralized type files:
 - `BalanceSheetData` - Complete balance sheet structure
 - `GuVData` - GuV (P&L) data structure
 - `GuVSection` - Individual GuV section
+
+**journal-entries.ts** - Journal entry types:
+- `JournalEntry` - Journal entry with line items
+- `LineItem` - Individual debit/credit line item
+- `VatPattern` - Detected VAT pattern for simplified display
+- `UserConfig` - User preferences including simplified view toggle
 
 **tax-reports.ts** - Tax report types:
 - `TaxReportSummary` - Report metadata for list views
@@ -138,6 +147,31 @@ const [filterState, setFilterState] = useState<FilterState>({
 ```
 
 See `app/frontend/pages/BankAccounts/Show.tsx` for complete implementation example.
+
+### Journal Entry Components
+
+**Location**: `app/frontend/components/journal-entries/`
+
+Reusable components for displaying journal entries with intelligent VAT pattern detection. The simplified view automatically detects VAT expenses, VAT revenue, and reverse charge transactions and displays them in a natural language format instead of showing all line items. Users can toggle between simplified and detailed views globally, or expand individual entries.
+
+**Components**:
+- `JournalEntryRow` - Main component for rendering a single journal entry
+- `SimplifiedView` - Natural language display for detected VAT patterns
+- `DetailedView` - Traditional line item table display
+- `VatPatternDetector` - Pattern detection logic (VAT expense, revenue, reverse charge)
+
+**Usage**:
+```typescript
+import { JournalEntryRow } from '@/components/journal-entries/JournalEntryRow'
+
+<JournalEntryRow
+  entry={journalEntry}
+  index={entryIdx}
+  globalSimplifiedMode={simplifiedMode}
+  onEdit={handleEdit}
+  onDelete={handleDelete}
+/>
+```
 
 ### Report Components
 

@@ -26,8 +26,6 @@ export default function New({ company, fiscalYears, reportTypes, errors }: TaxRe
   const [selectedFiscalYearId, setSelectedFiscalYearId] = useState<string>('')
   const [isGenerating, setIsGenerating] = useState(false)
 
-  const currentYear = new Date().getFullYear()
-  // const availableYears = [currentYear - 1, currentYear, currentYear + 1]
   const availableYears = fiscalYears.map(fy => fy.year)
 
   // Get available period types for selected report type

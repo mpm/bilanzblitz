@@ -16,6 +16,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AccountSearch } from '@/components/AccountSearch'
 import { Plus, Trash2, AlertCircle, Loader2 } from 'lucide-react'
 import { formatCurrency } from '@/utils/formatting'
+import type { JournalEntry } from '@/types/journal-entries'
 
 interface FiscalYear {
   id: number
@@ -23,25 +24,6 @@ interface FiscalYear {
   startDate: string
   endDate: string
   closed: boolean
-}
-
-interface LineItem {
-  id: number
-  accountCode: string
-  accountName: string
-  amount: number
-  direction: 'debit' | 'credit'
-  bankTransactionId: number | null
-}
-
-interface JournalEntry {
-  id: number
-  bookingDate: string
-  description: string
-  postedAt: string | null
-  fiscalYearId: number
-  fiscalYearClosed: boolean
-  lineItems: LineItem[]
 }
 
 interface Account {
