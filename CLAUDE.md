@@ -2,500 +2,40 @@
 
 ## Project Overview
 
-BilanzBlitz is a comprehensive accounting and tax management application designed specifically for German GmbHs (limited liability companies) and UGs (entrepreneurial companies). The application enables businesses to manage their complete accounting workflow, from bank transaction synchronization to annual tax filings.
+BilanzBlitz is a comprehensive accounting and tax management application for German GmbHs and UGs. The application enables businesses to manage their complete accounting workflow, from bank transaction synchronization to annual tax filings.
 
 ### Core Features
 
-- **Bank Account Synchronization**: Connect and sync bank accounts to automatically import transactions
-- **Receipt & Invoice Management**: Upload and manage receipts, invoices, and other financial documents
-- **Double-Entry Bookkeeping**: Complete ledger system with journal entries and line items
-- **Transaction Splitting**: Split bank transactions across multiple accounts (e.g., separating VAT from expenses)
-- **Bank Reconciliation**: Link bank transactions to bookkeeping entries
-- **Opening Balance Sheets (EBK)**: Create opening balances manually or import from previous year
-- **Closing Balance Sheets (SBK)**: Automated fiscal year closing with proper German accounting procedures
-- **Fiscal Year Management**: Complete workflow from opening to closing with state tracking
-- **Balance Sheet Reports**: Generate balance sheets (Bilanz) following German GmbH standards with SKR03 account mapping
-- **Balance Sheet Persistence**: Store and retrieve opening and closing balance sheets
-- **GuV Reports**: Generate Profit & Loss statements (Gewinn- und Verlustrechnung) using Gesamtkostenverfahren (Total Cost Method) according to § 275 Abs. 2 HGB
-- **Tax Reports Management**: Complete tax report generation, preview, and persistence system
-  - **UStVA (Umsatzsteuervoranmeldung)**: Monthly, quarterly, and annual VAT advance returns with core fields (output/input VAT, reverse charge)
-  - **Körperschaftsteuer (KSt)**: Corporate income tax calculation with editable adjustments for outside-balance-sheet corrections
-  - **Missing Reports Detection**: Automatic identification of missing tax reports for compliance tracking
-- **GoBD Compliance**: Immutable posted entries and balance sheets to comply with German accounting regulations
+- **Double-Entry Bookkeeping** - Complete ledger system with journal entries and line items
+- **Bank Integration** - Sync bank accounts and automatically import transactions
+- **Transaction Splitting** - Split transactions across multiple accounts (VAT, expenses, etc.)
+- **Fiscal Year Management** - Complete workflow from opening to closing with state tracking
+- **Balance Sheet & GuV Reports** - Generate reports following German GmbH standards (SKR03)
+- **Tax Reports** - UStVA (VAT) and KSt (corporate tax) with automatic calculations
+- **GoBD Compliance** - Immutable posted entries to comply with German regulations
 
 ## Technology Stack
 
-### Backend
-- **Ruby on Rails 8.1** - Application framework
-- **PostgreSQL** - Database with JSONB support for flexible data storage
-- **Devise** - User authentication
-- **Inertia Rails** - Modern monolith architecture (Rails backend + SPA frontend)
+**Backend**: Ruby on Rails 8.1, PostgreSQL, Devise, Inertia Rails
+**Frontend**: React, TypeScript, Vite, Tailwind CSS, shadcn/ui
+**Development**: Dev Container (Docker)
 
-### Frontend
-- **React with TypeScript** - Component-based UI
-- **Vite Rails** - Fast frontend build tooling
-- **Inertia.js** - SPA experience without building an API
-- **Tailwind CSS** - Utility-first CSS framework
-- **shadcn/ui** - High-quality, accessible UI components
+## Documentation
 
-### Development Environment
-- **Dev Container** - Consistent development environment using Docker
+Detailed documentation is organized into specialized guides:
 
-## Database Architecture
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Database schema, design patterns, data integrity rules
+- **[ACCOUNTING.md](docs/ACCOUNTING.md)** - German accounting context, SKR03, HGB, GoBD compliance
+- **[SERVICES.md](docs/SERVICES.md)** - Service classes (AccountMap, BalanceSheetService, UstvaService, etc.)
+- **[FRONTEND.md](docs/FRONTEND.md)** - React components, TypeScript types, formatting utilities
+- **[WORKFLOWS.md](docs/WORKFLOWS.md)** - Step-by-step user workflows and usage examples
 
-The application uses a classic double-entry bookkeeping system:
+## Quick Start
 
-### Core Entities
+### Development Commands
 
-1. **Companies** - Business entities being managed
-2. **Users** - Accountants and business owners (linked via CompanyMemberships)
-3. **Fiscal Years** - Year-based accounting periods with workflow state tracking and closing capability
-4. **Accounts** - Chart of accounts (SKR03/SKR04 compatible)
-5. **Account Templates** - Template accounts in chart of accounts (used to create company-specific accounts)
-6. **Bank Accounts** - Physical bank accounts linked to ledger accounts
-7. **Bank Transactions** - Individual transactions from bank feeds (status: pending → booked → reconciled)
-8. **Documents** - Scanned receipts, invoices, and supporting documentation
-9. **Journal Entries** - Bookkeeping transaction headers (can be posted for immutability, with entry_type: normal/opening/closing)
-10. **Line Items** - The debit/credit splits that make up journal entries
-11. **Balance Sheets** - Stored opening and closing balance sheets (Eröffnungsbilanz/Schlussbilanz)
-12. **Tax Reports** - VAT and annual tax report storage (with report_type field)
-13. **Account Usages** - Tracks recently used accounts per company for quick selection during booking
+This project runs in a devcontainer. Use the `./dc` helper script:
 
-### Key Design Decisions
-
-#### Double-Entry Ledger System
-Journal entries contain multiple line items. Each line item has:
-- An account reference
-- An amount
-- A direction (debit or credit)
-- Optional bank transaction link
-
-The system validates that debits equal credits before allowing a journal entry to be posted.
-
-#### Bank Reconciliation
-The relationship between bank transactions and bookkeeping is solved through line items:
-- **Split Booking (1 Transaction → Many Accounts)**: One bank transaction links to one line item (bank asset account), while sibling line items split the amount into expense/VAT accounts
-- **Aggregated Booking (Many Transactions → 1 Record)**: Multiple bank transactions each link to separate line items (all bank asset account), balanced against a single invoice line item
-
-#### GoBD Compliance
-Once a journal entry has a `posted_at` timestamp, it becomes immutable:
-- Posted entries cannot be modified or deleted
-- Line items cannot be changed if their journal entry is posted
-- This ensures audit trail compliance with German tax law (GoBD - Grundsätze zur ordnungsmäßigen Führung und Aufbewahrung von Büchern)
-
-#### Bank Transaction Booking Workflow
-Bank transactions flow through the following states:
-1. **pending** - Imported but not yet booked
-2. **booked** - Linked to a journal entry
-3. **reconciled** - Fully verified against source documents
-
-The booking process uses service classes:
-- `JournalEntryCreator` - Creates journal entries from bank transactions with automatic VAT splits
-- `JournalEntryDestroyer` - Safely deletes journal entries (resets bank transaction to pending)
-
-#### Account Usage Tracking
-The `AccountUsage` model tracks which accounts are frequently used per company:
-- Records are upserted via `AccountUsage.record_usage(company:, account:)`
-- Recently used accounts are retrieved via `company.account_usages.recent`
-- This enables quick account selection in the booking UI
-
-#### VAT Account Constants
-Standard SKR03 VAT accounts are defined in `Account::VAT_ACCOUNTS`:
-- `1576` - Abziehbare Vorsteuer 19% (Input VAT 19%)
-- `1571` - Abziehbare Vorsteuer 7% (Input VAT 7%)
-- `1776` - Umsatzsteuer 19% (Output VAT 19%)
-- `1771` - Umsatzsteuer 7% (Output VAT 7%)
-
-#### Journal Entry Types and Ordering
-Journal entries have three types that determine their purpose and ordering:
-- **normal** (sequence: 1000-8999) - Regular business transactions
-- **opening** (sequence: 0-999) - Opening balance entries (Eröffnungsbilanzkonto - EBK)
-- **closing** (sequence: 9000-9999) - Closing balance entries (Schlussbilanzkonto - SBK)
-
-Entries are ordered by: `booking_date ASC, sequence ASC, id ASC`
-- This ensures EBK entries always appear first on the opening date
-- SBK entries always appear last on the closing date
-- Normal transactions appear in between based on booking date
-
-#### Fiscal Year Workflow States
-Fiscal years progress through five workflow states:
-
-1. **open** - New fiscal year created, no opening balance yet
-2. **open_with_opening** - Opening balance posted, transactions can be recorded
-3. **closing_posted** - Closing balance has been calculated and posted (not yet used)
-4. **closed** - Fiscal year is closed, immutable
-
-State transitions are tracked via:
-- `opening_balance_posted_at` - Timestamp when opening balance was posted
-- `closing_balance_posted_at` - Timestamp when closing balance was posted
-- `closed` / `closed_at` - Final closing timestamp
-
-#### Opening and Closing Balance Sheets (EBK/SBK)
-The application supports German-standard opening and closing balance sheets:
-
-**Opening Balance (Eröffnungsbilanz - EBK)**:
-- Created at the start of a fiscal year
-- Two modes:
-  - **Manual Entry**: User manually enters balance sheet data
-  - **Carryforward**: Automatically imports closing balance from previous year
-- Uses account 9000 "Saldenvorträge, Sachkonten" as contra account
-- Generates journal entries with `entry_type: 'opening'`
-- Stored in `balance_sheets` table with `sheet_type: 'opening'`
-
-**Closing Balance (Schlussbilanz - SBK)**:
-- Created at fiscal year end
-- Automatically calculated from posted journal entries
-- Creates closing journal entries that reverse the opening (credit assets, debit liabilities/equity)
-- Uses account 9000 as contra account
-- Generates journal entries with `entry_type: 'closing'`
-- Stored in `balance_sheets` table with `sheet_type: 'closing'`
-- Fiscal year is marked as closed and becomes immutable
-
-**SKR03 Closing Accounts (9000-series)**:
-- `9000` - Saldenvorträge, Sachkonten (main EBK/SBK account)
-- `9008` - Saldenvorträge, Debitoren
-- `9009` - Saldenvorträge, Kreditoren
-- `9090` - Summenvortragskonto
-- These are system accounts (hidden from normal booking UI)
-- Must collectively balance to zero
-
-**Service Classes**:
-- `OpeningBalanceCreator` - Creates opening balance entries
-- `FiscalYearClosingService` - Closes fiscal year and generates SBK entries
-- `BalanceSheetService` - Calculates balance sheets (uses AccountMap for categorization and GuVService for net income)
-- `GuVService` - Calculates Profit & Loss statements using AccountMap for section categorization
-- `AccountMap` - Centralized mapping service for account categorization (GuV sections and balance sheet categories)
-
-#### Balance Sheet Generation
-The `BalanceSheetService` generates balance sheets from posted journal entries:
-- **AccountMap Integration**: Uses `AccountMap` service for account categorization into balance sheet sections (Anlagevermögen, Umlaufvermögen, Eigenkapital, Fremdkapital)
-- **Closing Entry Exclusion**: Entries with `entry_type: 'closing'` are excluded from calculations
-- **Posted Entries Only**: Only posted journal entries are included (GoBD compliance)
-- **Net Income Integration**: Net income calculated by GuVService is included in equity
-- **GuV Integration**: Automatically calls `GuVService` to calculate detailed GuV data alongside balance sheet
-- **Account Balances**: Calculated using debit/credit logic appropriate to each account type
-- **Balance Verification**: Ensures Aktiva = Passiva (or flags data integrity issues)
-- **Stored Balance Sheets**: For closed fiscal years, loads stored balance sheet instead of recalculating
-- **Backward Compatibility**: Older balance sheets without GuV data will have GuV calculated on-the-fly
-
-#### GuV (Gewinn- und Verlustrechnung) Generation
-The `GuVService` generates Profit & Loss statements following German accounting standards:
-- **Gesamtkostenverfahren Format**: Implements § 275 Abs. 2 HGB (Total Cost Method)
-- **AccountMap Integration**: Uses `AccountMap` service for account-to-section categorization (see AccountMap section below)
-- **Net Income Calculation**: Calculates Jahresüberschuss (profit) or Jahresfehlbetrag (loss)
-- **Exclusion Rules**: Excludes closing entries and 9xxx accounts (same as balance sheet)
-- **Posted Entries Only**: Only posted journal entries are included (GoBD compliance)
-- **Section Subtotals**: Each GuV section includes accounts list and subtotal
-- **Display Type Hints**: Sections tagged as positive (revenue) or negative (expenses) for UI formatting
-- **Automatic Persistence**: GuV data stored in `balance_sheets.data` JSONB field when closing fiscal years
-- **Net Income Reuse**: BalanceSheetService reuses the net income calculated by GuVService instead of recalculating it
-
-#### Account Mapping Service (AccountMap)
-The `AccountMap` service provides centralized configuration for categorizing accounts into GuV sections and balance sheet categories:
-
-**Purpose**:
-- Decouples account categorization logic from business logic
-- Provides single source of truth for account-to-section mappings
-- Enables easy customization of account ranges without code changes
-- Based on official SKR03 account mapping data (imported from `contrib/guv-with-categories.json` and `contrib/bilanz-with-categories.json`)
-- Supports German accounting standards (§ 275 Abs. 2 HGB for GuV, § 266 HGB for Bilanz)
-
-**GuV Section Mapping**:
-Complete mapping for all 17 GuV sections according to § 275 Abs. 2 HGB (Gesamtkostenverfahren), including:
-- Revenue sections (Umsatzerlöse, sonstige betriebliche Erträge, etc.)
-- Expense sections (Materialaufwand, Personalaufwand, Abschreibungen, etc.)
-- Financial sections (Erträge aus Beteiligungen, Zinsen, etc.)
-
-Each section contains specific SKR03 account codes and ranges. Some sections have subsections (e.g., Materialaufwand has separate mappings for materials and services).
-
-**Balance Sheet Category Mapping**:
-Complete mapping for all four balance sheet categories according to § 266 HGB:
-- **Anlagevermögen** (Fixed Assets) - Immaterielle Vermögensgegenstände, Sachanlagen, Finanzanlagen
-- **Umlaufvermögen** (Current Assets) - Vorräte, Forderungen, Wertpapiere, Kassenbestand
-- **Eigenkapital** (Equity) - Gezeichnetes Kapital, Rücklagen, Jahresüberschuss/Jahresfehlbetrag
-- **Fremdkapital** (Liabilities) - Rückstellungen, Verbindlichkeiten
-
-Each category contains the official SKR03 account codes extracted from the structured Bilanz template.
-
-**Key Methods**:
-```ruby
-# GuV section methods
-AccountMap.section_title(:umsatzerloese)
-# => "1. Umsatzerlöse"
-
-AccountMap.account_codes(:umsatzerloese)
-# => ["2750", "2751", ..., "8959"] (expanded from ranges)
-
-AccountMap.find_accounts(accounts, :umsatzerloese)
-# => [{ code: "8000", name: "Revenue", balance: 1000.0 }]
-
-# Balance sheet category methods
-AccountMap.balance_sheet_category_title(:anlagevermoegen)
-# => "Anlagevermögen"
-
-AccountMap.balance_sheet_account_codes(:anlagevermoegen)
-# => ["0010", "0015", ..., "1518"] (expanded from ranges)
-
-AccountMap.find_balance_sheet_accounts(accounts, :anlagevermoegen)
-# => [{ code: "0100", name: "Fixed Asset", balance: 10000.0 }]
-```
-
-**Error Handling**:
-- All methods validate section IDs and raise `ArgumentError` for unknown sections
-- This ensures typos and invalid configurations are caught early
-
-**Usage in Services**:
-- `GuVService` uses `AccountMap.find_accounts()` to filter accounts into GuV sections
-- `BalanceSheetService` uses `AccountMap.find_balance_sheet_accounts()` to categorize accounts into balance sheet sections
-- Both services rely on AccountMap as the single source of truth for account categorization
-
-**Configuration**:
-To customize account mappings, edit the `GUV_SECTIONS` or `BALANCE_SHEET_CATEGORIES` hashes in `app/services/account_map.rb`. Changes take effect immediately without requiring code changes in consuming services.
-
-**Data Source**:
-The account mappings are generated from official SKR03 documentation using helper scripts in the `contrib/` directory:
-- `contrib/bilanz-with-categories.json` - Balance sheet account mappings
-- `contrib/guv-with-categories.json` - GuV account mappings
-- `contrib/generate_account_map_ranges.rb` - Helper script to transform JSON data into AccountMap format
-
-#### Tax Form Field Mapping Service (TaxFormFieldMap)
-The `TaxFormFieldMap` service provides centralized configuration for tax form field definitions, similar to `AccountMap` for account categorization:
-
-**Purpose**:
-- Decouples tax form field definitions from business logic
-- Provides single source of truth for field configurations
-- Enables easy customization of fields without code changes
-- Supports German tax forms (UStVA and KSt)
-
-**UStVA Field Mapping**:
-Core fields for Umsatzsteuervoranmeldung (VAT advance return):
-- **Output VAT**: Kennziffer 81 (19%), Kennziffer 86 (7%)
-- **Input VAT**: Kennziffer 66 (19%), Kennziffer 61 (7%)
-- **Reverse Charge**: Kennziffer 46 (output), Kennziffer 47 (input)
-- **Net Liability**: Kennziffer 83 (calculated field)
-
-Each field includes:
-- Field number (Kennziffer)
-- Name and description
-- Associated account codes (using `Account::VAT_ACCOUNTS`)
-- Calculation type (`:account_balance` or `:formula`)
-- Section grouping (`:output_vat`, `:input_vat`, `:reverse_charge`, `:summary`)
-- Display order
-
-**KSt Field Mapping**:
-Fields for Körperschaftsteuer (corporate income tax):
-- **Base Data**: Net income from GuV (`:einkommen`)
-- **Adjustments** (editable fields for außerbilanzielle Korrekturen):
-  - Non-deductible expenses (`:nicht_abzugsfaehige_aufwendungen`) - adds to taxable income
-  - Tax-free income (`:steuerfreie_ertraege`) - subtracts from taxable income
-  - Loss carryforward (`:verlustvortrag`) - subtracts from taxable income
-  - Donations (`:spenden`) - subtracts from taxable income
-  - Special deductions (`:sonderabzuege`) - subtracts from taxable income
-- **Calculated Fields**: Taxable income and KSt amount (15% rate)
-
-Each adjustment field includes:
-- Name and description
-- Section (`:base_data`, `:adjustments`, `:calculated`)
-- Editability flag
-- Default value (0.0 for adjustments)
-- Adjustment sign (`:add` or `:subtract`)
-- Display order
-
-**Key Methods**:
-```ruby
-# Get all UStVA fields
-TaxFormFieldMap.ustva_fields
-# => { kz_81: {...}, kz_86: {...}, ... }
-
-# Get single field definition
-TaxFormFieldMap.ustva_field(:kz_81)
-# => { field_number: 81, name: "Umsatzsteuer 19%", ... }
-
-# Get fields grouped by section
-TaxFormFieldMap.ustva_fields_by_section
-# => { output_vat: {...}, input_vat: {...}, ... }
-
-# Get editable KSt fields only
-TaxFormFieldMap.kst_editable_fields
-# => { nicht_abzugsfaehige_aufwendungen: {...}, ... }
-
-# Get section labels
-TaxFormFieldMap.ustva_section_label(:output_vat)
-# => "Umsatzsteuer (Output VAT)"
-```
-
-**Error Handling**:
-- All lookup methods validate field keys and raise `ArgumentError` for unknown fields
-- Section label methods validate section keys and raise `ArgumentError` for unknown sections
-
-**Usage in Services**:
-- `UstvaService` uses `TaxFormFieldMap.ustva_fields` to calculate VAT report fields
-- `KstService` uses `TaxFormFieldMap.kst_editable_fields` to build adjustment fields
-
-**Configuration**:
-To customize tax form fields, edit the `USTVA_FIELDS` or `KST_FIELDS` frozen hashes in `app/services/tax_form_field_map.rb`. Changes take effect immediately.
-
-#### UStVA Service (Umsatzsteuervoranmeldung)
-The `UstvaService` calculates VAT advance returns from posted journal entries:
-
-**Purpose**:
-- Calculate periodic VAT liabilities for submission to tax authorities
-- Support monthly, quarterly, and annual reporting periods
-- Provide detailed breakdown by VAT rate and type
-
-**Key Features**:
-- **GoBD Compliant**: Only includes posted (immutable) journal entries
-- **Date Range Filtering**: Filters transactions by booking date within specified period
-- **VAT Account Aggregation**: Sums VAT amounts by account using SQL GROUP BY
-- **Absolute Values**: Reports all VAT amounts as positive values (using `.abs` to handle asset vs liability accounts)
-- **Section Grouping**: Organizes fields into output VAT, input VAT, and reverse charge sections
-- **Net Liability Calculation**: Calculates amount owed or refund (output VAT - input VAT + reverse charge)
-- **Period Type Detection**: Automatically detects monthly (28-31 days), quarterly (89-92 days), annual (365-366 days), or custom periods
-
-**Data Structure Returned**:
-```ruby
-{
-  period_type: "monthly",
-  start_date: "2025-01-01",
-  end_date: "2025-01-31",
-  fields: [
-    { key: :kz_81, field_number: 81, name: "Umsatzsteuer 19%", value: 190.00, editable: false },
-    # ... more fields
-  ],
-  sections: {
-    output_vat: { label: "...", fields: [...], subtotal: 190.00 },
-    input_vat: { label: "...", fields: [...], subtotal: 38.00 },
-    reverse_charge: { label: "...", fields: [...], subtotal: 0.00 }
-  },
-  net_vat_liability: 152.00,  # Positive = owed, negative = refund
-  metadata: {
-    journal_entries_count: 12,
-    calculation_date: "2025-12-18"
-  }
-}
-```
-
-**Usage**:
-```ruby
-service = UstvaService.new(
-  company: company,
-  start_date: Date.new(2025, 1, 1),
-  end_date: Date.new(2025, 1, 31)
-)
-result = service.call
-
-if result.success?
-  puts "Net VAT Liability: #{result.data[:net_vat_liability]}"
-else
-  puts "Errors: #{result.errors.join(', ')}"
-end
-```
-
-**Important Notes**:
-- VAT amounts are calculated as `credit - debit` for liability accounts and `debit - credit` for asset accounts, then converted to absolute values
-- Only accounts defined in `Account::VAT_ACCOUNTS` are included
-- The service validates required parameters (company, dates) and ensures end_date > start_date
-- Formula fields (like net liability) are calculated separately, not from account balances
-
-#### KSt Service (Körperschaftsteuer)
-The `KstService` calculates corporate income tax with user-provided adjustments:
-
-**Purpose**:
-- Calculate corporate income tax (15% rate) on taxable income
-- Support außerbilanzielle Korrekturen (outside-balance-sheet corrections)
-- Enable tax planning through editable adjustment fields
-
-**Key Features**:
-- **GuV Integration**: Gets net income from stored balance sheet or generates on-the-fly via `BalanceSheetService`
-- **Stored vs Calculated**: For closed fiscal years, loads stored balance sheet; otherwise calculates fresh
-- **Editable Adjustments**: Five adjustment fields that users can modify
-- **Adjustment Signs**: Each adjustment either adds to or subtracts from taxable income
-- **Zero Floor**: Corporate tax cannot be negative (minimum 0.00)
-- **Rounding**: All monetary values rounded to 2 decimal places
-- **Loss Handling**: Distinguishes Jahresüberschuss (profit) from Jahresfehlbetrag (loss)
-
-**Data Structure Returned**:
-```ruby
-{
-  fiscal_year_id: 1,
-  year: 2025,
-  base_data: {
-    net_income: 50000.00,
-    net_income_label: "Jahresüberschuss",  # or "Jahresfehlbetrag" for losses
-    balance_sheet_available: true,
-    guv_available: true
-  },
-  adjustments: {
-    nicht_abzugsfaehige_aufwendungen: {
-      name: "Nicht abzugsfähige Aufwendungen",
-      description: "...",
-      value: 2000.00,
-      editable: true,
-      adjustment_sign: :add
-    },
-    # ... more adjustments
-  },
-  calculated: {
-    taxable_income: 41500.00,  # After adjustments
-    kst_rate: 0.15,
-    kst_amount: 6225.00  # 15% of taxable income
-  },
-  metadata: {
-    calculation_date: "2025-12-18",
-    stored_balance_sheet: true  # false if calculated on-the-fly
-  }
-}
-```
-
-**Adjustment Calculation**:
-```ruby
-# Starting with net income from GuV
-taxable_income = net_income
-  + nicht_abzugsfaehige_aufwendungen  # Add back non-deductible expenses
-  - steuerfreie_ertraege              # Subtract tax-free income
-  - verlustvortrag                    # Subtract loss carryforward
-  - spenden                           # Subtract donations
-  - sonderabzuege                     # Subtract special deductions
-
-# Corporate tax
-kst_amount = [taxable_income * 0.15, 0.0].max
-```
-
-**Usage**:
-```ruby
-service = KstService.new(
-  company: company,
-  fiscal_year: fiscal_year_2025,
-  adjustments: {
-    nicht_abzugsfaehige_aufwendungen: 2000.00,
-    verlustvortrag: 10000.00
-  }
-)
-result = service.call
-
-if result.success?
-  puts "Taxable Income: #{result.data[:calculated][:taxable_income]}"
-  puts "KSt Amount: #{result.data[:calculated][:kst_amount]}"
-else
-  puts "Errors: #{result.errors.join(', ')}"
-end
-```
-
-**Important Notes**:
-- The service validates that the fiscal year belongs to the specified company
-- If fiscal year is closed and stored balance sheet exists, it uses stored data (more efficient)
-- Otherwise, calls `BalanceSheetService` to generate GuV on-the-fly
-- All adjustment values default to 0.0 if not provided
-- The `@stored_balance_sheet` flag tracks whether data came from database or was calculated fresh
-
-## Development Commands
-
-### Running Commands
-This project runs in a devcontainer. Use the `./dc` helper script to execute commands inside the container.
-
-The `./dc` script is a shorthand for `devcontainer exec --workspace-folder .`
-
-Examples:
 ```bash
 # Rails console
 ./dc rails console
@@ -509,40 +49,6 @@ Examples:
 # Apply linting rules
 ./dc rubocop -A
 
-# Start Rails server (if not already running)
-./dc rails server
-```
-
-You can also use the full command if needed:
-```bash
-devcontainer exec --workspace-folder . rails console
-```
-
-### Common Tasks
-
-#### Database
-```bash
-# Create database
-./dc rails db:create
-
-# Run migrations
-./dc rails db:migrate
-
-# Rollback migration
-./dc rails db:rollback
-
-# Reset database (caution: destroys all data)
-./dc rails db:reset
-
-# Seed database
-./dc rails db:seed
-```
-
-#### Frontend (Vite)
-```bash
-# The Vite dev server typically runs automatically in the devcontainer
-# Check package.json for available scripts
-
 # Install JavaScript dependencies
 ./dc npm install
 
@@ -550,614 +56,164 @@ devcontainer exec --workspace-folder . rails console
 ./dc npm run check
 ```
 
-Explicitly building the frontend assets is not necessary, as there is
-usually a Vite process running during development.
+The `./dc` script is shorthand for `devcontainer exec --workspace-folder .`
 
+### Getting Started
 
-#### Generators
-```bash
-# Generate model
-./dc rails generate model ModelName
-
-# Generate controller
-./dc rails generate controller ControllerName
-
-# Generate migration
-./dc rails generate migration MigrationName
-```
+1. Ensure the devcontainer is running
+2. Run migrations: `./dc rails db:migrate`
+3. Seed initial data: `./dc rails db:seed`
+4. Access the application at http://localhost:3000
+5. Create your first company and chart of accounts
+6. Start booking transactions!
 
 ## Project Structure
 
 ```
-.
-├── app/
-│   ├── controllers/          # Rails controllers (Inertia endpoints)
-│   │   ├── fiscal_years_controller.rb        # Fiscal year management
-│   │   ├── opening_balances_controller.rb    # Opening balance entry
-│   │   ├── tax_reports_controller.rb         # Tax report generation and management
-│   │   └── reports/                          # Report controllers
-│   │       └── balance_sheets_controller.rb  # Balance sheet reports
-│   ├── models/              # ActiveRecord models
-│   │   ├── balance_sheet.rb            # Stored balance sheets (opening/closing)
-│   │   ├── fiscal_year.rb              # Fiscal years with workflow states
-│   │   ├── journal_entry.rb            # Journal entries with entry_type
-│   │   ├── tax_report.rb               # Tax reports (UStVA, KSt, etc.)
-│   │   ├── account.rb                  # Chart of accounts
-│   │   └── account_template.rb         # Account templates for charts
-│   ├── services/            # Service classes (business logic)
-│   │   ├── account_map.rb                   # Centralized account-to-section mapping (GuV & balance sheet)
-│   │   ├── tax_form_field_map.rb            # Centralized tax form field definitions (UStVA & KSt)
-│   │   ├── balance_sheet_service.rb         # Balance sheet calculation (integrates GuV)
-│   │   ├── guv_service.rb                   # GuV (P&L) calculation using Gesamtkostenverfahren
-│   │   ├── ustva_service.rb                 # UStVA (VAT advance return) calculation
-│   │   ├── kst_service.rb                   # KSt (corporate income tax) calculation
-│   │   ├── opening_balance_creator.rb       # Opening balance (EBK) creation
-│   │   ├── fiscal_year_closing_service.rb   # Fiscal year closing (SBK)
-│   │   ├── journal_entry_creator.rb         # Journal entry creation
-│   │   └── journal_entry_destroyer.rb       # Journal entry deletion
-│   ├── frontend/            # React + TypeScript frontend
-│   │   ├── components/      # React components (including shadcn/ui)
-│   │   │   ├── FiscalYearStatusBadge.tsx  # Workflow state indicator
-│   │   │   ├── reports/                   # Report-specific components
-│   │   │   │   ├── BalanceSheetSection.tsx  # Reusable balance sheet section display
-│   │   │   │   └── GuVSection.tsx           # GuV display component
-│   │   │   ├── tax-reports/               # Tax report components
-│   │   │   │   ├── TaxReportSection.tsx     # Tax report section display
-│   │   │   │   ├── TaxFormFieldRow.tsx      # Individual tax field row (editable/readonly)
-│   │   │   │   ├── ReportTypeBadge.tsx      # Badge for report types
-│   │   │   │   └── MissingReportsAlert.tsx  # Missing reports warning
-│   │   │   └── ui/                        # shadcn/ui components
-│   │   ├── pages/          # Inertia page components
-│   │   │   ├── FiscalYears/              # Fiscal year management
-│   │   │   │   ├── Index.tsx             # List fiscal years
-│   │   │   │   ├── Show.tsx              # Fiscal year details
-│   │   │   │   └── PreviewClosing.tsx    # Preview closing balance
-│   │   │   ├── OpeningBalances/
-│   │   │   │   └── Form.tsx              # Opening balance entry form
-│   │   │   ├── Reports/                  # Report pages
-│   │   │   │   └── BalanceSheet.tsx      # Balance sheet & GuV report
-│   │   │   ├── TaxReports/               # Tax report pages
-│   │   │   │   ├── Index.tsx             # List tax reports with missing detection
-│   │   │   │   ├── New.tsx               # Multi-step report generation wizard
-│   │   │   │   └── Show.tsx              # Display/edit tax report (UStVA & KSt)
-│   │   │   ├── BankAccounts/
-│   │   │   └── Dashboard/
-│   │   ├── types/          # TypeScript type definitions
-│   │   │   ├── accounting.ts             # Shared accounting types (BalanceSheetData, GuVData, etc.)
-│   │   │   └── tax-reports.ts            # Tax report types (UstvaData, KstData, etc.)
-│   │   └── utils/          # Shared utility functions (formatting, etc.)
-│   │       ├── formatting.ts             # Date/currency formatting
-│   │       └── missing-reports.ts        # Missing report detection logic
-│   └── views/              # Minimal (Inertia uses React for views)
-├── db/
-│   ├── migrate/            # Database migrations
-│   └── schema.rb           # Current database schema
-├── config/
-│   ├── routes.rb           # Route definitions
-│   └── database.yml        # Database configuration
-├── spec/
-│   ├── services/           # Service specs
-│   │   ├── tax_form_field_map_spec.rb   # TaxFormFieldMap tests
-│   │   ├── ustva_service_spec.rb        # UstvaService tests
-│   │   └── kst_service_spec.rb          # KstService tests
-│   └── factories/          # FactoryBot factories
-│       └── balance_sheets.rb            # BalanceSheet factory
-└── .devcontainer/          # Dev container configuration
+app/
+├── controllers/          # Rails controllers (Inertia endpoints)
+│   ├── fiscal_years_controller.rb
+│   ├── tax_reports_controller.rb
+│   └── reports/
+├── models/              # ActiveRecord models
+│   ├── journal_entry.rb
+│   ├── fiscal_year.rb
+│   ├── balance_sheet.rb
+│   └── tax_report.rb
+├── services/            # Service classes (business logic)
+│   ├── account_map.rb
+│   ├── balance_sheet_service.rb
+│   ├── guv_service.rb
+│   ├── ustva_service.rb
+│   └── kst_service.rb
+├── frontend/            # React + TypeScript
+│   ├── components/      # Reusable components
+│   ├── pages/          # Inertia pages
+│   ├── types/          # TypeScript types
+│   └── utils/          # Formatting utilities
+└── views/              # Minimal (Inertia uses React)
+
+docs/                    # Detailed documentation
+├── ARCHITECTURE.md
+├── ACCOUNTING.md
+├── SERVICES.md
+├── FRONTEND.md
+└── WORKFLOWS.md
 ```
 
-## Frontend Development
+## Key Concepts
 
-### Formatting Utilities
+### Double-Entry Bookkeeping
 
-The application uses shared formatting utilities to ensure consistent display of dates, currencies, and amounts across all components.
+Journal entries contain line items with debits and credits that must balance. See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for details.
 
-**Location**: `app/frontend/utils/formatting.ts`
+### GoBD Compliance
 
-**Available Functions**:
-- `formatDate(dateString, options?)` - Formats dates to German locale (DD.MM.YYYY)
-- `formatAmount(amount, currency)` - Formats amounts with currency symbols (e.g., "1.234,56 €")
-- `formatCurrency(amount, currency?)` - Like formatAmount but handles null values (returns '-')
-
-**Usage**:
-```typescript
-import { formatDate, formatAmount, formatCurrency } from '@/utils/formatting'
-
-// Format a date
-formatDate('2024-03-15')  // Returns: "15.03.2024"
-
-// Format an amount with currency
-formatAmount(1234.56, 'EUR')  // Returns: "1.234,56 €"
-
-// Format currency with null handling
-formatCurrency(null)  // Returns: "-"
-formatCurrency(100.50)  // Returns: "100,50 €"
-```
-
-**Important**:
-- **Before creating new formatting functions**, always check if the functionality exists in `formatting.ts`
-- **All new formatting utilities** should be added to `formatting.ts` to avoid duplication
-- Use German locale (`de-DE`) for all date and number formatting to comply with local accounting standards
-
-### TypeScript Types
-
-The application uses centralized TypeScript type definitions for accounting and tax data structures.
-
-**Location**: `app/frontend/types/accounting.ts`
-
-**Available Types**:
-- `AccountBalance` - Account with code, name, and balance (shared across components)
-- `FiscalYear` - Fiscal year with workflow state and metadata
-- `BalanceSheetData` - Complete balance sheet data structure including GuV
-- `GuVData` - GuV (P&L) data structure
-- `GuVSection` - Individual GuV section with accounts and subtotal
-
-**Usage**:
-```typescript
-import { BalanceSheetData, GuVData, AccountBalance } from '@/types/accounting'
-
-// Use in component props
-interface MyComponentProps {
-  balanceSheet: BalanceSheetData
-}
-
-// Access GuV data
-const guv: GuVData | undefined = balanceSheet.guv
-```
-
-**Location**: `app/frontend/types/tax-reports.ts`
-
-**Available Types**:
-- `TaxReportSummary` - Report metadata for list views
-- `UstvaData` - Complete UStVA report structure
-- `KstData` - Complete KSt report structure
-- `TaxFormField` - Individual tax form field (with value and metadata)
-- `TaxReportSection` - Section containing multiple fields with subtotal
-- `TaxAdjustmentField` - Editable KSt adjustment field
-
-**Usage**:
-```typescript
-import { UstvaData, KstData, TaxFormField } from '@/types/tax-reports'
-
-// Use in component props
-interface TaxReportProps {
-  reportData: UstvaData | KstData
-}
-
-// Type guard for report type
-if (reportData.reportType === 'ustva') {
-  const ustvaData = reportData as UstvaData
-  console.log(ustvaData.netVatLiability)
-}
-```
-
-**Important**:
-- **All accounting-related types** should be defined in `accounting.ts`
-- **All tax report types** should be defined in `tax-reports.ts`
-- **Import types from these central locations** to ensure consistency
-- **GuV data is optional** in `BalanceSheetData` for backward compatibility with older balance sheets
-
-### List Filter Component
-
-The application provides a reusable filter component for list views with filtering, sorting, and search capabilities.
-
-**Location**: `app/frontend/components/ListFilter.tsx`
-
-**Features**:
-- **Fiscal Year Filter** - Dropdown to filter by fiscal year or show all
-- **Sort Order Toggle** - Toggle between ascending/descending date sorting
-- **Status Filter** - Checkbox to hide specific statuses (e.g., booked transactions, posted entries)
-- **Text Search** - Live search input for filtering results
-
-**Usage**:
-```typescript
-import { ListFilter, FilterState } from '@/components/ListFilter'
-
-const [filterState, setFilterState] = useState<FilterState>({
-  fiscalYearId: null,
-  sortOrder: 'asc',
-  hideFilteredStatus: false,
-  searchText: ''
-})
-
-<ListFilter
-  config={{
-    showFiscalYearFilter: true,
-    showSortOrder: true,
-    showStatusFilter: true,
-    showTextSearch: true,
-    statusFilterLabel: 'Show only pending',
-    statusFilterDescription: 'Hiding booked and reconciled transactions',
-    searchPlaceholder: 'Search remittance info or counterparty...'
-  }}
-  fiscalYears={fiscalYears}
-  value={filterState}
-  onChange={setFilterState}
-/>
-```
-
-**Important**:
-- **Use this component for all list views** that need filtering/sorting capabilities
-- **The status filter is generic** - customize the label for your use case (e.g., "Show only unposted" for journal entries)
-- **Implement filtering logic** in a `useMemo` hook for performance
-- See `app/frontend/pages/BankAccounts/Show.tsx` for a complete implementation example
-
-## Data Models
-
-### Journal Entry Workflow
-
-1. **Create Journal Entry** (draft state)
-   - Set company, fiscal year, booking date, description
-   - Optionally attach a document (receipt/invoice)
-
-2. **Add Line Items**
-   - Each line item references an account
-   - Specify amount and direction (debit/credit)
-   - Optionally link to bank transaction
-   - System validates that debits = credits
-
-3. **Post Journal Entry**
-   - Call `journal_entry.post!`
-   - Sets `posted_at` timestamp
-   - Entry becomes immutable (GoBD compliance)
-
-### Example: Split Booking
-
-Office supplies purchase for €119 (€100 + €19 VAT):
-
-```ruby
-# Create journal entry
-je = JournalEntry.create!(
-  company: company,
-  fiscal_year: fiscal_year_2025,
-  booking_date: Date.today,
-  description: "Office supplies from Supplier XYZ"
-)
-
-# Line item 1: Credit bank account (money out)
-LineItem.create!(
-  journal_entry: je,
-  account: bank_account,           # Account "1200 Bank"
-  amount: 119.00,
-  direction: "credit",
-  bank_transaction: bank_tx        # Link to actual bank transaction
-)
-
-# Line item 2: Debit expense account
-LineItem.create!(
-  journal_entry: je,
-  account: office_expense_account, # Account "4930 Office Supplies"
-  amount: 100.00,
-  direction: "debit"
-)
-
-# Line item 3: Debit input tax account
-LineItem.create!(
-  journal_entry: je,
-  account: input_tax_account,      # Account "1576 Input Tax 19%"
-  amount: 19.00,
-  direction: "debit"
-)
-
-# Post the entry (make immutable)
-je.post!
-```
-
-### Balance Sheet Report
-
-The Balance Sheet (Bilanz) report provides a snapshot of the company's financial position at the end of a fiscal year.
-
-**Access**: Navigate to Reports → Balance Sheet in the sidebar menu.
-
-**Features**:
-- **Fiscal Year Selection**: Choose any fiscal year from the dropdown to view its balance sheet
-- **Two-Column Layout**:
-  - **Aktiva (Assets)**: Fixed Assets (Anlagevermögen) and Current Assets (Umlaufvermögen)
-  - **Passiva (Liabilities & Equity)**: Equity (Eigenkapital) with net income/loss, and Liabilities (Fremdkapital)
-- **Automatic P&L Integration**: Net income (Jahresüberschuss) or loss (Jahresfehlbetrag) is calculated and included in equity
-- **GuV Display**: Detailed Profit & Loss statement displayed below balance sheet using Gesamtkostenverfahren format
-- **Balance Verification**: System verifies that Aktiva = Passiva and warns of data integrity issues
-- **Status Indicators**: Shows whether fiscal year is open or closed
-- **German Locale Formatting**: Amounts displayed in EUR with German number formatting
-- **Modular Components**: Uses extracted `BalanceSheetSection` and `GuVSection` components for clean, maintainable code
-
-**How It Works**:
-1. Service queries all journal entries for the selected fiscal year
-2. Only posted entries are included (GoBD compliance)
-3. Line items are aggregated by account using SQL GROUP BY
-4. Accounts are categorized into balance sheet sections using AccountMap service
-5. Net income is calculated by GuVService and included in equity
-6. GuVService calculates detailed GuV breakdown with section-wise grouping
-7. Zero-balance accounts are filtered out for cleaner reports
-8. Final balance sheet is validated (Aktiva = Passiva)
-
-**Implementation**:
-- **Services**:
-  - `BalanceSheetService` (`app/services/balance_sheet_service.rb`) - Main service
-  - `GuVService` (`app/services/guv_service.rb`) - GuV calculation
-- **Controller**: `Reports::BalanceSheetsController` (`app/controllers/reports/balance_sheets_controller.rb`)
-- **Frontend**:
-  - `Reports/BalanceSheet.tsx` (`app/frontend/pages/Reports/BalanceSheet.tsx`) - Main page
-  - `reports/BalanceSheetSection.tsx` (`app/frontend/components/reports/BalanceSheetSection.tsx`) - Balance sheet display
-  - `reports/GuVSection.tsx` (`app/frontend/components/reports/GuVSection.tsx`) - GuV display
-- **Types**: `accounting.ts` (`app/frontend/types/accounting.ts`) - Shared TypeScript interfaces
-- **Route**: `/reports/balance_sheet`
-
-### GuV (Gewinn- und Verlustrechnung) Report
-
-The GuV report provides a detailed breakdown of income and expenses following German accounting standards.
-
-**Access**: The GuV is automatically displayed below the balance sheet when viewing balance sheet reports.
-
-**Features**:
-- **Gesamtkostenverfahren Format**: Follows § 275 Abs. 2 HGB (Total Cost Method)
-- **Five Main Sections**: Revenue, Material Expense, Personnel Expense, Depreciation, Other Operating Expenses
-- **Account Details**: Shows individual accounts within each section with amounts
-- **Section Subtotals**: Displays subtotals for each GuV section
-- **Net Income/Loss**: Final result labeled as Jahresüberschuss (profit) or Jahresfehlbetrag (loss)
-- **Color Coding**: Expense sections displayed in red for visual clarity
-- **German Standards**: Complies with HGB § 275 Abs. 2 requirements
-- **Automatic Calculation**: Calculated on-the-fly for open fiscal years
-- **Persistent Storage**: Stored in balance sheet data when fiscal year is closed
-- **Backward Compatible**: Older balance sheets calculate GuV on-the-fly if not stored
-
-**How It Works**:
-1. `GuVService` queries posted journal entries for the fiscal year
-2. Accounts are categorized using `AccountMap` service into GuV sections according to § 275 Abs. 2 HGB
-3. `AccountMap.find_accounts()` filters accounts by configured code ranges for each section
-4. Each section calculates a subtotal
-5. Net income is calculated as sum of all section subtotals
-6. GuV data is included in balance sheet response
-7. Frontend displays GuV below balance sheet in scrollable layout
-
-**Implementation**:
-- **Services**:
-  - `GuVService` (`app/services/guv_service.rb`) - Main GuV calculation
-  - `AccountMap` (`app/services/account_map.rb`) - Account categorization
-- **Frontend Component**: `reports/GuVSection.tsx` (`app/frontend/components/reports/GuVSection.tsx`)
-- **Types**: `GuVData`, `GuVSection` in `accounting.ts`
-- **Storage**: Stored in `balance_sheets.data` JSONB field under `guv` key
-- **Tests**: Comprehensive test suites in `spec/services/guv_service_spec.rb` and `spec/services/account_map_spec.rb`
-
-## Fiscal Year Management
+Posted journal entries are immutable (cannot be modified or deleted). This ensures audit trail compliance with German tax law.
 
 ### Fiscal Year Workflow
 
-The application supports a complete fiscal year lifecycle with proper opening and closing procedures following German accounting standards.
+Fiscal years progress through states: `open` → `open_with_opening` → `closed`. See [WORKFLOWS.md](docs/WORKFLOWS.md) for the complete lifecycle.
 
-**Access**: Navigate to `/fiscal_years` to manage fiscal years.
+### German Accounting Standards
 
-**Workflow States**:
+The application follows SKR03 chart of accounts, HGB balance sheet structure, and § 275 Abs. 2 HGB for GuV. See [ACCOUNTING.md](docs/ACCOUNTING.md) for details.
 
-1. **Open** - Newly created fiscal year without opening balance
-   - Cannot create journal entries yet
-   - Shows "Create Opening Balance" button
+## Development Guidelines
 
-2. **Open with Opening** - Opening balance has been posted
-   - Normal journal entries can be created
-   - This is the active working state for the fiscal year
+### Backend Development
 
-3. **Closed** - Fiscal year has been finalized
-   - Closing balance sheet stored
-   - All entries are immutable
-   - Opening balance automatically created for next year
+- Use service classes for business logic
+- Follow GoBD immutability rules for posted entries
+- Validate debits = credits in journal entries
+- Use `AccountMap` for account categorization
+- Use `TaxFormFieldMap` for tax form field definitions
 
-**Creating Opening Balance**:
-- Navigate to fiscal year details → "Create Opening Balance"
-- Two options:
-  - **Import from Previous Year** (recommended): Automatically imports closing balance
-  - **Manual Entry**: Enter balance sheet data manually (for first year or corrections)
-- Opening balance must be posted before journal entries can be created
+See [SERVICES.md](docs/SERVICES.md) for service class documentation.
 
-**Closing Fiscal Year**:
-1. Navigate to fiscal year details → "Preview Closing"
-2. Review the calculated closing balance sheet and GuV
-3. System validates that Aktiva = Passiva
-4. Click "Confirm Close Fiscal Year"
-5. System automatically:
-   - Creates SBK (closing) journal entries
-   - Stores closing balance sheet with GuV data
-   - Marks fiscal year as closed
-   - Creates opening balance for next fiscal year
+### Frontend Development
 
-**Controllers and Routes**:
-- `FiscalYearsController`:
-  - `GET /fiscal_years` - List all fiscal years
-  - `GET /fiscal_years/:id` - Show fiscal year details
-  - `GET /fiscal_years/:id/preview_closing` - Preview closing balance
-  - `POST /fiscal_years/:id/close` - Close the fiscal year
-- `OpeningBalancesController`:
-  - `GET /opening_balances/new` - Opening balance entry form
-  - `POST /opening_balances` - Create opening balance
+- Check `app/frontend/utils/formatting.ts` for existing formatting functions
+- Import types from `app/frontend/types/` (accounting.ts, tax-reports.ts)
+- Extract reusable components to `app/frontend/components/`
+- Use German locale (`de-DE`) for dates and numbers
+- Follow shadcn/ui component patterns
 
-**Frontend Pages**:
-- `FiscalYears/Index.tsx` - List fiscal years with workflow state badges
-- `FiscalYears/Show.tsx` - Fiscal year details with workflow timeline
-- `FiscalYears/PreviewClosing.tsx` - Preview closing balance before finalizing
-- `OpeningBalances/Form.tsx` - Create opening balance (manual or carryforward)
-- `FiscalYearStatusBadge.tsx` - Component showing workflow state with icons
+See [FRONTEND.md](docs/FRONTEND.md) for complete frontend guide.
 
-## German Accounting Context
+### Testing
 
-### Chart of Accounts (Kontenrahmen)
-The application should support standard German charts of accounts:
-- **SKR03** - Process-oriented (most common)
-- **SKR04** - Balance sheet-oriented
+```bash
+# Run all specs
+./dc rspec .
 
-Account codes follow the standard numbering:
-- 0xxx: Asset accounts (Anlagevermögen)
-- 1xxx: Current assets (Umlaufvermögen)
-- 2xxx: Equity (Eigenkapital)
-- 3xxx: Liabilities (Fremdkapital)
-- 4xxx: Operating income (Betriebliche Erträge)
-- 5-7xxx: Operating expenses (Betriebliche Aufwendungen)
-- 8xxx: Revenue accounts (Erlöskonten)
-- 9xxx: Carryforward and closing accounts (Saldenvorträge - EBK/SBK)
+# Run specific spec file
+./dc rspec spec/services/ustva_service_spec.rb
+```
 
-### VAT Rates (Umsatzsteuer)
-Common German VAT rates to support:
-- 19% standard rate (Regelsteuersatz)
-- 7% reduced rate (ermäßigter Steuersatz)
-- 0% tax-free (steuerfrei)
+### Code Quality
 
-### VAT Accounting Method
-The application currently supports **Ist-Versteuerung** (cash accounting):
-- VAT becomes due/deductible when payment is received/made
-- This is the method used when booking bank transactions directly
-- Soll-Versteuerung (accrual accounting) would require invoice-based VAT handling
+```bash
+# Auto-fix Rubocop issues
+./dc rubocop -A
 
-### Tax Reports
+# Check TypeScript types
+./dc npm run check
+```
 
-The Tax Reports feature provides complete management of German tax filings with generation, preview, editing, and persistence capabilities.
+## Common Tasks
 
-**Access**: Navigate to Tax Reports in the sidebar menu (`/tax_reports`).
+### Database Management
 
-**Supported Report Types**:
-1. **UStVA (Umsatzsteuervoranmeldung)** - VAT advance return
-   - Frequencies: Monthly, quarterly, annual
-   - Core fields only (Kennziffer 81, 86, 66, 61, 46, 47, 83)
-   - Automatic calculation from posted journal entries
-   - Net VAT liability calculation (amount owed or refund)
+```bash
+./dc rails db:create      # Create database
+./dc rails db:migrate     # Run migrations
+./dc rails db:rollback    # Rollback migration
+./dc rails db:reset       # Reset database (destroys all data)
+./dc rails db:seed        # Seed database
+```
 
-2. **KSt (Körperschaftsteuer)** - Corporate income tax
-   - Frequency: Annual only
-   - Based on GuV/balance sheet data
-   - Editable adjustments for außerbilanzielle Korrekturen
-   - 15% corporate tax rate
+### Generators
 
-**Key Features**:
-- **Report List View**: Shows all finalized tax reports with filtering by year and type
-- **Missing Reports Detection**: Automatically identifies missing reports for selected calendar year (e.g., "Missing: Feb, Mar, Jun")
-- **Report Generation Wizard**: Step-by-step selection of report type, period type, and specific period/fiscal year
-- **Preview Before Save**: Generate and review reports before persisting to database
-- **Editable After Save**: All finalized reports remain editable (not immutable like posted journal entries)
-- **On-the-fly GuV**: For KSt reports, generates GuV automatically if not stored (doesn't persist it)
-- **Official Field Numbers**: Displays Kennziffer numbers for UStVA fields
-
-**Workflow**:
-
-1. **Generate New Report**:
-   - Click "Generate New Report" from index page
-   - Step 1: Select report type (UStVA or KSt)
-   - Step 2: Select period type (monthly/quarterly/annual for UStVA, annual for KSt)
-   - Step 3: Select specific period (date range for UStVA, fiscal year for KSt)
-   - Click "Generate Report" to preview
-
-2. **Review Preview**:
-   - **UStVA**: Shows output VAT, input VAT, and reverse charge sections with field numbers and amounts
-   - **KSt**: Shows base data (net income), editable adjustment fields, and calculated tax
-   - All amounts displayed in German locale formatting
-
-3. **Save Report**:
-   - Click "Save Report" to persist to database
-   - Report data stored in `tax_reports.generated_data` JSONB field
-   - Status defaults to "draft", can be updated later
-
-4. **Edit Saved Report**:
-   - Navigate to saved report from index
-   - **UStVA reports**: Read-only (amounts calculated from journal entries)
-   - **KSt reports**: Can edit adjustment fields and recalculate tax
-   - Click "Update Report" to save changes
-
-**Implementation Details**:
-
-**Backend**:
-- **Controller**: `TaxReportsController` (`app/controllers/tax_reports_controller.rb`)
-  - 7 endpoints: index, new, generate, show, create, update, missing_reports
-  - Uses `camelize_keys()` for Inertia props, `underscore_keys()` for params
-  - Follows same patterns as `Reports::BalanceSheetsController`
-- **Services**:
-  - `TaxFormFieldMap` - Field definitions and mappings
-  - `UstvaService` - VAT calculation
-  - `KstService` - Corporate tax calculation
-- **Model**: `TaxReport` with `REPORT_TYPES` constant, scopes, and helper methods
-- **Routes**: `resources :tax_reports` with custom collection actions
-
-**Frontend**:
-- **Pages**:
-  - `TaxReports/Index.tsx` - List reports with filtering and missing reports alert
-  - `TaxReports/New.tsx` - Multi-step wizard for report generation
-  - `TaxReports/Show.tsx` - Display/edit report (supports both UStVA and KSt)
-- **Components**:
-  - `tax-reports/TaxReportSection.tsx` - Displays section of fields with subtotal
-  - `tax-reports/TaxFormFieldRow.tsx` - Individual field row (editable or readonly)
-  - `tax-reports/ReportTypeBadge.tsx` - Visual badge for report types
-  - `tax-reports/MissingReportsAlert.tsx` - Alert showing missing reports
-- **Types**: `tax-reports.ts` - Complete TypeScript interfaces for all data structures
-- **Utils**: `missing-reports.ts` - Missing report detection logic
-
-**Data Conversion**:
-- Backend uses snake_case (Ruby conventions)
-- Frontend uses camelCase (JavaScript conventions)
-- Automatic conversion via `camelize_keys()` and `underscore_keys()` helpers
-- JSONB storage in `generated_data` field preserves camelCase keys for frontend
-
-**Missing Reports Detection**:
-- Based on calendar year (Jan-Dec), not fiscal year
-- Compares expected periods against existing reports in database
-- Monthly: 12 expected reports per year
-- Quarterly: 4 expected reports per year (Q1-Q4)
-- Annual: 1 expected report per year
-
-**Future Considerations**:
-- **ELSTER Integration** - Direct electronic filing to German tax authorities
-- **Additional Report Types** - Zusammenfassende Meldung, Gewerbesteuer
-- **Extended UStVA Fields** - Support for all official Kennziffer fields
-- **SolZ (Solidaritätszuschlag)** - Solidarity surcharge calculation alongside KSt
+```bash
+./dc rails generate model ModelName
+./dc rails generate controller ControllerName
+./dc rails generate migration MigrationName
+```
 
 ## Security & Compliance
 
-### Data Protection
 - User authentication via Devise
 - Company data isolation (users only access their companies)
-- Role-based access through CompanyMembership
-
-### GoBD Compliance
-- Posted journal entries are immutable (via `posted_at` timestamp)
-- Posted balance sheets are immutable (via `posted_at` timestamp)
-- Complete audit trail through timestamps and workflow state tracking
-- Document archival (receipts/invoices stored with metadata)
-- Fiscal year closing mechanism with SBK entries
+- Posted entries are immutable (GoBD compliance)
 - 10-year retention of closed fiscal years and balance sheets
-- Proper separation of opening/closing entries from regular transactions
+- Document archival with metadata
 
 ## Future Considerations
 
-- **DATEV Export** - Export accounting data in DATEV format
-- **ELSTER Integration** - Direct electronic tax filing
-- **Bank API Integration** - FinTS/HBCI or PSD2 for automatic bank sync
-- **OCR for Receipts** - Automatic extraction of invoice data
-- **Multi-currency Support** - Currently focuses on EUR
-- **Additional Reports** - Cash Flow Statement, expanded GuV sections
-- **Document Management** - Enhanced DMS with full-text search
+- DATEV export (accounting data export format)
+- ELSTER integration (electronic tax filing)
+- Bank API integration (FinTS/HBCI or PSD2)
+- OCR for receipts (automatic invoice data extraction)
+- Multi-currency support (currently EUR only)
 
-## Getting Started
-
-1. Ensure the devcontainer is running
-2. Run migrations: `./dc rails db:migrate`
-3. Seed initial data (if available): `./dc rails db:seed`
-4. Access the application (typically at http://localhost:3000)
-5. Create your first company and chart of accounts
-6. Start booking transactions!
-
-## Notes for Claude Code
+## Notes for AI Assistants
 
 When working on this project:
-- Use the `./dc` helper script for all Rails/npm commands (e.g., `./dc rails console`)
-- Alternatively, use the full form: `devcontainer exec --workspace-folder . <command>`
-- Respect GoBD immutability rules when modifying accounting logic
-- Consider German accounting standards (SKR03/04) when creating account-related features
-- Use Inertia.js for routing between backend and React frontend
-- Follow TypeScript best practices for frontend code
-- Use shadcn/ui components for consistent UI design
-- **Always check `app/frontend/utils/formatting.ts` for existing formatting functions before creating new ones**
-- **Add all new formatting utilities to `formatting.ts` to maintain consistency and avoid duplication**
-- **Import accounting types from `app/frontend/types/accounting.ts`** instead of defining them locally
-- **Import tax report types from `app/frontend/types/tax-reports.ts`** for tax-related components
-- **Extract reusable components** to `app/frontend/components/` for better code organization
-- **Use `AccountMap` service for account categorization** instead of hardcoding account ranges in business logic
-- **Use `TaxFormFieldMap` service for tax form field definitions** instead of hardcoding field configurations
-- **Customize account ranges in `AccountMap`** (`app/services/account_map.rb`) rather than modifying GuVService or BalanceSheetService
-- **Customize tax form fields in `TaxFormFieldMap`** (`app/services/tax_form_field_map.rb`) rather than modifying UstvaService or KstService
-- When adding GuV acronyms or similar, update `config/initializers/inflections.rb` to ensure Rails recognizes them correctly
-- **UStVA reports use absolute values** - VAT amounts are always positive (input VAT calculated as `.abs` of account balance)
-- **KSt service validates fiscal year ownership** - Ensures fiscal year belongs to the same company as the report
+
+- Use `./dc` for all Rails/npm commands
+- Respect GoBD immutability rules (posted entries cannot be modified)
+- Consider German accounting standards (SKR03/04, HGB)
+- Use Inertia.js for routing (no separate API layer)
+- Check existing utilities before creating new ones:
+  - Formatting functions: `app/frontend/utils/formatting.ts`
+  - TypeScript types: `app/frontend/types/`
+  - Service classes: `app/services/`
+- Use `AccountMap` service for account categorization (don't hardcode ranges)
+- Use `TaxFormFieldMap` service for tax form field definitions
+- Import types from centralized locations (`types/accounting.ts`, `types/tax-reports.ts`)
+- Extract reusable components to `app/frontend/components/`
+- UStVA reports use absolute values (VAT amounts always positive)
+- When adding GuV acronyms, update `config/initializers/inflections.rb`
+
+For detailed information, see the specialized documentation in the `docs/` directory.
