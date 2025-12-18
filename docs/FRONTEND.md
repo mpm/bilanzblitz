@@ -209,6 +209,97 @@ router.visit(`/fiscal_years/${id}`)
 <Link href={`/fiscal_years/${id}`}>View Fiscal Year</Link>
 ```
 
+## User Preferences
+
+### Fiscal Year Preference
+
+**Location**: Stored in `users.config` JSONB column, managed by `UserPreferencesController`
+
+The application maintains a **global fiscal year preference per company** that persists across sessions. This preference is used as the default filter for all views that support fiscal year filtering.
+
+**Storage Format**:
+```json
+{
+  "fiscal_years": {
+    "company_id": year  // e.g., "1": 2025
+  },
+  "ui": {
+    "theme": "dark"
+  }
+}
+```
+
+**Backend Implementation**:
+- `ApplicationController#preferred_fiscal_year_for_company(company_id)` - Helper method to retrieve preference
+- `UserPreferencesController#update` - API endpoint to update preferences
+- All controllers that filter by fiscal year should use this preference as the default
+
+**Frontend Implementation**:
+- `AppLayout` component displays a global fiscal year selector in the top bar
+- Changing the year in the global selector updates the user preference and reloads the page
+- User preference is passed via `userConfig` in Inertia shared props
+
+**Views with Fiscal Year Filtering**:
+
+The following views default to the user's preferred fiscal year:
+
+1. **Journal Entries** (`/journal_entries`) - Filters entries by fiscal year
+2. **Balance Sheet** (`/reports/balance_sheet`) - Shows balance sheet for selected year
+3. **Bank Account Transactions** (`/bank_accounts/:id`) - Filters transactions by fiscal year date range
+
+**Implementation Pattern for New Views**:
+
+When adding a new view that supports fiscal year filtering:
+
+```ruby
+# Controller
+def index
+  @fiscal_years = @company.fiscal_years.order(year: :desc)
+
+  # Use user preference as default
+  @fiscal_year = if params[:fiscal_year_id].present?
+    @fiscal_years.find_by(id: params[:fiscal_year_id])
+  else
+    preferred_year = preferred_fiscal_year_for_company(@company.id)
+    if preferred_year
+      @fiscal_years.find_by(year: preferred_year) || @fiscal_years.first
+    else
+      @fiscal_years.first
+    end
+  end
+
+  # Pass selected fiscal year to frontend
+  render inertia: "MyPage/Index", props: {
+    selectedFiscalYearId: @fiscal_year&.id,
+    # ... other props
+  }
+end
+```
+
+```typescript
+// Frontend Component
+interface Props {
+  selectedFiscalYearId: number | null
+  // ... other props
+}
+
+export default function MyPage({ selectedFiscalYearId }: Props) {
+  // Initialize filter with user preference
+  const [filterState, setFilterState] = useState({
+    fiscalYearId: selectedFiscalYearId,
+    // ... other filters
+  })
+
+  // Use filterState to filter data
+}
+```
+
+**Important Notes**:
+- The fiscal year preference is stored as a **year number** (e.g., `2025`), not the fiscal year record ID
+- This allows the preference to persist even if fiscal year records are recreated
+- Each company has its own fiscal year preference to support multi-company access
+- The global selector in `AppLayout` automatically syncs with the user's preference
+
 ## Component Patterns
 
 ### Extract Reusable Components
