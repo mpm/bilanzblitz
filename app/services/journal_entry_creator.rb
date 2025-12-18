@@ -186,7 +186,7 @@ class JournalEntryCreator
     return @vat_account if defined?(@vat_account)
 
     code = vat_account_code
-    @vat_account = @company.accounts.find_by(code: code)
+    @vat_account = find_or_create_account_by_code(code)
   end
 
   def vat_account_code
