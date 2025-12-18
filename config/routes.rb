@@ -57,7 +57,7 @@ Rails.application.routes.draw do
   end
 
   # Journal Entries
-  resources :journal_entries, only: [ :index, :create, :update, :destroy ]
+  resources :journal_entries, only: [ :index, :show, :create, :update, :destroy ]
 
   # Documents
   resources :documents, only: [ :index, :create, :update, :destroy ]

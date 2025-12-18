@@ -30,21 +30,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { BookingModal } from '@/components/BookingModal'
 import { formatDate, formatAmount } from '@/utils/formatting'
 import { ListFilter, FilterState } from '@/components/ListFilter'
+import { JournalEntryPopover } from '@/components/bank-transactions/JournalEntryPopover'
+import type { BankTransaction } from '@/types/accounting'
 
-interface Transaction {
-  id: number
-  bookingDate: string
-  valueDate: string | null
-  amount: number
-  currency: string
-  remittanceInformation: string | null
-  counterpartyName: string | null
-  counterpartyIban: string | null
-  status: 'pending' | 'booked' | 'reconciled'
-  config: Record<string, unknown>
-  journalEntryId: number | null
-  journalEntryPosted: boolean | null
-}
+
 
 interface Account {
   id: number
@@ -91,7 +80,7 @@ interface BankAccountShowProps {
     name: string
   }
   bankAccount: BankAccount
-  transactions: Transaction[]
+  transactions: BankTransaction[]
   recentAccounts: Account[]
   fiscalYear: FiscalYear | null
   fiscalYears: FiscalYear[]
@@ -112,7 +101,7 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
 
   // Booking modal state
   const [bookingModalOpen, setBookingModalOpen] = useState(false)
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
+  const [selectedTransaction, setSelectedTransaction] = useState<BankTransaction | null>(null)
   const [deletingId, setDeletingId] = useState<number | null>(null)
 
   // Filter state - initialize with selected fiscal year from user preference
@@ -170,7 +159,7 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
     return iban.replace(/(.{4})/g, '$1 ').trim()
   }
 
-  const getStatusBadge = (status: Transaction['status']) => {
+  const getStatusBadge = (status: BankTransaction['status']) => {
     switch (status) {
       case 'pending':
         return <Badge variant="outline">Pending</Badge>
@@ -265,7 +254,7 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
     }
   }
 
-  const handleOpenBooking = (transaction: Transaction) => {
+  const handleOpenBooking = (transaction: BankTransaction) => {
     setSelectedTransaction(transaction)
     setBookingModalOpen(true)
   }
@@ -444,6 +433,7 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
                   <TableHead>Counterparty</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                   <TableHead className="w-[100px]">Status</TableHead>
+                  <TableHead className="w-[120px]">Journal</TableHead>
                   <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -481,6 +471,19 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
                     </TableCell>
                     <TableCell>
                       {getStatusBadge(tx.status)}
+                    </TableCell>
+                    <TableCell>
+                      {tx.journalEntryId && (
+                        <JournalEntryPopover journalEntryId={tx.journalEntryId}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs h-7 px-2"
+                          >
+                            View Journal
+                          </Button>
+                        </JournalEntryPopover>
+                      )}
                     </TableCell>
                     <TableCell>
                       {tx.status === 'pending' && canBook && (

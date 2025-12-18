@@ -2,7 +2,11 @@ class JournalEntriesController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_has_company
   before_action :set_company
-  before_action :set_journal_entry, only: [ :destroy, :update ]
+  before_action :set_journal_entry, only: [ :destroy, :update, :show ]
+
+  def show
+    render json: journal_entry_with_details(@journal_entry)
+  end
 
   def index
     @fiscal_years = @company.fiscal_years.order(year: :desc)
@@ -200,19 +204,19 @@ class JournalEntriesController < ApplicationController
   def journal_entry_with_details(je)
     {
       id: je.id,
-      booking_date: je.booking_date,
+      bookingDate: je.booking_date,
       description: je.description,
-      posted_at: je.posted_at,
-      fiscal_year_id: je.fiscal_year_id,
-      fiscal_year_closed: je.fiscal_year.closed,
-      line_items: je.line_items.map { |li|
+      postedAt: je.posted_at,
+      fiscalYearId: je.fiscal_year_id,
+      fiscalYearClosed: je.fiscal_year.closed,
+      lineItems: je.line_items.map { |li|
         {
           id: li.id,
-          account_code: li.account.code,
-          account_name: li.account.name,
+          accountCode: li.account.code,
+          accountName: li.account.name,
           amount: li.amount.to_f,
           direction: li.direction,
-          bank_transaction_id: li.bank_transaction_id
+          bankTransactionId: li.bank_transaction_id
         }
       }
     }

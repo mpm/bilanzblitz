@@ -35,6 +35,22 @@ export interface FiscalYear {
   workflowState: 'open' | 'open_with_opening' | 'closing_posted' | 'closed'
 }
 
+// Bank Transaction
+export interface BankTransaction {
+  id: number
+  bookingDate: string
+  valueDate: string | null
+  amount: number
+  currency: string
+  remittanceInformation: string | null
+  counterpartyName: string | null
+  counterpartyIban: string | null
+  status: 'pending' | 'booked' | 'reconciled'
+  config: Record<string, unknown>
+  journalEntryId: number | null
+  journalEntryPosted: boolean | null
+}
+
 // Balance Sheet Data Structure
 export interface BalanceSheetData {
   fiscalYear: FiscalYear
