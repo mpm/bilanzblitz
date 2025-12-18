@@ -17,8 +17,10 @@ BilanzBlitz is a comprehensive accounting and tax management application designe
 - **Balance Sheet Reports**: Generate balance sheets (Bilanz) following German GmbH standards with SKR03 account mapping
 - **Balance Sheet Persistence**: Store and retrieve opening and closing balance sheets
 - **GuV Reports**: Generate Profit & Loss statements (Gewinn- und Verlustrechnung) using Gesamtkostenverfahren (Total Cost Method) according to § 275 Abs. 2 HGB
-- **VAT Reports**: Generate periodic VAT reports (Umsatzsteuervoranmeldung)
-- **Annual Tax Returns**: Prepare and generate annual tax filings
+- **Tax Reports Management**: Complete tax report generation, preview, and persistence system
+  - **UStVA (Umsatzsteuervoranmeldung)**: Monthly, quarterly, and annual VAT advance returns with core fields (output/input VAT, reverse charge)
+  - **Körperschaftsteuer (KSt)**: Corporate income tax calculation with editable adjustments for outside-balance-sheet corrections
+  - **Missing Reports Detection**: Automatic identification of missing tax reports for compliance tracking
 - **GoBD Compliance**: Immutable posted entries and balance sheets to comply with German accounting regulations
 
 ## Technology Stack
@@ -256,6 +258,236 @@ The account mappings are generated from official SKR03 documentation using helpe
 - `contrib/guv-with-categories.json` - GuV account mappings
 - `contrib/generate_account_map_ranges.rb` - Helper script to transform JSON data into AccountMap format
 
+#### Tax Form Field Mapping Service (TaxFormFieldMap)
+The `TaxFormFieldMap` service provides centralized configuration for tax form field definitions, similar to `AccountMap` for account categorization:
+
+**Purpose**:
+- Decouples tax form field definitions from business logic
+- Provides single source of truth for field configurations
+- Enables easy customization of fields without code changes
+- Supports German tax forms (UStVA and KSt)
+
+**UStVA Field Mapping**:
+Core fields for Umsatzsteuervoranmeldung (VAT advance return):
+- **Output VAT**: Kennziffer 81 (19%), Kennziffer 86 (7%)
+- **Input VAT**: Kennziffer 66 (19%), Kennziffer 61 (7%)
+- **Reverse Charge**: Kennziffer 46 (output), Kennziffer 47 (input)
+- **Net Liability**: Kennziffer 83 (calculated field)
+
+Each field includes:
+- Field number (Kennziffer)
+- Name and description
+- Associated account codes (using `Account::VAT_ACCOUNTS`)
+- Calculation type (`:account_balance` or `:formula`)
+- Section grouping (`:output_vat`, `:input_vat`, `:reverse_charge`, `:summary`)
+- Display order
+
+**KSt Field Mapping**:
+Fields for Körperschaftsteuer (corporate income tax):
+- **Base Data**: Net income from GuV (`:einkommen`)
+- **Adjustments** (editable fields for außerbilanzielle Korrekturen):
+  - Non-deductible expenses (`:nicht_abzugsfaehige_aufwendungen`) - adds to taxable income
+  - Tax-free income (`:steuerfreie_ertraege`) - subtracts from taxable income
+  - Loss carryforward (`:verlustvortrag`) - subtracts from taxable income
+  - Donations (`:spenden`) - subtracts from taxable income
+  - Special deductions (`:sonderabzuege`) - subtracts from taxable income
+- **Calculated Fields**: Taxable income and KSt amount (15% rate)
+
+Each adjustment field includes:
+- Name and description
+- Section (`:base_data`, `:adjustments`, `:calculated`)
+- Editability flag
+- Default value (0.0 for adjustments)
+- Adjustment sign (`:add` or `:subtract`)
+- Display order
+
+**Key Methods**:
+```ruby
+# Get all UStVA fields
+TaxFormFieldMap.ustva_fields
+# => { kz_81: {...}, kz_86: {...}, ... }
+
+# Get single field definition
+TaxFormFieldMap.ustva_field(:kz_81)
+# => { field_number: 81, name: "Umsatzsteuer 19%", ... }
+
+# Get fields grouped by section
+TaxFormFieldMap.ustva_fields_by_section
+# => { output_vat: {...}, input_vat: {...}, ... }
+
+# Get editable KSt fields only
+TaxFormFieldMap.kst_editable_fields
+# => { nicht_abzugsfaehige_aufwendungen: {...}, ... }
+
+# Get section labels
+TaxFormFieldMap.ustva_section_label(:output_vat)
+# => "Umsatzsteuer (Output VAT)"
+```
+
+**Error Handling**:
+- All lookup methods validate field keys and raise `ArgumentError` for unknown fields
+- Section label methods validate section keys and raise `ArgumentError` for unknown sections
+
+**Usage in Services**:
+- `UstvaService` uses `TaxFormFieldMap.ustva_fields` to calculate VAT report fields
+- `KstService` uses `TaxFormFieldMap.kst_editable_fields` to build adjustment fields
+
+**Configuration**:
+To customize tax form fields, edit the `USTVA_FIELDS` or `KST_FIELDS` frozen hashes in `app/services/tax_form_field_map.rb`. Changes take effect immediately.
+
+#### UStVA Service (Umsatzsteuervoranmeldung)
+The `UstvaService` calculates VAT advance returns from posted journal entries:
+
+**Purpose**:
+- Calculate periodic VAT liabilities for submission to tax authorities
+- Support monthly, quarterly, and annual reporting periods
+- Provide detailed breakdown by VAT rate and type
+
+**Key Features**:
+- **GoBD Compliant**: Only includes posted (immutable) journal entries
+- **Date Range Filtering**: Filters transactions by booking date within specified period
+- **VAT Account Aggregation**: Sums VAT amounts by account using SQL GROUP BY
+- **Absolute Values**: Reports all VAT amounts as positive values (using `.abs` to handle asset vs liability accounts)
+- **Section Grouping**: Organizes fields into output VAT, input VAT, and reverse charge sections
+- **Net Liability Calculation**: Calculates amount owed or refund (output VAT - input VAT + reverse charge)
+- **Period Type Detection**: Automatically detects monthly (28-31 days), quarterly (89-92 days), annual (365-366 days), or custom periods
+
+**Data Structure Returned**:
+```ruby
+{
+  period_type: "monthly",
+  start_date: "2025-01-01",
+  end_date: "2025-01-31",
+  fields: [
+    { key: :kz_81, field_number: 81, name: "Umsatzsteuer 19%", value: 190.00, editable: false },
+    # ... more fields
+  ],
+  sections: {
+    output_vat: { label: "...", fields: [...], subtotal: 190.00 },
+    input_vat: { label: "...", fields: [...], subtotal: 38.00 },
+    reverse_charge: { label: "...", fields: [...], subtotal: 0.00 }
+  },
+  net_vat_liability: 152.00,  # Positive = owed, negative = refund
+  metadata: {
+    journal_entries_count: 12,
+    calculation_date: "2025-12-18"
+  }
+}
+```
+
+**Usage**:
+```ruby
+service = UstvaService.new(
+  company: company,
+  start_date: Date.new(2025, 1, 1),
+  end_date: Date.new(2025, 1, 31)
+)
+result = service.call
+
+if result.success?
+  puts "Net VAT Liability: #{result.data[:net_vat_liability]}"
+else
+  puts "Errors: #{result.errors.join(', ')}"
+end
+```
+
+**Important Notes**:
+- VAT amounts are calculated as `credit - debit` for liability accounts and `debit - credit` for asset accounts, then converted to absolute values
+- Only accounts defined in `Account::VAT_ACCOUNTS` are included
+- The service validates required parameters (company, dates) and ensures end_date > start_date
+- Formula fields (like net liability) are calculated separately, not from account balances
+
+#### KSt Service (Körperschaftsteuer)
+The `KstService` calculates corporate income tax with user-provided adjustments:
+
+**Purpose**:
+- Calculate corporate income tax (15% rate) on taxable income
+- Support außerbilanzielle Korrekturen (outside-balance-sheet corrections)
+- Enable tax planning through editable adjustment fields
+
+**Key Features**:
+- **GuV Integration**: Gets net income from stored balance sheet or generates on-the-fly via `BalanceSheetService`
+- **Stored vs Calculated**: For closed fiscal years, loads stored balance sheet; otherwise calculates fresh
+- **Editable Adjustments**: Five adjustment fields that users can modify
+- **Adjustment Signs**: Each adjustment either adds to or subtracts from taxable income
+- **Zero Floor**: Corporate tax cannot be negative (minimum 0.00)
+- **Rounding**: All monetary values rounded to 2 decimal places
+- **Loss Handling**: Distinguishes Jahresüberschuss (profit) from Jahresfehlbetrag (loss)
+
+**Data Structure Returned**:
+```ruby
+{
+  fiscal_year_id: 1,
+  year: 2025,
+  base_data: {
+    net_income: 50000.00,
+    net_income_label: "Jahresüberschuss",  # or "Jahresfehlbetrag" for losses
+    balance_sheet_available: true,
+    guv_available: true
+  },
+  adjustments: {
+    nicht_abzugsfaehige_aufwendungen: {
+      name: "Nicht abzugsfähige Aufwendungen",
+      description: "...",
+      value: 2000.00,
+      editable: true,
+      adjustment_sign: :add
+    },
+    # ... more adjustments
+  },
+  calculated: {
+    taxable_income: 41500.00,  # After adjustments
+    kst_rate: 0.15,
+    kst_amount: 6225.00  # 15% of taxable income
+  },
+  metadata: {
+    calculation_date: "2025-12-18",
+    stored_balance_sheet: true  # false if calculated on-the-fly
+  }
+}
+```
+
+**Adjustment Calculation**:
+```ruby
+# Starting with net income from GuV
+taxable_income = net_income
+  + nicht_abzugsfaehige_aufwendungen  # Add back non-deductible expenses
+  - steuerfreie_ertraege              # Subtract tax-free income
+  - verlustvortrag                    # Subtract loss carryforward
+  - spenden                           # Subtract donations
+  - sonderabzuege                     # Subtract special deductions
+
+# Corporate tax
+kst_amount = [taxable_income * 0.15, 0.0].max
+```
+
+**Usage**:
+```ruby
+service = KstService.new(
+  company: company,
+  fiscal_year: fiscal_year_2025,
+  adjustments: {
+    nicht_abzugsfaehige_aufwendungen: 2000.00,
+    verlustvortrag: 10000.00
+  }
+)
+result = service.call
+
+if result.success?
+  puts "Taxable Income: #{result.data[:calculated][:taxable_income]}"
+  puts "KSt Amount: #{result.data[:calculated][:kst_amount]}"
+else
+  puts "Errors: #{result.errors.join(', ')}"
+end
+```
+
+**Important Notes**:
+- The service validates that the fiscal year belongs to the specified company
+- If fiscal year is closed and stored balance sheet exists, it uses stored data (more efficient)
+- Otherwise, calls `BalanceSheetService` to generate GuV on-the-fly
+- All adjustment values default to 0.0 if not provided
+- The `@stored_balance_sheet` flag tracks whether data came from database or was calculated fresh
+
 ## Development Commands
 
 ### Running Commands
@@ -342,18 +574,23 @@ usually a Vite process running during development.
 │   ├── controllers/          # Rails controllers (Inertia endpoints)
 │   │   ├── fiscal_years_controller.rb        # Fiscal year management
 │   │   ├── opening_balances_controller.rb    # Opening balance entry
+│   │   ├── tax_reports_controller.rb         # Tax report generation and management
 │   │   └── reports/                          # Report controllers
 │   │       └── balance_sheets_controller.rb  # Balance sheet reports
 │   ├── models/              # ActiveRecord models
 │   │   ├── balance_sheet.rb            # Stored balance sheets (opening/closing)
 │   │   ├── fiscal_year.rb              # Fiscal years with workflow states
 │   │   ├── journal_entry.rb            # Journal entries with entry_type
+│   │   ├── tax_report.rb               # Tax reports (UStVA, KSt, etc.)
 │   │   ├── account.rb                  # Chart of accounts
 │   │   └── account_template.rb         # Account templates for charts
 │   ├── services/            # Service classes (business logic)
 │   │   ├── account_map.rb                   # Centralized account-to-section mapping (GuV & balance sheet)
+│   │   ├── tax_form_field_map.rb            # Centralized tax form field definitions (UStVA & KSt)
 │   │   ├── balance_sheet_service.rb         # Balance sheet calculation (integrates GuV)
 │   │   ├── guv_service.rb                   # GuV (P&L) calculation using Gesamtkostenverfahren
+│   │   ├── ustva_service.rb                 # UStVA (VAT advance return) calculation
+│   │   ├── kst_service.rb                   # KSt (corporate income tax) calculation
 │   │   ├── opening_balance_creator.rb       # Opening balance (EBK) creation
 │   │   ├── fiscal_year_closing_service.rb   # Fiscal year closing (SBK)
 │   │   ├── journal_entry_creator.rb         # Journal entry creation
@@ -364,6 +601,11 @@ usually a Vite process running during development.
 │   │   │   ├── reports/                   # Report-specific components
 │   │   │   │   ├── BalanceSheetSection.tsx  # Reusable balance sheet section display
 │   │   │   │   └── GuVSection.tsx           # GuV display component
+│   │   │   ├── tax-reports/               # Tax report components
+│   │   │   │   ├── TaxReportSection.tsx     # Tax report section display
+│   │   │   │   ├── TaxFormFieldRow.tsx      # Individual tax field row (editable/readonly)
+│   │   │   │   ├── ReportTypeBadge.tsx      # Badge for report types
+│   │   │   │   └── MissingReportsAlert.tsx  # Missing reports warning
 │   │   │   └── ui/                        # shadcn/ui components
 │   │   ├── pages/          # Inertia page components
 │   │   │   ├── FiscalYears/              # Fiscal year management
@@ -374,11 +616,18 @@ usually a Vite process running during development.
 │   │   │   │   └── Form.tsx              # Opening balance entry form
 │   │   │   ├── Reports/                  # Report pages
 │   │   │   │   └── BalanceSheet.tsx      # Balance sheet & GuV report
+│   │   │   ├── TaxReports/               # Tax report pages
+│   │   │   │   ├── Index.tsx             # List tax reports with missing detection
+│   │   │   │   ├── New.tsx               # Multi-step report generation wizard
+│   │   │   │   └── Show.tsx              # Display/edit tax report (UStVA & KSt)
 │   │   │   ├── BankAccounts/
 │   │   │   └── Dashboard/
 │   │   ├── types/          # TypeScript type definitions
-│   │   │   └── accounting.ts             # Shared accounting types (BalanceSheetData, GuVData, etc.)
+│   │   │   ├── accounting.ts             # Shared accounting types (BalanceSheetData, GuVData, etc.)
+│   │   │   └── tax-reports.ts            # Tax report types (UstvaData, KstData, etc.)
 │   │   └── utils/          # Shared utility functions (formatting, etc.)
+│   │       ├── formatting.ts             # Date/currency formatting
+│   │       └── missing-reports.ts        # Missing report detection logic
 │   └── views/              # Minimal (Inertia uses React for views)
 ├── db/
 │   ├── migrate/            # Database migrations
@@ -386,6 +635,13 @@ usually a Vite process running during development.
 ├── config/
 │   ├── routes.rb           # Route definitions
 │   └── database.yml        # Database configuration
+├── spec/
+│   ├── services/           # Service specs
+│   │   ├── tax_form_field_map_spec.rb   # TaxFormFieldMap tests
+│   │   ├── ustva_service_spec.rb        # UstvaService tests
+│   │   └── kst_service_spec.rb          # KstService tests
+│   └── factories/          # FactoryBot factories
+│       └── balance_sheets.rb            # BalanceSheet factory
 └── .devcontainer/          # Dev container configuration
 ```
 
@@ -424,7 +680,7 @@ formatCurrency(100.50)  // Returns: "100,50 €"
 
 ### TypeScript Types
 
-The application uses centralized TypeScript type definitions for accounting data structures.
+The application uses centralized TypeScript type definitions for accounting and tax data structures.
 
 **Location**: `app/frontend/types/accounting.ts`
 
@@ -448,9 +704,36 @@ interface MyComponentProps {
 const guv: GuVData | undefined = balanceSheet.guv
 ```
 
+**Location**: `app/frontend/types/tax-reports.ts`
+
+**Available Types**:
+- `TaxReportSummary` - Report metadata for list views
+- `UstvaData` - Complete UStVA report structure
+- `KstData` - Complete KSt report structure
+- `TaxFormField` - Individual tax form field (with value and metadata)
+- `TaxReportSection` - Section containing multiple fields with subtotal
+- `TaxAdjustmentField` - Editable KSt adjustment field
+
+**Usage**:
+```typescript
+import { UstvaData, KstData, TaxFormField } from '@/types/tax-reports'
+
+// Use in component props
+interface TaxReportProps {
+  reportData: UstvaData | KstData
+}
+
+// Type guard for report type
+if (reportData.reportType === 'ustva') {
+  const ustvaData = reportData as UstvaData
+  console.log(ustvaData.netVatLiability)
+}
+```
+
 **Important**:
 - **All accounting-related types** should be defined in `accounting.ts`
-- **Import types from this central location** to ensure consistency
+- **All tax report types** should be defined in `tax-reports.ts`
+- **Import types from these central locations** to ensure consistency
 - **GuV data is optional** in `BalanceSheetData` for backward compatibility with older balance sheets
 
 ### List Filter Component
@@ -723,9 +1006,103 @@ The application currently supports **Ist-Versteuerung** (cash accounting):
 - Soll-Versteuerung (accrual accounting) would require invoice-based VAT handling
 
 ### Tax Reports
-- **UStVA** (Umsatzsteuervoranmeldung) - Monthly or quarterly VAT pre-registration
-- **Annual Tax Return** - Yearly submission
-- **ELSTER Integration** - Electronic tax filing system (future consideration)
+
+The Tax Reports feature provides complete management of German tax filings with generation, preview, editing, and persistence capabilities.
+
+**Access**: Navigate to Tax Reports in the sidebar menu (`/tax_reports`).
+
+**Supported Report Types**:
+1. **UStVA (Umsatzsteuervoranmeldung)** - VAT advance return
+   - Frequencies: Monthly, quarterly, annual
+   - Core fields only (Kennziffer 81, 86, 66, 61, 46, 47, 83)
+   - Automatic calculation from posted journal entries
+   - Net VAT liability calculation (amount owed or refund)
+
+2. **KSt (Körperschaftsteuer)** - Corporate income tax
+   - Frequency: Annual only
+   - Based on GuV/balance sheet data
+   - Editable adjustments for außerbilanzielle Korrekturen
+   - 15% corporate tax rate
+
+**Key Features**:
+- **Report List View**: Shows all finalized tax reports with filtering by year and type
+- **Missing Reports Detection**: Automatically identifies missing reports for selected calendar year (e.g., "Missing: Feb, Mar, Jun")
+- **Report Generation Wizard**: Step-by-step selection of report type, period type, and specific period/fiscal year
+- **Preview Before Save**: Generate and review reports before persisting to database
+- **Editable After Save**: All finalized reports remain editable (not immutable like posted journal entries)
+- **On-the-fly GuV**: For KSt reports, generates GuV automatically if not stored (doesn't persist it)
+- **Official Field Numbers**: Displays Kennziffer numbers for UStVA fields
+
+**Workflow**:
+
+1. **Generate New Report**:
+   - Click "Generate New Report" from index page
+   - Step 1: Select report type (UStVA or KSt)
+   - Step 2: Select period type (monthly/quarterly/annual for UStVA, annual for KSt)
+   - Step 3: Select specific period (date range for UStVA, fiscal year for KSt)
+   - Click "Generate Report" to preview
+
+2. **Review Preview**:
+   - **UStVA**: Shows output VAT, input VAT, and reverse charge sections with field numbers and amounts
+   - **KSt**: Shows base data (net income), editable adjustment fields, and calculated tax
+   - All amounts displayed in German locale formatting
+
+3. **Save Report**:
+   - Click "Save Report" to persist to database
+   - Report data stored in `tax_reports.generated_data` JSONB field
+   - Status defaults to "draft", can be updated later
+
+4. **Edit Saved Report**:
+   - Navigate to saved report from index
+   - **UStVA reports**: Read-only (amounts calculated from journal entries)
+   - **KSt reports**: Can edit adjustment fields and recalculate tax
+   - Click "Update Report" to save changes
+
+**Implementation Details**:
+
+**Backend**:
+- **Controller**: `TaxReportsController` (`app/controllers/tax_reports_controller.rb`)
+  - 7 endpoints: index, new, generate, show, create, update, missing_reports
+  - Uses `camelize_keys()` for Inertia props, `underscore_keys()` for params
+  - Follows same patterns as `Reports::BalanceSheetsController`
+- **Services**:
+  - `TaxFormFieldMap` - Field definitions and mappings
+  - `UstvaService` - VAT calculation
+  - `KstService` - Corporate tax calculation
+- **Model**: `TaxReport` with `REPORT_TYPES` constant, scopes, and helper methods
+- **Routes**: `resources :tax_reports` with custom collection actions
+
+**Frontend**:
+- **Pages**:
+  - `TaxReports/Index.tsx` - List reports with filtering and missing reports alert
+  - `TaxReports/New.tsx` - Multi-step wizard for report generation
+  - `TaxReports/Show.tsx` - Display/edit report (supports both UStVA and KSt)
+- **Components**:
+  - `tax-reports/TaxReportSection.tsx` - Displays section of fields with subtotal
+  - `tax-reports/TaxFormFieldRow.tsx` - Individual field row (editable or readonly)
+  - `tax-reports/ReportTypeBadge.tsx` - Visual badge for report types
+  - `tax-reports/MissingReportsAlert.tsx` - Alert showing missing reports
+- **Types**: `tax-reports.ts` - Complete TypeScript interfaces for all data structures
+- **Utils**: `missing-reports.ts` - Missing report detection logic
+
+**Data Conversion**:
+- Backend uses snake_case (Ruby conventions)
+- Frontend uses camelCase (JavaScript conventions)
+- Automatic conversion via `camelize_keys()` and `underscore_keys()` helpers
+- JSONB storage in `generated_data` field preserves camelCase keys for frontend
+
+**Missing Reports Detection**:
+- Based on calendar year (Jan-Dec), not fiscal year
+- Compares expected periods against existing reports in database
+- Monthly: 12 expected reports per year
+- Quarterly: 4 expected reports per year (Q1-Q4)
+- Annual: 1 expected report per year
+
+**Future Considerations**:
+- **ELSTER Integration** - Direct electronic filing to German tax authorities
+- **Additional Report Types** - Zusammenfassende Meldung, Gewerbesteuer
+- **Extended UStVA Fields** - Support for all official Kennziffer fields
+- **SolZ (Solidaritätszuschlag)** - Solidarity surcharge calculation alongside KSt
 
 ## Security & Compliance
 
@@ -775,7 +1152,12 @@ When working on this project:
 - **Always check `app/frontend/utils/formatting.ts` for existing formatting functions before creating new ones**
 - **Add all new formatting utilities to `formatting.ts` to maintain consistency and avoid duplication**
 - **Import accounting types from `app/frontend/types/accounting.ts`** instead of defining them locally
+- **Import tax report types from `app/frontend/types/tax-reports.ts`** for tax-related components
 - **Extract reusable components** to `app/frontend/components/` for better code organization
 - **Use `AccountMap` service for account categorization** instead of hardcoding account ranges in business logic
+- **Use `TaxFormFieldMap` service for tax form field definitions** instead of hardcoding field configurations
 - **Customize account ranges in `AccountMap`** (`app/services/account_map.rb`) rather than modifying GuVService or BalanceSheetService
+- **Customize tax form fields in `TaxFormFieldMap`** (`app/services/tax_form_field_map.rb`) rather than modifying UstvaService or KstService
 - When adding GuV acronyms or similar, update `config/initializers/inflections.rb` to ensure Rails recognizes them correctly
+- **UStVA reports use absolute values** - VAT amounts are always positive (input VAT calculated as `.abs` of account balance)
+- **KSt service validates fiscal year ownership** - Ensures fiscal year belongs to the same company as the report
