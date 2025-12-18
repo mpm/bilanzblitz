@@ -21,8 +21,17 @@ class BankAccountsController < ApplicationController
       .includes(line_item: :journal_entry)
       .order(booking_date: :asc, created_at: :desc)
     @recent_accounts = @company.account_usages.recent.includes(:account).map(&:account).compact
-    @fiscal_year = FiscalYear.current_for(company: @company)
     @fiscal_years = @company.fiscal_years.order(year: :desc)
+
+    # Determine selected fiscal year from user preference
+    @selected_fiscal_year = nil
+    preferred_year = preferred_fiscal_year_for_company(@company.id)
+    if preferred_year
+      @selected_fiscal_year = @fiscal_years.find_by(year: preferred_year)
+    end
+
+    # Get current fiscal year for booking availability
+    @current_fiscal_year = FiscalYear.current_for(company: @company)
 
     render inertia: "BankAccounts/Show", props: {
       company: {
@@ -32,8 +41,9 @@ class BankAccountsController < ApplicationController
       bankAccount: bank_account_json(@bank_account),
       transactions: @transactions.map { |tx| transaction_json(tx) },
       recentAccounts: @recent_accounts.map { |a| account_json(a) },
-      fiscalYear: @fiscal_year ? fiscal_year_json(@fiscal_year) : nil,
-      fiscalYears: @fiscal_years.map { |fy| fiscal_year_json(fy) }
+      fiscalYear: @current_fiscal_year ? fiscal_year_json(@current_fiscal_year) : nil,
+      fiscalYears: @fiscal_years.map { |fy| fiscal_year_json(fy) },
+      selectedFiscalYearId: @selected_fiscal_year&.id
     }
   end
 

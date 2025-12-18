@@ -6,11 +6,16 @@ class Reports::BalanceSheetsController < ApplicationController
     @company = current_user.companies.first
     @fiscal_years = @company.fiscal_years.order(year: :desc)
 
-    # Determine selected fiscal year (from params or default to most recent)
+    # Determine selected fiscal year (from params or default to user preference, then most recent)
     @fiscal_year = if params[:fiscal_year_id].present?
       @fiscal_years.find_by(id: params[:fiscal_year_id])
     else
-      @fiscal_years.first
+      preferred_year = preferred_fiscal_year_for_company(@company.id)
+      if preferred_year
+        @fiscal_years.find_by(year: preferred_year) || @fiscal_years.first
+      else
+        @fiscal_years.first
+      end
     end
 
     # Generate balance sheet if fiscal year exists

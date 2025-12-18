@@ -95,11 +95,12 @@ interface BankAccountShowProps {
   recentAccounts: Account[]
   fiscalYear: FiscalYear | null
   fiscalYears: FiscalYear[]
+  selectedFiscalYearId: number | null
 }
 
 type ImportStep = 'input' | 'preview' | 'success'
 
-export default function BankAccountShow({ company, bankAccount, transactions, recentAccounts, fiscalYear, fiscalYears }: BankAccountShowProps) {
+export default function BankAccountShow({ company, bankAccount, transactions, recentAccounts, fiscalYear, fiscalYears, selectedFiscalYearId }: BankAccountShowProps) {
   const [showImportModal, setShowImportModal] = useState(false)
   const [importStep, setImportStep] = useState<ImportStep>('input')
   const [csvData, setCsvData] = useState('')
@@ -114,9 +115,9 @@ export default function BankAccountShow({ company, bankAccount, transactions, re
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
   const [deletingId, setDeletingId] = useState<number | null>(null)
 
-  // Filter state
+  // Filter state - initialize with selected fiscal year from user preference
   const [filterState, setFilterState] = useState<FilterState>({
-    fiscalYearId: null,
+    fiscalYearId: selectedFiscalYearId,
     sortOrder: 'asc',
     hideFilteredStatus: false,
     searchText: ''

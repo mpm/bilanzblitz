@@ -5,6 +5,13 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   LayoutDashboard,
   Building2,
   Wallet,
@@ -15,6 +22,12 @@ import {
   Settings,
   LogOut,
 } from 'lucide-react'
+
+interface FiscalYear {
+  id: number
+  year: number
+  closed: boolean
+}
 
 interface AppLayoutProps {
   company: {
@@ -27,9 +40,20 @@ interface AppLayoutProps {
 
 export function AppLayout({ company, currentPage, children }: AppLayoutProps) {
   const { props } = usePage()
-  const userConfig = (props.userConfig || {}) as { ui?: { theme?: string } }
+  const userConfig = (props.userConfig || {}) as {
+    ui?: { theme?: string }
+    fiscal_years?: Record<string, number>
+  }
+  const fiscalYears = (props.fiscalYears || []) as FiscalYear[]
+
   const [theme, setTheme] = useState<'light' | 'dark'>(
     (userConfig.ui?.theme === 'dark' ? 'dark' : 'light') as 'light' | 'dark'
+  )
+
+  // Get the preferred fiscal year for this company
+  const preferredYear = userConfig.fiscal_years?.[company.id.toString()]
+  const [selectedYear, setSelectedYear] = useState<number | null>(
+    preferredYear || (fiscalYears.length > 0 ? fiscalYears[0].year : null)
   )
 
   // Debug: Log the user config
@@ -67,6 +91,31 @@ export function AppLayout({ company, currentPage, children }: AppLayoutProps) {
     }
   }
 
+  const handleFiscalYearChange = async (yearString: string) => {
+    const year = parseInt(yearString)
+    setSelectedYear(year)
+
+    // Update user preference in backend
+    try {
+      await fetch('/user_preferences', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+        },
+        body: JSON.stringify({
+          fiscal_year: year,
+          company_id: company.id,
+        }),
+      })
+
+      // Reload the page to apply the new fiscal year filter
+      router.reload()
+    } catch (error) {
+      console.error('Failed to update fiscal year preference:', error)
+    }
+  }
+
   const handleLogout = () => {
     router.delete('/users/sign_out')
   }
@@ -98,6 +147,31 @@ export function AppLayout({ company, currentPage, children }: AppLayoutProps) {
               <Building2 className="h-4 w-4" />
               <span className="font-medium text-foreground">{company.name}</span>
             </div>
+
+            {/* Fiscal Year Selector */}
+            {fiscalYears.length > 0 && (
+              <>
+                <div className="h-4 w-px bg-border" />
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <Select
+                    value={selectedYear?.toString() || ''}
+                    onValueChange={handleFiscalYearChange}
+                  >
+                    <SelectTrigger className="h-8 w-[140px] text-sm">
+                      <SelectValue placeholder="Select year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fiscalYears.map((fy) => (
+                        <SelectItem key={fy.id} value={fy.year.toString()}>
+                          {fy.year} {fy.closed && '(Closed)'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-2">

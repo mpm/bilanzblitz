@@ -7,16 +7,21 @@ class JournalEntriesController < ApplicationController
   def index
     @fiscal_years = @company.fiscal_years.order(year: :desc)
 
-    # Determine selected fiscal year (from params or default to most recent open, then most recent)
+    # Determine selected fiscal year (from params or default to user preference, then most recent open)
     @fiscal_year = if params[:fiscal_year_id].present? && params[:fiscal_year_id] != "all"
       @fiscal_years.find_by(id: params[:fiscal_year_id])
     else
       nil # Show all fiscal years
     end
 
-    # Default to most recent open fiscal year if no param provided
+    # Default to user preference or most recent open fiscal year if no param provided
     if params[:fiscal_year_id].blank?
-      @fiscal_year = @fiscal_years.open.first || @fiscal_years.first
+      preferred_year = preferred_fiscal_year_for_company(@company.id)
+      @fiscal_year = if preferred_year
+        @fiscal_years.find_by(year: preferred_year) || @fiscal_years.open.first || @fiscal_years.first
+      else
+        @fiscal_years.open.first || @fiscal_years.first
+      end
     end
 
     # Query journal entries with optional fiscal year filter
