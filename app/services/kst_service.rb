@@ -6,11 +6,15 @@ class KstService
   KST_RATE = 0.15  # 15% corporate tax rate in Germany
 
   def initialize(company:, fiscal_year:, adjustments: {})
+    if company.id != fiscal_year.company_id
+      raise "fiscal_year belongs to different company (#{fiscal_year.company_id}) than company the tax report is for (#{company.id})"
+    end
     @company = company
     @fiscal_year = fiscal_year
     @adjustments = adjustments
     @net_income = nil
     @balance_sheet_available = false
+    @stored_balance_sheet = false
     @guv_available = false
   end
 
@@ -34,7 +38,7 @@ class KstService
       calculated: build_calculated_fields,
       metadata: {
         calculation_date: Date.today.to_s,
-        stored_balance_sheet: @balance_sheet_available
+        stored_balance_sheet: @stored_balance_sheet
       }
     }
 
@@ -51,6 +55,7 @@ class KstService
       stored_sheet = load_stored_balance_sheet
       if stored_sheet
         @balance_sheet_available = true
+        @stored_balance_sheet = true
         @guv_available = stored_sheet[:guv].present?
         return Result.new(
           success?: true,
@@ -83,7 +88,7 @@ class KstService
   end
 
   def load_stored_balance_sheet
-    balance_sheet = @company.balance_sheets
+    balance_sheet = BalanceSheet
       .where(fiscal_year: @fiscal_year, sheet_type: "closing")
       .order(created_at: :desc)
       .first

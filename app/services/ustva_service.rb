@@ -62,10 +62,12 @@ class UstvaService
     # Build hash of account_code => net_balance
     balances = {}
     results.each do |account|
-      # VAT accounts are liability accounts (credit balance)
-      # Positive balance = VAT owed (credit > debit)
+      # VAT amounts are always reported as positive values on UStVA
+      # Output VAT (liability): credit balance
+      # Input VAT (asset): debit balance
+      # Use absolute value to ensure positive amounts
       net_balance = account.total_credit.to_f - account.total_debit.to_f
-      balances[account.code] = net_balance
+      balances[account.code] = net_balance.abs
     end
 
     balances
