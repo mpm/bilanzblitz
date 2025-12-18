@@ -21,7 +21,7 @@ interface AppLayoutProps {
     id: number
     name: string
   }
-  currentPage: 'dashboard' | 'bank-accounts' | 'journal-entries' | 'documents' | 'reports' | 'balance-sheet' | 'fiscal-years' | 'tax-filings'
+  currentPage: 'dashboard' | 'bank-accounts' | 'journal-entries' | 'documents' | 'reports' | 'balance-sheet' | 'fiscal-years' | 'tax-reports'
   children: React.ReactNode
 }
 
@@ -78,7 +78,7 @@ export function AppLayout({ company, currentPage, children }: AppLayoutProps) {
     { key: 'documents', label: 'Documents', icon: FileText, href: '/documents', enabled: true },
     { key: 'reports', label: 'Reports', icon: BarChart3, href: '/reports/balance_sheet', enabled: true },
     { key: 'fiscal-years', label: 'Fiscal Years', icon: Calendar, href: '/fiscal_years', enabled: true },
-    { key: 'tax-filings', label: 'Tax Filings', icon: FileCheck, href: '#', enabled: false },
+    { key: 'tax-reports', label: 'Tax Reports', icon: FileCheck, href: '/tax_reports', enabled: true },
   ]
 
   return (

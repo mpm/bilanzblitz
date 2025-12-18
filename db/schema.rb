@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_17_222106) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_18_055427) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -232,6 +232,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_17_222106) do
     t.datetime "created_at", null: false
     t.string "elster_transmission_id"
     t.date "end_date", null: false
+    t.bigint "fiscal_year_id"
     t.jsonb "generated_data"
     t.string "period_type", null: false
     t.string "report_type", default: "vat", null: false
@@ -239,8 +240,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_17_222106) do
     t.string "status", default: "draft"
     t.datetime "submitted_at"
     t.datetime "updated_at", null: false
+    t.index ["company_id", "fiscal_year_id", "report_type"], name: "index_tax_reports_on_company_fiscal_year_type"
     t.index ["company_id", "report_type", "period_type"], name: "idx_on_company_id_report_type_period_type_b09cde21dd"
+    t.index ["company_id", "report_type", "start_date"], name: "index_tax_reports_on_company_type_start"
+    t.index ["company_id", "status"], name: "index_tax_reports_on_company_status"
     t.index ["company_id"], name: "index_tax_reports_on_company_id"
+    t.index ["fiscal_year_id"], name: "index_tax_reports_on_fiscal_year_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -280,4 +285,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_17_222106) do
   add_foreign_key "line_items", "bank_transactions"
   add_foreign_key "line_items", "journal_entries"
   add_foreign_key "tax_reports", "companies"
+  add_foreign_key "tax_reports", "fiscal_years"
 end

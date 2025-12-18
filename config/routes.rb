@@ -25,6 +25,14 @@ Rails.application.routes.draw do
     get "balance_sheet", to: "balance_sheets#index"
   end
 
+  # Tax Reports
+  resources :tax_reports, only: [ :index, :new, :show, :create, :update, :destroy ] do
+    collection do
+      post :generate
+      get :missing_reports
+    end
+  end
+
   # Fiscal Years
   resources :fiscal_years, only: [ :index, :show, :new, :create ] do
     collection do
