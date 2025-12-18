@@ -160,21 +160,16 @@ The application supports German-standard opening and closing balance sheets:
 **Service Classes**:
 - `OpeningBalanceCreator` - Creates opening balance entries
 - `FiscalYearClosingService` - Closes fiscal year and generates SBK entries
-- `BalanceSheetService` - Calculates balance sheets (uses GuVService for net income calculation)
+- `BalanceSheetService` - Calculates balance sheets (uses AccountMap for categorization and GuVService for net income)
 - `GuVService` - Calculates Profit & Loss statements using AccountMap for section categorization
 - `AccountMap` - Centralized mapping service for account categorization (GuV sections and balance sheet categories)
 
 #### Balance Sheet Generation
 The `BalanceSheetService` generates balance sheets from posted journal entries:
-- **SKR03 Code Range Mapping**: Accounts are automatically grouped based on their code prefix:
-  - 0xxx → Anlagevermögen (Fixed Assets)
-  - 1xxx → Umlaufvermögen (Current Assets)
-  - 2xxx → Eigenkapital (Equity)
-  - 3xxx → Fremdkapital (Liabilities)
-  - 9xxx → Closing accounts (filtered out from display)
+- **AccountMap Integration**: Uses `AccountMap` service for account categorization into balance sheet sections (Anlagevermögen, Umlaufvermögen, Eigenkapital, Fremdkapital)
 - **Closing Entry Exclusion**: Entries with `entry_type: 'closing'` are excluded from calculations
 - **Posted Entries Only**: Only posted journal entries are included (GoBD compliance)
-- **Net Income Integration**: P&L is calculated from revenue (4xxx) and expense (5xxx-7xxx) accounts and included in equity
+- **Net Income Integration**: Net income calculated by GuVService is included in equity
 - **GuV Integration**: Automatically calls `GuVService` to calculate detailed GuV data alongside balance sheet
 - **Account Balances**: Calculated using debit/credit logic appropriate to each account type
 - **Balance Verification**: Ensures Aktiva = Passiva (or flags data integrity issues)
@@ -200,56 +195,47 @@ The `AccountMap` service provides centralized configuration for categorizing acc
 - Decouples account categorization logic from business logic
 - Provides single source of truth for account-to-section mappings
 - Enables easy customization of account ranges without code changes
-- Supports German accounting standards (§ 275 Abs. 2 HGB for GuV)
+- Based on official SKR03 account mapping data (imported from `contrib/guv-with-categories.json` and `contrib/bilanz-with-categories.json`)
+- Supports German accounting standards (§ 275 Abs. 2 HGB for GuV, § 266 HGB for Bilanz)
 
 **GuV Section Mapping**:
-All 17 GuV sections according to § 275 Abs. 2 HGB (Gesamtkostenverfahren) are defined:
-1. Umsatzerlöse (Revenue)
-2. Bestandsveränderungen (Inventory changes)
-3. Aktivierte Eigenleistungen (Capitalized own work)
-4. Sonstige betriebliche Erträge (Other operating income)
-5. Materialaufwand (Material expenses) - with subsections a) and b)
-6. Personalaufwand (Personnel expenses) - with subsections a) and b)
-7. Abschreibungen (Depreciation) - with subsections a) and b)
-8. Sonstige betriebliche Aufwendungen (Other operating expenses)
-9. Erträge aus Beteiligungen (Income from investments)
-10. Erträge aus Wertpapieren (Income from securities)
-11. Sonstige Zinsen und ähnliche Erträge (Other interest income)
-12. Abschreibungen auf Finanzanlagen (Depreciation on financial assets)
-13. Zinsen und ähnliche Aufwendungen (Interest expenses)
-14. Steuern vom Einkommen und Ertrag (Income taxes)
-15. Ergebnis nach Steuern (Result after taxes) - calculated, not mapped
-16. Sonstige Steuern (Other taxes)
-17. Jahresüberschuss/Jahresfehlbetrag (Net income/loss) - calculated, not mapped
+Complete mapping for all 17 GuV sections according to § 275 Abs. 2 HGB (Gesamtkostenverfahren), including:
+- Revenue sections (Umsatzerlöse, sonstige betriebliche Erträge, etc.)
+- Expense sections (Materialaufwand, Personalaufwand, Abschreibungen, etc.)
+- Financial sections (Erträge aus Beteiligungen, Zinsen, etc.)
 
-Each section can have:
-- Individual account codes (e.g., "4000", "5120")
-- Account ranges (e.g., "4000-4999", "7600-7699")
-- Empty configuration for sections not currently in use
+Each section contains specific SKR03 account codes and ranges. Some sections have subsections (e.g., Materialaufwand has separate mappings for materials and services).
 
-**Balance Sheet Category Mapping** (stub for future implementation):
-- Anlagevermögen (Fixed Assets) - 0xxx accounts
-- Umlaufvermögen (Current Assets) - 1xxx accounts
-- Eigenkapital (Equity) - 2xxx accounts
-- Fremdkapital (Liabilities) - 3xxx accounts
+**Balance Sheet Category Mapping**:
+Complete mapping for all four balance sheet categories according to § 266 HGB:
+- **Anlagevermögen** (Fixed Assets) - Immaterielle Vermögensgegenstände, Sachanlagen, Finanzanlagen
+- **Umlaufvermögen** (Current Assets) - Vorräte, Forderungen, Wertpapiere, Kassenbestand
+- **Eigenkapital** (Equity) - Gezeichnetes Kapital, Rücklagen, Jahresüberschuss/Jahresfehlbetrag
+- **Fremdkapital** (Liabilities) - Rückstellungen, Verbindlichkeiten
+
+Each category contains the official SKR03 account codes extracted from the structured Bilanz template.
 
 **Key Methods**:
 ```ruby
-# Get section title
+# GuV section methods
 AccountMap.section_title(:umsatzerloese)
 # => "1. Umsatzerlöse"
 
-# Get expanded list of account codes (ranges are expanded to individual codes)
 AccountMap.account_codes(:umsatzerloese)
-# => ["4000", "4001", "4002", ..., "4999"]
+# => ["2750", "2751", ..., "8959"] (expanded from ranges)
 
-# Filter accounts by section
-accounts = [
-  { code: "4000", name: "Revenue", balance: 1000.0 },
-  { code: "5000", name: "Material", balance: 500.0 }
-]
 AccountMap.find_accounts(accounts, :umsatzerloese)
-# => [{ code: "4000", name: "Revenue", balance: 1000.0 }]
+# => [{ code: "8000", name: "Revenue", balance: 1000.0 }]
+
+# Balance sheet category methods
+AccountMap.balance_sheet_category_title(:anlagevermoegen)
+# => "Anlagevermögen"
+
+AccountMap.balance_sheet_account_codes(:anlagevermoegen)
+# => ["0010", "0015", ..., "1518"] (expanded from ranges)
+
+AccountMap.find_balance_sheet_accounts(accounts, :anlagevermoegen)
+# => [{ code: "0100", name: "Fixed Asset", balance: 10000.0 }]
 ```
 
 **Error Handling**:
@@ -258,11 +244,17 @@ AccountMap.find_accounts(accounts, :umsatzerloese)
 
 **Usage in Services**:
 - `GuVService` uses `AccountMap.find_accounts()` to filter accounts into GuV sections
-- `BalanceSheetService` reuses net income from GuVService calculation
-- Future services can use `AccountMap` for balance sheet categorization
+- `BalanceSheetService` uses `AccountMap.find_balance_sheet_accounts()` to categorize accounts into balance sheet sections
+- Both services rely on AccountMap as the single source of truth for account categorization
 
 **Configuration**:
 To customize account mappings, edit the `GUV_SECTIONS` or `BALANCE_SHEET_CATEGORIES` hashes in `app/services/account_map.rb`. Changes take effect immediately without requiring code changes in consuming services.
+
+**Data Source**:
+The account mappings are generated from official SKR03 documentation using helper scripts in the `contrib/` directory:
+- `contrib/bilanz-with-categories.json` - Balance sheet account mappings
+- `contrib/guv-with-categories.json` - GuV account mappings
+- `contrib/generate_account_map_ranges.rb` - Helper script to transform JSON data into AccountMap format
 
 ## Development Commands
 
@@ -589,8 +581,8 @@ The Balance Sheet (Bilanz) report provides a snapshot of the company's financial
 1. Service queries all journal entries for the selected fiscal year
 2. Only posted entries are included (GoBD compliance)
 3. Line items are aggregated by account using SQL GROUP BY
-4. Accounts are automatically grouped by SKR03 code ranges (0xxx, 1xxx, 2xxx, 3xxx)
-5. Net income is calculated from revenue (4xxx) minus expenses (5xxx-7xxx)
+4. Accounts are categorized into balance sheet sections using AccountMap service
+5. Net income is calculated by GuVService and included in equity
 6. GuVService calculates detailed GuV breakdown with section-wise grouping
 7. Zero-balance accounts are filtered out for cleaner reports
 8. Final balance sheet is validated (Aktiva = Passiva)
