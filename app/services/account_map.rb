@@ -275,6 +275,7 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
       }
     }
   },
+
   passiva: {
     eigenkapital: {
       name: "Eigenkapital",
@@ -326,12 +327,69 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
     rueckstellungen: {
       name: "Rückstellungen",
       codes: [ "0951" ],
-      children: {}
+      children: {
+        rueckstellungen_pensionen: {
+          name: "Rückstellungen für Pensionen und ähnliche Verpflichtungen",
+          codes: [ "0950", "0952-0954" ],
+          children: {}
+        },
+        steuerrueckstellungen: {
+          name: "Steuerrückstellungen",
+          codes: [ "0955-0956", "0962-0963", "0969" ],
+          children: {}
+        },
+        sonstige_rueckstellungen: {
+          name: "sonstige Rückstellungen.",
+          codes: [ "0961", "0964-0966", "0970-0971", "0973-0974", "0976-0979" ],
+          children: {}
+        }
+      }
     },
     verbindlichkeiten: {
       name: "Verbindlichkeiten",
       codes: [ "0630", "0640", "0650", "0660", "0670", "0680", "0690" ],
-      children: {}
+      children: {
+        anleihen: {
+          name: "Anleihen, davon konvertibel",
+          codes: [ "0600-0601", "0605", "0610", "0615-0616", "0620", "0625" ],
+          children: {}
+        },
+        verbindlichkeiten_kreditinstitute: {
+          name: "Verbindlichkeiten gegenüber Kreditinstituten",
+          codes: [ "0699", "9963" ],
+          children: {}
+        },
+        erhaltene_anzahlungen: {
+          name: "erhaltene Anzahlungen auf Bestellungen",
+          codes: [ "1710-1712", "1714-1715", "1717-1721" ],
+          children: {}
+        },
+        verbindlichkeiten_lieferungen_leistungen: {
+          name: "Verbindlichkeiten aus Lieferungen und Leistungen",
+          codes: [ "9964" ],
+          children: {}
+        },
+        verbindlichkeiten_wechsel: {
+          name: "Verbindlichkeiten aus der Annahme gezogener Wechsel und der Ausstellung eigener Wechsel",
+          codes: [],
+          children: {}
+        },
+        verbindlichkeiten_verbundene_unternehmen: {
+          name: "Verbindlichkeiten gegenüber verbundenen Unternehmen",
+          codes: [ "0700-0701", "0705", "0710", "1630-1631", "1635", "1638" ],
+          children: {}
+        },
+        verbindlichkeiten_beteiligungsverhaeltnis: {
+          name: "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+          codes: [ "0715-0716", "0720", "0725", "1640-1641", "1645", "1648" ],
+          children: {}
+        },
+        sonstige_verbindlichkeiten: {
+          name: "sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen Sicherheit.",
+          codes: [ "0730", "0740", "0750", "0755", "0760", "0764", "0767", "0770", "0774", "0777", "0780", "0784", "0787", "0790", "0799", "1665-1668", "1670-1673", "1675-1678", "1691", "1695-1698", "1700-1709", "1728-1740", "1746-1754", "1767-1768", "1795-1798", "9961" ],
+          children: {}
+        }
+      }
     }
   }
 }.freeze

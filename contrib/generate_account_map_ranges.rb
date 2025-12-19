@@ -301,6 +301,14 @@ end
 
 # Process an individual item recursively
 def process_nested_item(item, mapping, contextual_mapping, output, parent_name)
+  # Handle nameless wrapper objects (common in Passiva section of the JSON)
+  if item["name"].nil? && item["children"]
+    item["children"].each do |child|
+      process_nested_item(child, mapping, contextual_mapping, output, parent_name)
+    end
+    return
+  end
+
   item_name = item['name']
 
   # Check for contextual mapping first
@@ -339,8 +347,9 @@ def print_nested_structure(data, indent: 0)
       if key == :aktiva || key == :passiva
         puts "#{space}#{key}: {"
         print_nested_structure(value, indent: indent + 2)
-        puts "#{space}}"
-        puts "#{space}," unless key == data.keys.last
+        print "#{space}}"
+
+        puts "," unless key == data.keys.last; puts
       elsif key == :children
         if value.empty?
           puts "#{space}children: {}"
@@ -348,6 +357,7 @@ def print_nested_structure(data, indent: 0)
           puts "#{space}children: {"
           print_nested_structure(value, indent: indent + 2)
           puts "#{space}}"
+
         end
       else
         # This is a section key

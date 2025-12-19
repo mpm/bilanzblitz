@@ -604,7 +604,7 @@
               ]
             },
             {
-              "name": "sonstige Rückstellungen.",
+              "name": "sonstige Rückstellungen",
               "cid": "0e23ee1",
               "matched_category": "Sonstige Rückstellungen",
               "codes": [
@@ -727,7 +727,7 @@
               ]
             },
             {
-              "name": "sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen Sicherheit.",
+              "name": "sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen Sicherheit",
               "cid": "eb85992",
               "matched_category": "Sonstige Verbindlichkeiten",
               "codes": [
