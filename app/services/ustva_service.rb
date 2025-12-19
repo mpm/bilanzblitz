@@ -50,7 +50,7 @@ class UstvaService
       .where(code: Account::VAT_ACCOUNTS.values)
       .joins(line_items: :journal_entry)
       .where(journal_entries: { booking_date: @start_date..@end_date })
-      #.where.not(journal_entries: { posted_at: nil })
+      .where.not(journal_entries: { posted_at: nil })
       .select(
         "accounts.code",
         "accounts.name",
@@ -157,7 +157,7 @@ class UstvaService
   def count_journal_entries
     @company.journal_entries
       .where(booking_date: @start_date..@end_date)
-      #.where.not(posted_at: nil)
+      .where.not(posted_at: nil)
       .count
   end
 
