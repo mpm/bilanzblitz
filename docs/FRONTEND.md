@@ -44,7 +44,8 @@ All shared types should be defined in centralized type files:
 **accounting.ts** - Accounting-related types:
 - `AccountBalance` - Account with code, name, and balance
 - `FiscalYear` - Fiscal year with workflow state
-- `BalanceSheetData` - Complete balance sheet structure
+- `BalanceSheetData` - Complete balance sheet structure (includes optional nested structure)
+- `BalanceSheetSectionNested` - Nested subcategory tree (optional)
 - `GuVData` - GuV (P&L) data structure
 - `GuVSection` - Individual GuV section
 

@@ -15,6 +15,7 @@ Service classes encapsulate business logic and complex operations. They follow a
 **Key Features**:
 - Maps SKR03 account codes to GuV sections (§ 275 Abs. 2 HGB)
 - Maps SKR03 account codes to balance sheet categories (§ 266 HGB)
+- Supports nested balance sheet structure with subcategories
 - Based on official SKR03 documentation
 - Single source of truth for account categorization
 
@@ -25,18 +26,33 @@ AccountMap.section_title(:umsatzerloese)
 AccountMap.account_codes(:umsatzerloese)
 AccountMap.find_accounts(accounts, :umsatzerloese)
 
-# Balance sheet category methods
+# Balance sheet category methods (flat)
 AccountMap.balance_sheet_category_title(:anlagevermoegen)
 AccountMap.balance_sheet_account_codes(:anlagevermoegen)
 AccountMap.find_balance_sheet_accounts(accounts, :anlagevermoegen)
+
+# Nested balance sheet methods
+AccountMap.nested_category_structure(:anlagevermoegen)
+AccountMap.category_name(:sachanlagen)  # Works with nested categories
+AccountMap.build_nested_section(accounts, :anlagevermoegen)  # Returns BalanceSheetSection tree
 ```
 
-**Customization**: Edit `GUV_SECTIONS` or `BALANCE_SHEET_CATEGORIES` hashes in the service file.
+**Customization**: Edit `GUV_SECTIONS` or `BALANCE_SHEET_CATEGORIES` hashes. Nested structure in `NESTED_BALANCE_SHEET_CATEGORIES`.
 
 **Data Source**:
 - `contrib/bilanz-with-categories.json` - Balance sheet mappings
 - `contrib/guv-with-categories.json` - GuV mappings
 - `contrib/generate_account_map_ranges.rb` - Helper script
+
+### BalanceSheetSection
+
+**Purpose**: Helper class for nested balance sheet structure with hierarchical subcategories.
+
+**Location**: `app/services/balance_sheet_section.rb`
+
+**Key Features**: Recursive tree structure, flattened_accounts for backward compatibility, own_total vs total calculations
+
+**Usage**: Created via `AccountMap.build_nested_section(accounts, :anlagevermoegen)`
 
 ### TaxFormFieldMap
 
@@ -77,10 +93,11 @@ TaxFormFieldMap.kst_section_label(:adjustments)
 **Key Features**:
 - Queries posted journal entries for fiscal year
 - Excludes closing entries (`entry_type: 'closing'`)
-- Uses `AccountMap` for account categorization
+- Uses `AccountMap` and `BalanceSheetSection` for nested categorization
 - Integrates with `GuVService` for net income calculation
 - Validates Aktiva = Passiva
 - Supports stored balance sheets for closed fiscal years
+- Returns flat arrays (backward compatible) plus optional nested structure
 
 **Usage**:
 ```ruby

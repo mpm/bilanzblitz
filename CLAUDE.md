@@ -210,6 +210,7 @@ When working on this project:
   - TypeScript types: `app/frontend/types/`
   - Service classes: `app/services/`
 - Use `AccountMap` service for account categorization (don't hardcode ranges)
+- Balance sheets support nested subcategories via `AccountMap.build_nested_section()` and `BalanceSheetSection`
 - Use `TaxFormFieldMap` service for tax form field definitions
 - Import types from centralized locations (`types/accounting.ts`, `types/journal-entries.ts`, `types/tax-reports.ts`)
 - Extract reusable components to `app/frontend/components/`
