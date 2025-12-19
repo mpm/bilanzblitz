@@ -392,8 +392,33 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
       }
     }
   }
-}.freeze
+  }.freeze
 
+  # Revenue sections in GuV (for account type classification)
+  REVENUE_SECTIONS = [
+    :umsatzerloese,
+    :bestandsveraenderungen,
+    :aktivierte_eigenleistungen,
+    :sonstige_betriebliche_ertraege,
+    :ertraege_beteiligungen,
+    :ertraege_wertpapiere,
+    :sonstige_zinsen_ertraege
+  ].freeze
+
+  # Expense sections in GuV (for account type classification)
+  EXPENSE_SECTIONS = [
+    :materialaufwand_roh_hilfs_betriebsstoffe,
+    :materialaufwand_bezogene_leistungen,
+    :personalaufwand_loehne_gehaelter,
+    :personalaufwand_soziale_abgaben,
+    :abschreibungen_anlagevermoegen,
+    :abschreibungen_umlaufvermoegen,
+    :sonstige_betriebliche_aufwendungen,
+    :abschreibungen_finanzanlagen,
+    :zinsen_aufwendungen,
+    :steuern_einkommen_ertrag,
+    :sonstige_steuern
+  ].freeze
 
   class << self
     # Get the human-readable title for a GuV section
@@ -517,6 +542,33 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
     def build_nested_section(account_list, category_id)
       structure = nested_category_structure(category_id)
       build_section_recursive(account_list, category_id, structure, level: 1)
+    end
+
+    # Determine account type (asset, liability, equity, expense, revenue) for a given account code
+    # @param account_code [String] The account code (e.g., "0750", "4000")
+    # @return [String, nil] The account type or nil if not found in any category
+    def account_type_for_code(account_code)
+      # 1. Check if special handling applies (deferred - always returns nil for now)
+      special_type = check_special_category_handling(account_code)
+      return special_type if special_type
+
+      # 2. Check balance sheet categories (nested structure)
+      balance_result = find_account_in_nested_structure(account_code)
+      if balance_result
+        return account_type_from_balance_position(
+          balance_result[:side],
+          balance_result[:top_level_category]
+        )
+      end
+
+      # 3. Check GuV sections
+      guv_section = find_guv_section_for_account(account_code)
+      if guv_section
+        return REVENUE_SECTIONS.include?(guv_section) ? "revenue" : "expense"
+      end
+
+      # 4. Not found in any category
+      nil
     end
 
     private
@@ -644,6 +696,89 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
       end
 
       section
+    end
+
+    # Check if account requires special category handling (stub for future implementation)
+    # @param account_code [String] The account code
+    # @return [String, nil] Account type if special handling applies, nil otherwise
+    def check_special_category_handling(account_code)
+      # TODO: Implement special handling for:
+      # - Rechnungsabgrenzungsposten (ARAP/PRAP)
+      # - Latente Steuern (aktiv/passiv)
+      # - Sonderposten mit Rücklageanteil
+      # - Aktiver Unterschiedsbetrag aus Vermögensverrechnung
+      nil
+    end
+
+    # Find account in nested balance sheet structure
+    # @param account_code [String] The account code to search for
+    # @return [Hash, nil] Hash with :side and :top_level_category, or nil if not found
+    def find_account_in_nested_structure(account_code)
+      # Search aktiva
+      NESTED_BALANCE_SHEET_CATEGORIES[:aktiva].each do |top_key, top_data|
+        if account_in_category?(account_code, top_data)
+          return { side: :aktiva, top_level_category: top_key }
+        end
+      end
+
+      # Search passiva
+      NESTED_BALANCE_SHEET_CATEGORIES[:passiva].each do |top_key, top_data|
+        if account_in_category?(account_code, top_data)
+          return { side: :passiva, top_level_category: top_key }
+        end
+      end
+
+      nil
+    end
+
+    # Check if account code exists in a category (recursively checks children)
+    # @param account_code [String] The account code to search for
+    # @param category_data [Hash] Category data with :codes and :children
+    # @return [Boolean] True if account found in this category or its children
+    def account_in_category?(account_code, category_data)
+      # Check codes at this level
+      codes = expand_account_ranges(category_data[:codes] || [])
+      return true if codes.include?(account_code)
+
+      # Recursively check children
+      if category_data[:children]
+        category_data[:children].each_value do |child_data|
+          return true if account_in_category?(account_code, child_data)
+        end
+      end
+
+      false
+    end
+
+    # Determine account type from balance sheet position
+    # @param side [Symbol] :aktiva or :passiva
+    # @param top_level_category [Symbol] The top-level category key
+    # @return [String] The account type ("asset", "liability", or "equity")
+    def account_type_from_balance_position(side, top_level_category)
+      case side
+      when :aktiva
+        "asset"
+      when :passiva
+        case top_level_category
+        when :eigenkapital
+          "equity"
+        when :rueckstellungen, :verbindlichkeiten
+          "liability"
+        else
+          "liability"  # Conservative default for passiva
+        end
+      end
+    end
+
+    # Find which GuV section an account belongs to
+    # @param account_code [String] The account code
+    # @return [Symbol, nil] The GuV section identifier or nil if not found
+    def find_guv_section_for_account(account_code)
+      GUV_SECTIONS.each do |section_id, section_data|
+        codes = expand_account_ranges(section_data[:accounts])
+        return section_id if codes.include?(account_code)
+      end
+      nil
     end
   end
 end

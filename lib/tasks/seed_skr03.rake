@@ -52,8 +52,8 @@ namespace :accounting do
       # Track this account code and where it appears
       seen_codes[code] << { line: line_number, description: description }
 
-      # Determine account type based on account number
-      account_type = determine_account_type(code)
+      # Determine account type based on account number and category
+      account_type = determine_account_type(code, category)
 
       # Extract tax rate from description if present
       tax_rate = extract_tax_rate(description)
@@ -166,62 +166,45 @@ namespace :accounting do
 
   private
 
-  # Determine account type based on SKR03 (Prozessgliederungsprinzip) structure
-  # Klasse 0: Anlage- und Kapitalkonten (fixed assets and capital/equity)
-  # Klasse 1: Finanz- und Privatkonten (cash, bank, receivables, payables)
-  # Klasse 2: Abgrenzungskonten (deferrals - can be assets or liabilities)
-  # Klasse 3: Wareneingangs- und Bestandskonten (inventory - assets)
-  # Klasse 4, 5, 6: Betriebliche Aufwendungen (operating expenses)
-  # Klasse 8: Erlöskonten (revenue)
-  # Klasse 9: Vortrags- und statistische Konten (carryforward/closing - equity)
-  def determine_account_type(account_code)
+  # Determine account type using AccountMap category-based lookup
+  # @param account_code [String] The account code (e.g., "0750")
+  # @param category_cid [String] The category identifier from CSV (can be "NONE")
+  # @return [String] The account type ("asset", "liability", "equity", "expense", "revenue")
+  def determine_account_type(account_code, category_cid)
     account_num = account_code.to_i
 
+    # Special handling: 9xxx accounts (closing/carryforward) - always equity
+    return "equity" if account_num >= 9000 && account_num < 10000
+
+    # If category is "NONE", use fallback logic
+    if category_cid.nil? || category_cid.empty? || category_cid == "NONE"
+      return fallback_account_type(account_num)
+    end
+
+    # Primary method: Look up account code in AccountMap
+    account_type = AccountMap.account_type_for_code(account_code)
+
+    # If found, return it
+    return account_type if account_type
+
+    # Fallback if not found in any category
+    puts "ℹ️  INFO: Account #{account_code} not found in AccountMap categories, using fallback"
+    fallback_account_type(account_num)
+  end
+
+  # Fallback account type determination for uncategorized accounts
+  # @param account_num [Integer] The numeric account code
+  # @return [String] The account type
+  def fallback_account_type(account_num)
     case account_num
-    # Class 0: Fixed assets and capital accounts
-    when 0...800
-      "asset" # Fixed assets (intangible, tangible, financial assets)
-    when 800...1000
-      "equity" # Capital accounts, equity
-
-    # Class 1: Finance and private accounts
-    when 1000...1600
-      "asset" # Cash, bank, receivables
-    when 1600...1800
-      "liability" # Payables (Verbindlichkeiten)
-    when 1800...2000
-      "asset" # Other current assets
-
-    # Class 2: Deferral accounts
-    when 2000...2200
-      "equity" # Equity accounts
-    when 2200...2400
-      "liability" # Provisions (Rückstellungen)
-    when 2400...3000
-      "liability" # Liabilities and deferrals
-
-    # Class 3: Inventory accounts
-    when 3000...4000
-      "asset" # Raw materials, goods, work in progress
-
-    # Class 4, 5, 6: Expense accounts
-    when 4000...7000
-      "expense" # Operating expenses
-
-    # Class 7: Additional expenses or cost types
-    when 7000...8000
-      "expense" # Other expenses
-
-    # Class 8: Revenue accounts
+    when 0...4000
+      "asset"  # Conservative default for 0-3999
+    when 4000...8000
+      "expense"
     when 8000...9000
-      "revenue" # Sales revenue and closing accounts
-
-    # Class 9: Carryforward and statistical accounts
-    when 9000...10000
-      "equity" # Cost accounting, closing, carryforward
-
+      "revenue"
     else
-      "asset" # Default fallback
+      "equity"  # 9xxx accounts
     end
   end
 

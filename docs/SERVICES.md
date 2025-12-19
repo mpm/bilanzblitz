@@ -16,6 +16,7 @@ Service classes encapsulate business logic and complex operations. They follow a
 - Maps SKR03 account codes to GuV sections (§ 275 Abs. 2 HGB)
 - Maps SKR03 account codes to balance sheet categories (§ 266 HGB)
 - Supports nested balance sheet structure with subcategories
+- Determines account types (asset, liability, equity, expense, revenue) from category membership
 - Based on official SKR03 documentation
 - Single source of truth for account categorization
 
@@ -35,9 +36,30 @@ AccountMap.find_balance_sheet_accounts(accounts, :anlagevermoegen)
 AccountMap.nested_category_structure(:anlagevermoegen)
 AccountMap.category_name(:sachanlagen)  # Works with nested categories
 AccountMap.build_nested_section(accounts, :anlagevermoegen)  # Returns BalanceSheetSection tree
+
+# Account type determination
+AccountMap.account_type_for_code("0750")  # => "liability"
+AccountMap.account_type_for_code("4000")  # => "expense"
 ```
 
 **Customization**: Edit `GUV_SECTIONS` or `BALANCE_SHEET_CATEGORIES` hashes. Nested structure in `NESTED_BALANCE_SHEET_CATEGORIES`.
+
+**Account Type Determination**:
+
+AccountMap determines account types by looking up the account code in the nested category structure:
+
+1. **Balance sheet accounts**: Determined by whether the account belongs to Aktiva or Passiva
+   - Aktiva accounts → `"asset"`
+   - Passiva.Eigenkapital → `"equity"`
+   - Passiva.Rückstellungen/Verbindlichkeiten → `"liability"`
+
+2. **GuV accounts**: Determined by semantic meaning of the GuV section
+   - Revenue sections (Umsatzerlöse, Erträge, etc.) → `"revenue"`
+   - Expense sections (Materialaufwand, Personalaufwand, etc.) → `"expense"`
+
+3. **Special accounts**: 9xxx accounts (closing/carryforward) → `"equity"`
+
+This replaces the old range-based approach which was structurally incorrect for SKR03. For example, account 0750 is now correctly classified as `"liability"` (not `"asset"`), because it belongs to the "Verbindlichkeiten" category.
 
 **Data Source**:
 - `contrib/bilanz-with-categories.json` - Balance sheet mappings
