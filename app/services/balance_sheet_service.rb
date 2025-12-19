@@ -87,22 +87,48 @@ class BalanceSheetService
   end
 
   def group_by_balance_sheet_sections(account_balances)
+    # Build nested sections using AccountMap
+    anlagevermoegen = AccountMap.build_nested_section(account_balances, :anlagevermoegen)
+    umlaufvermoegen = AccountMap.build_nested_section(account_balances, :umlaufvermoegen)
+    eigenkapital = AccountMap.build_nested_section(account_balances, :eigenkapital)
+
+    # Fremdkapital combines Rückstellungen and Verbindlichkeiten
+    # For backward compatibility, we keep :fremdkapital as top-level
+    # But internally it's built from nested structures
+    rueckstellungen = AccountMap.build_nested_section(account_balances, :rueckstellungen)
+    verbindlichkeiten = AccountMap.build_nested_section(account_balances, :verbindlichkeiten)
+
+    # Create a fremdkapital section that combines them
+    fremdkapital = BalanceSheetSection.new(
+      section_key: :fremdkapital,
+      section_name: "Fremdkapital",
+      level: 1,
+      accounts: []
+    )
+    fremdkapital.add_child(rueckstellungen)
+    fremdkapital.add_child(verbindlichkeiten)
+
     {
-      anlagevermoegen: AccountMap.find_balance_sheet_accounts(account_balances, :anlagevermoegen),
-      umlaufvermoegen: AccountMap.find_balance_sheet_accounts(account_balances, :umlaufvermoegen),
-      eigenkapital: AccountMap.find_balance_sheet_accounts(account_balances, :eigenkapital),
-      fremdkapital: AccountMap.find_balance_sheet_accounts(account_balances, :fremdkapital)
+      anlagevermoegen: anlagevermoegen,
+      umlaufvermoegen: umlaufvermoegen,
+      eigenkapital: eigenkapital,
+      fremdkapital: fremdkapital
     }
   end
 
-  def build_balance_sheet_data(grouped_accounts, net_income, guv_data = nil)
-    # Build Aktiva (Assets) section
-    aktiva_accounts = grouped_accounts[:anlagevermoegen] + grouped_accounts[:umlaufvermoegen]
-    aktiva_total = aktiva_accounts.sum { |a| a[:balance] }
+  def build_balance_sheet_data(grouped_sections, net_income, guv_data = nil)
+    # grouped_sections now contains BalanceSheetSection instances
+
+    # Build Aktiva (Assets) section using flattened_accounts for backward compatibility
+    aktiva_accounts = grouped_sections[:anlagevermoegen].flattened_accounts +
+                      grouped_sections[:umlaufvermoegen].flattened_accounts
+    aktiva_total = grouped_sections[:anlagevermoegen].total +
+                   grouped_sections[:umlaufvermoegen].total
 
     # Build Passiva (Liabilities & Equity) section
     # Add net income to equity
-    eigenkapital_accounts = grouped_accounts[:eigenkapital].dup
+    eigenkapital_section = grouped_sections[:eigenkapital]
+    eigenkapital_accounts = eigenkapital_section.flattened_accounts.dup
     eigenkapital_accounts << {
       code: "net_income",
       name: net_income >= 0 ? "Jahresüberschuss" : "Jahresfehlbetrag",
@@ -110,8 +136,8 @@ class BalanceSheetService
       balance: net_income
     }
 
-    passiva_accounts = eigenkapital_accounts + grouped_accounts[:fremdkapital]
-    passiva_total = passiva_accounts.sum { |a| a[:balance] }
+    passiva_accounts = eigenkapital_accounts + grouped_sections[:fremdkapital].flattened_accounts
+    passiva_total = eigenkapital_section.total + grouped_sections[:fremdkapital].total + net_income
 
     # Check if balance sheet balances
     balanced = (aktiva_total - passiva_total).abs < 0.01
@@ -125,16 +151,25 @@ class BalanceSheetService
         closed: @fiscal_year.closed
       },
       aktiva: {
-        anlagevermoegen: format_accounts(grouped_accounts[:anlagevermoegen]),
-        umlaufvermoegen: format_accounts(grouped_accounts[:umlaufvermoegen]),
+        anlagevermoegen: format_accounts(grouped_sections[:anlagevermoegen].flattened_accounts),
+        umlaufvermoegen: format_accounts(grouped_sections[:umlaufvermoegen].flattened_accounts),
         total: aktiva_total.round(2)
       },
       passiva: {
         eigenkapital: format_accounts(eigenkapital_accounts),
-        fremdkapital: format_accounts(grouped_accounts[:fremdkapital]),
+        fremdkapital: format_accounts(grouped_sections[:fremdkapital].flattened_accounts),
         total: passiva_total.round(2)
       },
-      balanced: balanced
+      balanced: balanced,
+      # Add nested structure for future frontend use
+      nested_aktiva: {
+        anlagevermoegen: grouped_sections[:anlagevermoegen].to_h,
+        umlaufvermoegen: grouped_sections[:umlaufvermoegen].to_h
+      },
+      nested_passiva: {
+        eigenkapital: eigenkapital_section.to_h,
+        fremdkapital: grouped_sections[:fremdkapital].to_h
+      }
     }
 
     # Add GuV data if available

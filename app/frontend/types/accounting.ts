@@ -68,4 +68,26 @@ export interface BalanceSheetData {
   guv?: GuVData // Optional for backward compatibility
   stored?: boolean
   postedAt?: string
+  // New optional nested structure
+  nestedAktiva?: {
+    anlagevermoegen: BalanceSheetSectionNested
+    umlaufvermoegen: BalanceSheetSectionNested
+  }
+  nestedPassiva?: {
+    eigenkapital: BalanceSheetSectionNested
+    fremdkapital: BalanceSheetSectionNested
+  }
+}
+
+// Nested Balance Sheet Section (optional, for future use)
+export interface BalanceSheetSectionNested {
+  sectionKey: string
+  sectionName: string
+  level: number
+  accounts: AccountBalance[]
+  ownTotal: number
+  total: number
+  accountCount: number
+  totalAccountCount: number
+  children?: BalanceSheetSectionNested[]
 }

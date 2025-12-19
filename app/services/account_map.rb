@@ -408,6 +408,59 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
       end
     end
 
+    # Get nested category structure for a top-level category
+    # @param category_id [Symbol] The top-level category (:anlagevermoegen, :umlaufvermoegen, etc.)
+    # @return [Hash] Nested structure with name, codes, children
+    # @raise [ArgumentError] if category_id is not a valid top-level category
+    def nested_category_structure(category_id)
+      validate_nested_category!(category_id)
+
+      # Search in aktiva
+      if NESTED_BALANCE_SHEET_CATEGORIES[:aktiva].key?(category_id)
+        return NESTED_BALANCE_SHEET_CATEGORIES[:aktiva][category_id]
+      end
+
+      # Search in passiva
+      if NESTED_BALANCE_SHEET_CATEGORIES[:passiva].key?(category_id)
+        return NESTED_BALANCE_SHEET_CATEGORIES[:passiva][category_id]
+      end
+
+      raise ArgumentError, "Category #{category_id} not found in nested structure"
+    end
+
+    # Get the official German name for any category (works with nested categories)
+    # @param category_id [Symbol] Any category identifier
+    # @return [String, nil] The German name or nil if not found
+    def category_name(category_id)
+      # Check top-level flat categories first (backward compatibility)
+      if BALANCE_SHEET_CATEGORIES.key?(category_id)
+        return BALANCE_SHEET_CATEGORIES[category_id][:title]
+      end
+
+      # Search nested structure
+      found = find_in_nested_structure(category_id)
+      found ? found[:name] : nil
+    end
+
+    # Get all account codes for a category (works with nested categories, flattens all children)
+    # @param category_id [Symbol] Any category identifier
+    # @return [Array<String>] Array of account codes
+    def nested_account_codes(category_id)
+      found = find_in_nested_structure(category_id)
+      return [] unless found
+
+      collect_all_codes(found)
+    end
+
+    # Build a BalanceSheetSection tree for a top-level category
+    # @param account_list [Array<Hash>] List of account hashes with :code, :name, :balance keys
+    # @param category_id [Symbol] The top-level category identifier
+    # @return [BalanceSheetSection] The root section with nested children
+    def build_nested_section(account_list, category_id)
+      structure = nested_category_structure(category_id)
+      build_section_recursive(account_list, category_id, structure, level: 1)
+    end
+
     private
 
     # Validate that the section_id exists in GUV_SECTIONS
@@ -447,6 +500,92 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
       end
 
       result.uniq.sort
+    end
+
+    # Validate that category exists in nested structure
+    def validate_nested_category!(category_id)
+      valid_aktiva = NESTED_BALANCE_SHEET_CATEGORIES[:aktiva].keys
+      valid_passiva = NESTED_BALANCE_SHEET_CATEGORIES[:passiva].keys
+      valid_categories = valid_aktiva + valid_passiva
+
+      unless valid_categories.include?(category_id)
+        raise ArgumentError, "Unknown nested category: #{category_id}. Valid categories: #{valid_categories.join(', ')}"
+      end
+    end
+
+    # Find a category in the nested structure (recursive search)
+    def find_in_nested_structure(category_id)
+      # Search aktiva
+      NESTED_BALANCE_SHEET_CATEGORIES[:aktiva].each do |key, data|
+        found = search_category_recursive(key, data, category_id)
+        return found if found
+      end
+
+      # Search passiva
+      NESTED_BALANCE_SHEET_CATEGORIES[:passiva].each do |key, data|
+        found = search_category_recursive(key, data, category_id)
+        return found if found
+      end
+
+      nil
+    end
+
+    def search_category_recursive(current_key, current_data, target_key)
+      return current_data if current_key == target_key
+
+      if current_data[:children]
+        current_data[:children].each do |child_key, child_data|
+          found = search_category_recursive(child_key, child_data, target_key)
+          return found if found
+        end
+      end
+
+      nil
+    end
+
+    # Collect all codes from a structure and its children
+    def collect_all_codes(structure)
+      codes = structure[:codes] || []
+
+      if structure[:children]
+        structure[:children].each_value do |child_data|
+          codes.concat(collect_all_codes(child_data))
+        end
+      end
+
+      expand_account_ranges(codes)
+    end
+
+    # Recursively build BalanceSheetSection tree
+    def build_section_recursive(account_list, section_key, structure, level:)
+      # Get codes for this level only (not children)
+      own_codes = expand_account_ranges(structure[:codes] || [])
+
+      # Filter accounts that belong to this level
+      own_accounts = account_list.select { |account| own_codes.include?(account[:code]) }
+
+      # Create section
+      section = BalanceSheetSection.new(
+        section_key: section_key,
+        section_name: structure[:name],
+        level: level,
+        accounts: own_accounts
+      )
+
+      # Recursively build children
+      if structure[:children]
+        structure[:children].each do |child_key, child_data|
+          child_section = build_section_recursive(
+            account_list,
+            child_key,
+            child_data,
+            level: level + 1
+          )
+          section.add_child(child_section) unless child_section.empty?
+        end
+      end
+
+      section
     end
   end
 end
