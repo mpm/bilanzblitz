@@ -97,6 +97,246 @@ class AccountMap
     }
   }.freeze
 
+# Nested balance sheet categories with hierarchical structure
+# Generated from bilanz-with-categories.json
+NESTED_BALANCE_SHEET_CATEGORIES = {
+  aktiva: {
+    anlagevermoegen: {
+      name: "Anlagevermögen",
+      codes: [],
+      children: {
+        immaterielle_vermogensgegenstaende: {
+          name: "Immaterielle Vermögensgegenstände",
+          codes: [],
+          children: {
+            selbst_geschaffene_schutzrechte: {
+              name: "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte",
+              codes: [ "0043-0048" ],
+              children: {}
+            },
+            erworbene_konzessionen: {
+              name: "entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten",
+              codes: [ "0010", "0015", "0020", "0025", "0027", "0030" ],
+              children: {}
+            },
+            geschaefts_firmenwert: {
+              name: "Geschäfts- oder Firmenwert",
+              codes: [ "0035" ],
+              children: {}
+            },
+            geleistete_anzahlungen_immaterielle: {
+              name: "geleistete Anzahlungen",
+              codes: [ "0038-0039", "1510-1513", "1517-1518" ],
+              children: {}
+            }
+          }
+        },
+        sachanlagen: {
+          name: "Sachanlagen",
+          codes: [],
+          children: {
+            grundstuecke_bauten: {
+              name: "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken",
+              codes: [ "0050", "0059-0060", "0065", "0070", "0075", "0080", "0085", "0090", "0100", "0110-0113", "0115", "0140", "0145-0149", "0160", "0165", "0170", "0175-0179", "0190-0194" ],
+              children: {}
+            },
+            technische_anlagen_maschinen: {
+              name: "technische Anlagen und Maschinen",
+              codes: [ "0210", "0220", "0240", "0260", "0280" ],
+              children: {}
+            },
+            betriebs_geschaeftsausstattung: {
+              name: "andere Anlagen, Betriebs- und Geschäftsausstattung",
+              codes: [ "0300", "0310", "0320", "0350", "0380", "0400", "0410", "0420", "0430", "0440", "0450", "0460", "0480", "0485", "0490" ],
+              children: {}
+            },
+            geleistete_anzahlungen_anlagen_im_bau: {
+              name: "geleistete Anzahlungen und Anlagen im Bau",
+              codes: [ "0079", "0120", "0129", "0150", "0159", "0180", "0189", "0195", "0199", "0290", "0299", "0498-0499" ],
+              children: {}
+            }
+          }
+        },
+        finanzanlagen: {
+          name: "Finanzanlagen",
+          codes: [],
+          children: {
+            anteile_verbundene_unternehmen_finanzanlagen: {
+              name: "Anteile an verbundenen Unternehmen",
+              codes: [ "0500-0504", "0509", "1340", "1344" ],
+              children: {}
+            },
+            ausleihungen_verbundene_unternehmen: {
+              name: "Ausleihungen an verbundene Unternehmen",
+              codes: [ "0505-0508" ],
+              children: {}
+            },
+            beteiligungen: {
+              name: "Beteiligungen",
+              codes: [ "0510", "0513", "0516-0519" ],
+              children: {}
+            },
+            ausleihungen_beteiligungsverhaeltnis: {
+              name: "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+              codes: [ "0520", "0523-0524" ],
+              children: {}
+            },
+            wertpapiere_anlagevermoegen: {
+              name: "Wertpapiere des Anlagevermögens",
+              codes: [ "0525", "0530", "0535", "0538" ],
+              children: {}
+            },
+            sonstige_ausleihungen: {
+              name: "sonstige Ausleihungen.",
+              codes: [ "0540", "0550", "0580", "0582", "0584", "0586", "0590" ],
+              children: {}
+            }
+          }
+        }
+      }
+    },
+    umlaufvermoegen: {
+      name: "Umlaufvermögen",
+      codes: [],
+      children: {
+        vorraete: {
+          name: "Vorräte",
+          codes: [],
+          children: {
+            roh_hilfs_betriebsstoffe: {
+              name: "Roh-, Hilfs- und Betriebsstoffe",
+              codes: [ "3970" ],
+              children: {}
+            },
+            unfertige_erzeugnisse: {
+              name: "unfertige Erzeugnisse, unfertige Leistungen",
+              codes: [ "7000", "7050", "7080" ],
+              children: {}
+            },
+            fertige_erzeugnisse_waren: {
+              name: "fertige Erzeugnisse und Waren",
+              codes: [ "3980", "7100", "7110", "7140" ],
+              children: {}
+            },
+            geleistete_anzahlungen_vorraete: {
+              name: "geleistete Anzahlungen",
+              codes: [ "0038-0039", "1510-1513", "1517-1518" ],
+              children: {}
+            }
+          }
+        },
+        forderungen_sonstige_vermogensgegenstaende: {
+          name: "Forderungen und sonstige Vermögensgegenstände",
+          codes: [],
+          children: {
+            forderungen_lieferungen_leistungen: {
+              name: "Forderungen aus Lieferungen und Leistungen",
+              codes: [ "9960" ],
+              children: {}
+            },
+            forderungen_verbundene_unternehmen: {
+              name: "Forderungen gegen verbundene Unternehmen",
+              codes: [ "1310", "1470-1471", "1475", "1594-1596" ],
+              children: {}
+            },
+            forderungen_beteiligungsverhaeltnis: {
+              name: "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+              codes: [ "1480-1481", "1485", "1597-1599" ],
+              children: {}
+            },
+            sonstige_vermogensgegenstaende: {
+              name: "sonstige Vermögensgegenstände",
+              codes: [ "1350", "1352-1353", "1355-1356", "1373", "1376-1379", "1381-1383", "1385-1387", "1500-1508", "1519-1522", "1524-1531", "1537", "1539-1540", "1542-1551", "1555", "9965" ],
+              children: {}
+            }
+          }
+        },
+        wertpapiere_umlaufvermoegen: {
+          name: "Wertpapiere",
+          codes: [],
+          children: {
+            anteile_verbundene_unternehmen_wertpapiere: {
+              name: "Anteile an verbundenen Unternehmen",
+              codes: [ "0500-0504", "0509", "1340", "1344" ],
+              children: {}
+            },
+            sonstige_wertpapiere: {
+              name: "sonstige Wertpapiere",
+              codes: [ "1329", "1348-1349" ],
+              children: {}
+            }
+          }
+        },
+        liquide_mittel: {
+          name: "Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks",
+          codes: [ "1000", "1010", "1020", "1330", "9962" ],
+          children: {}
+        }
+      }
+    }
+  },
+  passiva: {
+    eigenkapital: {
+      name: "Eigenkapital",
+      codes: [],
+      children: {
+        gezeichnetes_kapital: {
+          name: "Gezeichnetes Kapital",
+          codes: [ "0800", "0809" ],
+          children: {}
+        },
+        kapitalruecklage: {
+          name: "Kapitalrücklage",
+          codes: [ "0840-0845" ],
+          children: {}
+        },
+        gewinnruecklagen: {
+          name: "Gewinnrücklagen",
+          codes: [],
+          children: {
+            gesetzliche_ruecklage: {
+              name: "gesetzliche Rücklage",
+              codes: [ "0846" ],
+              children: {}
+            },
+            ruecklage_anteile: {
+              name: "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
+              codes: [ "0849" ],
+              children: {}
+            },
+            satzungsmaessige_ruecklagen: {
+              name: "satzungsmäßige Rücklagen",
+              codes: [ "0851" ],
+              children: {}
+            },
+            andere_gewinnruecklagen: {
+              name: "andere Gewinnrücklagen",
+              codes: [ "0848", "0853-0859", "0987-0988" ],
+              children: {}
+            }
+          }
+        },
+        gewinnvortrag_verlustvortrag: {
+          name: "Gewinnvortrag/Verlustvortrag",
+          codes: [],
+          children: {}
+        }
+      }
+    },
+    rueckstellungen: {
+      name: "Rückstellungen",
+      codes: [ "0951" ],
+      children: {}
+    },
+    verbindlichkeiten: {
+      name: "Verbindlichkeiten",
+      codes: [ "0630", "0640", "0650", "0660", "0670", "0680", "0690" ],
+      children: {}
+    }
+  }
+}.freeze
+
+
   class << self
     # Get the human-readable title for a GuV section
     # @param section_id [Symbol] The section identifier (e.g., :umsatzerloese)
