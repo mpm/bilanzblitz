@@ -185,7 +185,8 @@ class JournalEntriesController < ApplicationController
         {
           account_code: li[:account_code],
           amount: li[:amount].to_f,
-          direction: li[:direction]
+          direction: li[:direction],
+          description: li[:description]
         }
       }
     }
@@ -216,7 +217,8 @@ class JournalEntriesController < ApplicationController
           accountName: li.account.name,
           amount: li.amount.to_f,
           direction: li.direction,
-          bankTransactionId: li.bank_transaction_id
+          bankTransactionId: li.bank_transaction_id,
+          description: li.description
         }
       }
     }
@@ -229,7 +231,8 @@ class JournalEntriesController < ApplicationController
       accountName: li.account.name,
       amount: li.amount.to_f,
       direction: li.direction,
-      bankTransactionId: li.bank_transaction_id
+      bankTransactionId: li.bank_transaction_id,
+      description: li.description
     }
   end
 

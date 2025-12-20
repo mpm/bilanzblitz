@@ -62,7 +62,8 @@ class JournalEntryUpdater
         journal_entry: @journal_entry,
         account: account,
         amount: li_params[:amount],
-        direction: li_params[:direction]
+        direction: li_params[:direction],
+        description: li_params[:description]
       )
     end
   end

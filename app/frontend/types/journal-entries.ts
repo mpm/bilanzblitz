@@ -5,6 +5,7 @@ export interface LineItem {
   amount: number
   direction: 'debit' | 'credit'
   bankTransactionId: number | null
+  description: string | null
 }
 
 export interface JournalEntry {

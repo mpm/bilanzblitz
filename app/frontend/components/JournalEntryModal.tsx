@@ -40,6 +40,7 @@ interface LineItemFormData {
   account: Account | null
   debitAmount: string
   creditAmount: string
+  description: string
 }
 
 interface JournalEntryModalProps {
@@ -77,6 +78,7 @@ export function JournalEntryModal({
       account: null,
       debitAmount: '',
       creditAmount: '',
+      description: '',
     }
   }
 
@@ -99,6 +101,7 @@ export function JournalEntryModal({
           },
           debitAmount: li.direction === 'debit' ? li.amount.toString() : '',
           creditAmount: li.direction === 'credit' ? li.amount.toString() : '',
+          description: li.description || '',
         }))
       )
       setErrors([])
@@ -255,6 +258,7 @@ export function JournalEntryModal({
           account_code: li.account!.code,
           amount: parseFloat(li.debitAmount || li.creditAmount),
           direction: li.debitAmount ? 'debit' : 'credit',
+          description: li.description,
         })),
       },
     }
@@ -413,6 +417,19 @@ export function JournalEntryModal({
                             className="text-right font-mono"
                           />
                         </div>
+                      </div>
+
+                      {/* Description */}
+                      <div className="space-y-2">
+                        <Label>Description (optional)</Label>
+                        <Input
+                          type="text"
+                          value={lineItem.description}
+                          onChange={(e) =>
+                            updateLineItem(lineItem.tempId, 'description', e.target.value)
+                          }
+                          placeholder="Line item description"
+                        />
                       </div>
                     </div>
 

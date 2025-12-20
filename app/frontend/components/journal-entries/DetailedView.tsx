@@ -28,7 +28,9 @@ export function DetailedView({
           </TableCell>
           <TableCell>{lineItem.accountName}</TableCell>
           <TableCell className="text-sm text-muted-foreground">
-            {lineItem.bankTransactionId && '(Bank transaction)'}
+            {lineItem.description && <span>{lineItem.description}</span>}
+            {lineItem.description && lineItem.bankTransactionId && <span> </span>}
+            {lineItem.bankTransactionId && <span>(Bank transaction)</span>}
           </TableCell>
           <TableCell className="text-right font-mono text-red-600">
             {lineItem.direction === 'debit' && formatCurrency(lineItem.amount)}
