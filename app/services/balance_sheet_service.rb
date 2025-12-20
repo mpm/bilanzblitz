@@ -90,61 +90,61 @@ class BalanceSheetService
   end
 
   def group_by_balance_sheet_sections(account_balances)
-    # Build nested sections using AccountMap
-    anlagevermoegen = AccountMap.build_nested_section(account_balances, :anlagevermoegen)
-    umlaufvermoegen = AccountMap.build_nested_section(account_balances, :umlaufvermoegen)
-    eigenkapital = AccountMap.build_nested_section(account_balances, :eigenkapital)
+    # Build all sections from the dynamically loaded JSON structure
+    aktiva_sections = {}
+    passiva_sections = {}
 
-    # Fremdkapital combines Rückstellungen and Verbindlichkeiten
-    # For backward compatibility, we keep :fremdkapital as top-level
-    # But internally it's built from nested structures
-    rueckstellungen = AccountMap.build_nested_section(account_balances, :rueckstellungen)
-    verbindlichkeiten = AccountMap.build_nested_section(account_balances, :verbindlichkeiten)
+    # Get all top-level categories from AccountMap
+    categories = AccountMap.nested_balance_sheet_categories
 
-    # Create a fremdkapital section that combines them
-    fremdkapital = BalanceSheetSection.new(
-      section_key: :fremdkapital,
-      section_name: "Fremdkapital",
-      level: 1,
-      accounts: []
-    )
-    fremdkapital.add_child(rueckstellungen)
-    fremdkapital.add_child(verbindlichkeiten)
+    # Build all aktiva sections
+    categories[:aktiva].each_key do |category_key|
+      section = AccountMap.build_nested_section(account_balances, category_key)
+      aktiva_sections[category_key] = section unless section.empty?
+    end
 
-    {
-      anlagevermoegen: anlagevermoegen,
-      umlaufvermoegen: umlaufvermoegen,
-      eigenkapital: eigenkapital,
-      fremdkapital: fremdkapital
-    }
+    # Build all passiva sections
+    categories[:passiva].each_key do |category_key|
+      section = AccountMap.build_nested_section(account_balances, category_key)
+      passiva_sections[category_key] = section unless section.empty?
+    end
+
+    { aktiva: aktiva_sections, passiva: passiva_sections }
   end
 
   def build_balance_sheet_data(grouped_sections, net_income, guv_data = nil)
-    # grouped_sections now contains BalanceSheetSection instances
+    aktiva_sections = grouped_sections[:aktiva]
+    passiva_sections = grouped_sections[:passiva]
 
-    # Build Aktiva (Assets) section using flattened_accounts for backward compatibility
-    aktiva_accounts = grouped_sections[:anlagevermoegen].flattened_accounts +
-                      grouped_sections[:umlaufvermoegen].flattened_accounts
-    aktiva_total = grouped_sections[:anlagevermoegen].total +
-                   grouped_sections[:umlaufvermoegen].total
+    # Calculate aktiva total from all aktiva sections
+    aktiva_total = aktiva_sections.values.sum(&:total)
 
-    # Build Passiva (Liabilities & Equity) section
-    # Add net income to equity
-    eigenkapital_section = grouped_sections[:eigenkapital]
-    eigenkapital_accounts = eigenkapital_section.flattened_accounts.dup
-    eigenkapital_accounts << {
-      code: "net_income",
-      name: net_income >= 0 ? "Jahresüberschuss" : "Jahresfehlbetrag",
-      type: "equity",
-      balance: net_income
-    }
+    # Add Jahresüberschuss/Jahresfehlbetrag to eigenkapital section
+    # Clone the eigenkapital section and add net income as a special account
+    eigenkapital_section = passiva_sections[:eigenkapital]
+    if eigenkapital_section
+      eigenkapital_section_hash = eigenkapital_section.to_h
+      # Add net income to the accounts at the top level of eigenkapital
+      eigenkapital_section_hash[:accounts] = eigenkapital_section_hash[:accounts].dup
+      eigenkapital_section_hash[:accounts] << {
+        code: "net_income",
+        name: net_income >= 0 ? "Jahresüberschuss" : "Jahresfehlbetrag",
+        type: "equity",
+        balance: net_income
+      }
+      eigenkapital_section_hash[:own_total] = (eigenkapital_section_hash[:own_total] || 0) + net_income
+      eigenkapital_section_hash[:total] = (eigenkapital_section_hash[:total] || 0) + net_income
+      eigenkapital_section_hash[:account_count] += 1
+      eigenkapital_section_hash[:total_account_count] += 1
+    end
 
-    passiva_accounts = eigenkapital_accounts + grouped_sections[:fremdkapital].flattened_accounts
-    passiva_total = eigenkapital_section.total + grouped_sections[:fremdkapital].total + net_income
+    # Calculate passiva total (including net_income in eigenkapital)
+    passiva_total = passiva_sections.values.sum(&:total) + net_income
 
     # Check if balance sheet balances
     balanced = (aktiva_total - passiva_total).abs < 0.01
 
+    # Build result with nested structure
     result = {
       fiscal_year: {
         id: @fiscal_year.id,
@@ -154,41 +154,26 @@ class BalanceSheetService
         closed: @fiscal_year.closed
       },
       aktiva: {
-        anlagevermoegen: format_accounts(grouped_sections[:anlagevermoegen].flattened_accounts),
-        umlaufvermoegen: format_accounts(grouped_sections[:umlaufvermoegen].flattened_accounts),
+        sections: aktiva_sections.transform_values(&:to_h),
         total: aktiva_total.round(2)
       },
       passiva: {
-        eigenkapital: format_accounts(eigenkapital_accounts),
-        fremdkapital: format_accounts(grouped_sections[:fremdkapital].flattened_accounts),
+        sections: passiva_sections.transform_values do |section|
+          if section.section_key == :eigenkapital
+            eigenkapital_section_hash
+          else
+            section.to_h
+          end
+        end,
         total: passiva_total.round(2)
       },
-      balanced: balanced,
-      # Add nested structure for future frontend use
-      nested_aktiva: {
-        anlagevermoegen: grouped_sections[:anlagevermoegen].to_h,
-        umlaufvermoegen: grouped_sections[:umlaufvermoegen].to_h
-      },
-      nested_passiva: {
-        eigenkapital: eigenkapital_section.to_h,
-        fremdkapital: grouped_sections[:fremdkapital].to_h
-      }
+      balanced: balanced
     }
 
     # Add GuV data if available
     result[:guv] = guv_data if guv_data
 
     result
-  end
-
-  def format_accounts(accounts)
-    accounts.map do |account|
-      {
-        account_code: account[:code],
-        account_name: account[:name],
-        balance: account[:balance].round(2)
-      }
-    end
   end
 
   def failure(message)

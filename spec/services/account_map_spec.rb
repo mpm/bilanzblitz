@@ -100,69 +100,7 @@ RSpec.describe AccountMap do
     end
   end
 
-  describe ".balance_sheet_category_title" do
-    it "returns the correct title for anlagevermoegen" do
-      expect(AccountMap.balance_sheet_category_title(:anlagevermoegen)).to eq("Anlagevermögen")
-    end
-
-    it "raises an error for unknown category" do
-      expect {
-        AccountMap.balance_sheet_category_title(:unknown_category)
-      }.to raise_error(ArgumentError, /Unknown balance sheet category/)
-    end
-  end
-
-  describe ".balance_sheet_account_codes" do
-    it "expands account ranges correctly" do
-      codes = AccountMap.balance_sheet_account_codes(:anlagevermoegen)
-      expect(codes).to include("0010", "0050", "0100", "0500") # Sample codes from ranges
-    end
-
-    it "raises an error for unknown category" do
-      expect {
-        AccountMap.balance_sheet_account_codes(:unknown_category)
-      }.to raise_error(ArgumentError, /Unknown balance sheet category/)
-    end
-  end
-
-  describe ".find_balance_sheet_accounts" do
-    let(:account_balances) do
-      [
-        { code: "0100", name: "Fixed Asset", balance: 10000.0 },
-        { code: "1000", name: "Current Asset", balance: 5000.0 },
-        { code: "0800", name: "Equity", balance: 8000.0 },
-        { code: "0700", name: "Liability", balance: 7000.0 }
-      ]
-    end
-
-    it "filters fixed assets correctly" do
-      result = AccountMap.find_balance_sheet_accounts(account_balances, :anlagevermoegen)
-      expect(result.size).to eq(1)
-      expect(result.first[:code]).to eq("0100")
-    end
-
-    it "filters current assets correctly" do
-      result = AccountMap.find_balance_sheet_accounts(account_balances, :umlaufvermoegen)
-      expect(result.size).to eq(1)
-      expect(result.first[:code]).to eq("1000")
-    end
-
-    it "filters equity correctly" do
-      result = AccountMap.find_balance_sheet_accounts(account_balances, :eigenkapital)
-      expect(result.size).to eq(1)
-      expect(result.first[:code]).to eq("0800")
-    end
-
-    it "filters liabilities correctly" do
-      result = AccountMap.find_balance_sheet_accounts(account_balances, :fremdkapital)
-      expect(result.size).to eq(1)
-      expect(result.first[:code]).to eq("0700")
-    end
-
-    it "raises an error for unknown category" do
-      expect {
-        AccountMap.find_balance_sheet_accounts(account_balances, :unknown_category)
-      }.to raise_error(ArgumentError, /Unknown balance sheet category/)
-    end
-  end
+  # Note: Deprecated flat balance sheet methods (balance_sheet_category_title,
+  # balance_sheet_account_codes, find_balance_sheet_accounts) have been removed.
+  # The system now uses the nested structure loaded from bilanz-with-categories.json.
 end

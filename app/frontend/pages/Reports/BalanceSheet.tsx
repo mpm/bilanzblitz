@@ -160,16 +160,7 @@ export default function BalanceSheet({
               {/* AKTIVA (Assets) */}
               <BalanceSheetSection
                 title="Aktiva (Assets)"
-                sections={[
-                  {
-                    label: 'A. Anlagevermögen (Fixed Assets)',
-                    accounts: balanceSheet.aktiva.anlagevermoegen,
-                  },
-                  {
-                    label: 'B. Umlaufvermögen (Current Assets)',
-                    accounts: balanceSheet.aktiva.umlaufvermoegen,
-                  },
-                ]}
+                sections={balanceSheet.aktiva.sections}
                 total={balanceSheet.aktiva.total}
                 showPreviousYear={SHOW_PREVIOUS_YEAR}
               />
@@ -177,16 +168,7 @@ export default function BalanceSheet({
               {/* PASSIVA (Liabilities & Equity) */}
               <BalanceSheetSection
                 title="Passiva (Liabilities & Equity)"
-                sections={[
-                  {
-                    label: 'A. Eigenkapital (Equity)',
-                    accounts: balanceSheet.passiva.eigenkapital,
-                  },
-                  {
-                    label: 'B. Fremdkapital (Liabilities)',
-                    accounts: balanceSheet.passiva.fremdkapital,
-                  },
-                ]}
+                sections={balanceSheet.passiva.sections}
                 total={balanceSheet.passiva.total}
                 showPreviousYear={SHOW_PREVIOUS_YEAR}
               />

@@ -110,7 +110,8 @@ class OpeningBalancesController < ApplicationController
     #   },
     #   passiva: {
     #     eigenkapital: [{account_code: "0800", balance: 25000.00}, ...],
-    #     fremdkapital: [{account_code: "1600", balance: 20000.00}, ...]
+    #     rueckstellungen: [{account_code: "0950", balance: 10000.00}, ...],
+    #     verbindlichkeiten: [{account_code: "1600", balance: 20000.00}, ...]
     #   }
     # }
 
@@ -124,7 +125,8 @@ class OpeningBalancesController < ApplicationController
       },
       passiva: {
         eigenkapital: parse_account_section(balance_params[:passiva][:eigenkapital]),
-        fremdkapital: parse_account_section(balance_params[:passiva][:fremdkapital])
+        rueckstellungen: parse_account_section(balance_params[:passiva][:rueckstellungen]),
+        verbindlichkeiten: parse_account_section(balance_params[:passiva][:verbindlichkeiten])
       }
     }
   rescue ActionController::ParameterMissing, NoMethodError

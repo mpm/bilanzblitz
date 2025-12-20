@@ -55,28 +55,17 @@ export interface BankTransaction {
 export interface BalanceSheetData {
   fiscalYear: FiscalYear
   aktiva: {
-    anlagevermoegen: AccountBalance[]
-    umlaufvermoegen: AccountBalance[]
+    sections: Record<string, BalanceSheetSectionNested>
     total: number
   }
   passiva: {
-    eigenkapital: AccountBalance[]
-    fremdkapital: AccountBalance[]
+    sections: Record<string, BalanceSheetSectionNested>
     total: number
   }
   balanced: boolean
-  guv?: GuVData // Optional for backward compatibility
+  guv?: GuVData
   stored?: boolean
   postedAt?: string
-  // New optional nested structure
-  nestedAktiva?: {
-    anlagevermoegen: BalanceSheetSectionNested
-    umlaufvermoegen: BalanceSheetSectionNested
-  }
-  nestedPassiva?: {
-    eigenkapital: BalanceSheetSectionNested
-    fremdkapital: BalanceSheetSectionNested
-  }
 }
 
 // Nested Balance Sheet Section (optional, for future use)

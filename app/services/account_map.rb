@@ -77,323 +77,6 @@ class AccountMap
     }
   }.freeze
 
-  # Balance sheet categories
-  BALANCE_SHEET_CATEGORIES = {
-    anlagevermoegen: {
-      title: "Anlagevermögen",
-      accounts: [ "0010", "0015", "0020", "0025", "0027", "0030", "0035", "0038-0039", "0043-0048", "0050", "0059-0060", "0065", "0070", "0075", "0079-0080", "0085", "0090", "0100", "0110-0113", "0115", "0120", "0129", "0140", "0145-0150", "0159-0160", "0165", "0170", "0175-0180", "0189-0195", "0199", "0210", "0220", "0240", "0260", "0280", "0290", "0299-0300", "0310", "0320", "0350", "0380", "0400", "0410", "0420", "0430", "0440", "0450", "0460", "0480", "0485", "0490", "0498-0510", "0513", "0516-0520", "0523-0525", "0530", "0535", "0538", "0540", "0550", "0580", "0582", "0584", "0586", "0590", "1340", "1344", "1510-1513", "1517-1518" ]
-    },
-    umlaufvermoegen: {
-      title: "Umlaufvermögen",
-      accounts: [ "0038-0039", "0500-0504", "0509", "1000", "1010", "1020", "1310", "1329-1330", "1340", "1344", "1348-1350", "1352-1353", "1355-1356", "1373", "1376-1379", "1381-1383", "1385-1387", "1470-1471", "1475", "1480-1481", "1485", "1500-1508", "1510-1513", "1517-1522", "1524-1531", "1537", "1539-1540", "1542-1551", "1555", "1594-1599", "3970", "3980", "7000", "7050", "7080", "7100", "7110", "7140", "9960", "9962", "9965" ]
-    },
-    eigenkapital: {
-      title: "Eigenkapital",
-      accounts: [ "0800", "0809", "0840-0846", "0848-0849", "0851", "0853-0859", "0987-0988" ]
-    },
-    fremdkapital: {
-      title: "Fremdkapital",
-      accounts: [ "0600-0601", "0605", "0610", "0615-0616", "0620", "0625", "0630", "0640", "0650", "0660", "0670", "0680", "0690", "0699-0701", "0705", "0710", "0715-0716", "0720", "0725", "0730", "0740", "0750", "0755", "0760", "0764", "0767", "0770", "0774", "0777", "0780", "0784", "0787", "0790", "0799", "0950-0956", "0961-0966", "0969-0971", "0973-0974", "0976-0979", "1630-1631", "1635", "1638", "1640-1641", "1645", "1648", "1665-1668", "1670-1673", "1675-1678", "1691", "1695-1698", "1700-1712", "1714-1715", "1717-1721", "1728-1740", "1746-1754", "1767-1768", "1795-1798", "9961", "9963-9964" ]
-    }
-  }.freeze
-
-# Nested balance sheet categories with hierarchical structure
-# Generated from bilanz-with-categories.json
-NESTED_BALANCE_SHEET_CATEGORIES = {
-  aktiva: {
-    anlagevermoegen: {
-      name: "Anlagevermögen",
-      codes: [],
-      children: {
-        immaterielle_vermogensgegenstaende: {
-          name: "Immaterielle Vermögensgegenstände",
-          codes: [],
-          children: {
-            selbst_geschaffene_schutzrechte: {
-              name: "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte",
-              codes: [ "0043-0048" ],
-              children: {}
-            },
-            erworbene_konzessionen: {
-              name: "entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten",
-              codes: [ "0010", "0015", "0020", "0025", "0027", "0030" ],
-              children: {}
-            },
-            geschaefts_firmenwert: {
-              name: "Geschäfts- oder Firmenwert",
-              codes: [ "0035" ],
-              children: {}
-            },
-            geleistete_anzahlungen_immaterielle: {
-              name: "geleistete Anzahlungen",
-              codes: [ "0038-0039", "1510-1513", "1517-1518" ],
-              children: {}
-            }
-          }
-        },
-        sachanlagen: {
-          name: "Sachanlagen",
-          codes: [],
-          children: {
-            grundstuecke_bauten: {
-              name: "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken",
-              codes: [ "0050", "0059-0060", "0065", "0070", "0075", "0080", "0085", "0090", "0100", "0110-0113", "0115", "0140", "0145-0149", "0160", "0165", "0170", "0175-0179", "0190-0194" ],
-              children: {}
-            },
-            technische_anlagen_maschinen: {
-              name: "technische Anlagen und Maschinen",
-              codes: [ "0210", "0220", "0240", "0260", "0280" ],
-              children: {}
-            },
-            betriebs_geschaeftsausstattung: {
-              name: "andere Anlagen, Betriebs- und Geschäftsausstattung",
-              codes: [ "0300", "0310", "0320", "0350", "0380", "0400", "0410", "0420", "0430", "0440", "0450", "0460", "0480", "0485", "0490" ],
-              children: {}
-            },
-            geleistete_anzahlungen_anlagen_im_bau: {
-              name: "geleistete Anzahlungen und Anlagen im Bau",
-              codes: [ "0079", "0120", "0129", "0150", "0159", "0180", "0189", "0195", "0199", "0290", "0299", "0498-0499" ],
-              children: {}
-            }
-          }
-        },
-        finanzanlagen: {
-          name: "Finanzanlagen",
-          codes: [],
-          children: {
-            anteile_verbundene_unternehmen_finanzanlagen: {
-              name: "Anteile an verbundenen Unternehmen",
-              codes: [ "0500-0504", "0509", "1340", "1344" ],
-              children: {}
-            },
-            ausleihungen_verbundene_unternehmen: {
-              name: "Ausleihungen an verbundene Unternehmen",
-              codes: [ "0505-0508" ],
-              children: {}
-            },
-            beteiligungen: {
-              name: "Beteiligungen",
-              codes: [ "0510", "0513", "0516-0519" ],
-              children: {}
-            },
-            ausleihungen_beteiligungsverhaeltnis: {
-              name: "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
-              codes: [ "0520", "0523-0524" ],
-              children: {}
-            },
-            wertpapiere_anlagevermoegen: {
-              name: "Wertpapiere des Anlagevermögens",
-              codes: [ "0525", "0530", "0535", "0538" ],
-              children: {}
-            },
-            sonstige_ausleihungen: {
-              name: "sonstige Ausleihungen.",
-              codes: [ "0540", "0550", "0580", "0582", "0584", "0586", "0590" ],
-              children: {}
-            }
-          }
-        }
-      }
-    },
-    umlaufvermoegen: {
-      name: "Umlaufvermögen",
-      codes: [],
-      children: {
-        vorraete: {
-          name: "Vorräte",
-          codes: [],
-          children: {
-            roh_hilfs_betriebsstoffe: {
-              name: "Roh-, Hilfs- und Betriebsstoffe",
-              codes: [ "3970" ],
-              children: {}
-            },
-            unfertige_erzeugnisse: {
-              name: "unfertige Erzeugnisse, unfertige Leistungen",
-              codes: [ "7000", "7050", "7080" ],
-              children: {}
-            },
-            fertige_erzeugnisse_waren: {
-              name: "fertige Erzeugnisse und Waren",
-              codes: [ "3980", "7100", "7110", "7140" ],
-              children: {}
-            },
-            geleistete_anzahlungen_vorraete: {
-              name: "geleistete Anzahlungen",
-              codes: [ "0038-0039", "1510-1513", "1517-1518" ],
-              children: {}
-            }
-          }
-        },
-        forderungen_sonstige_vermogensgegenstaende: {
-          name: "Forderungen und sonstige Vermögensgegenstände",
-          codes: [],
-          children: {
-            forderungen_lieferungen_leistungen: {
-              name: "Forderungen aus Lieferungen und Leistungen",
-              codes: [ "9960" ],
-              children: {}
-            },
-            forderungen_verbundene_unternehmen: {
-              name: "Forderungen gegen verbundene Unternehmen",
-              codes: [ "1310", "1470-1471", "1475", "1594-1596" ],
-              children: {}
-            },
-            forderungen_beteiligungsverhaeltnis: {
-              name: "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
-              codes: [ "1480-1481", "1485", "1597-1599" ],
-              children: {}
-            },
-            sonstige_vermogensgegenstaende: {
-              name: "sonstige Vermögensgegenstände",
-              codes: [ "1350", "1352-1353", "1355-1356", "1373", "1376-1379", "1381-1383", "1385-1387", "1500-1508", "1519-1522", "1524-1531", "1537", "1539-1540", "1542-1551", "1555", "9965" ],
-              children: {}
-            }
-          }
-        },
-        wertpapiere_umlaufvermoegen: {
-          name: "Wertpapiere",
-          codes: [],
-          children: {
-            anteile_verbundene_unternehmen_wertpapiere: {
-              name: "Anteile an verbundenen Unternehmen",
-              codes: [ "0500-0504", "0509", "1340", "1344" ],
-              children: {}
-            },
-            sonstige_wertpapiere: {
-              name: "sonstige Wertpapiere",
-              codes: [ "1329", "1348-1349" ],
-              children: {}
-            }
-          }
-        },
-        liquide_mittel: {
-          name: "Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks",
-          codes: [ "1000", "1010", "1020", "1200", "1330", "9962" ],
-          children: {}
-        }
-      }
-    }
-  },
-
-  passiva: {
-    eigenkapital: {
-      name: "Eigenkapital",
-      codes: [],
-      children: {
-        gezeichnetes_kapital: {
-          name: "Gezeichnetes Kapital",
-          codes: [ "0800", "0809" ],
-          children: {}
-        },
-        kapitalruecklage: {
-          name: "Kapitalrücklage",
-          codes: [ "0840-0845" ],
-          children: {}
-        },
-        gewinnruecklagen: {
-          name: "Gewinnrücklagen",
-          codes: [],
-          children: {
-            gesetzliche_ruecklage: {
-              name: "gesetzliche Rücklage",
-              codes: [ "0846" ],
-              children: {}
-            },
-            ruecklage_anteile: {
-              name: "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
-              codes: [ "0849" ],
-              children: {}
-            },
-            satzungsmaessige_ruecklagen: {
-              name: "satzungsmäßige Rücklagen",
-              codes: [ "0851" ],
-              children: {}
-            },
-            andere_gewinnruecklagen: {
-              name: "andere Gewinnrücklagen",
-              codes: [ "0848", "0853-0859", "0987-0988" ],
-              children: {}
-            }
-          }
-        },
-        gewinnvortrag_verlustvortrag: {
-          name: "Gewinnvortrag/Verlustvortrag",
-          codes: ["0868"],
-          children: {}
-        }
-      }
-    },
-    rueckstellungen: {
-      name: "Rückstellungen",
-      codes: [ "0951" ],
-      children: {
-        rueckstellungen_pensionen: {
-          name: "Rückstellungen für Pensionen und ähnliche Verpflichtungen",
-          codes: [ "0950", "0952-0954" ],
-          children: {}
-        },
-        steuerrueckstellungen: {
-          name: "Steuerrückstellungen",
-          codes: [ "0955-0956", "0962-0963", "0969" ],
-          children: {}
-        },
-        sonstige_rueckstellungen: {
-          name: "sonstige Rückstellungen.",
-          codes: [ "0961", "0964-0966", "0970-0971", "0973-0974", "0976-0979" ],
-          children: {}
-        }
-      }
-    },
-    verbindlichkeiten: {
-      name: "Verbindlichkeiten",
-      codes: [ "0630", "0640", "0650", "0660", "0670", "0680", "0690" ],
-      children: {
-        anleihen: {
-          name: "Anleihen, davon konvertibel",
-          codes: [ "0600-0601", "0605", "0610", "0615-0616", "0620", "0625" ],
-          children: {}
-        },
-        verbindlichkeiten_kreditinstitute: {
-          name: "Verbindlichkeiten gegenüber Kreditinstituten",
-          codes: [ "0699", "9963" ],
-          children: {}
-        },
-        erhaltene_anzahlungen: {
-          name: "erhaltene Anzahlungen auf Bestellungen",
-          codes: [ "1710-1712", "1714-1715", "1717-1721" ],
-          children: {}
-        },
-        verbindlichkeiten_lieferungen_leistungen: {
-          name: "Verbindlichkeiten aus Lieferungen und Leistungen",
-          codes: [ "9964" ],
-          children: {}
-        },
-        verbindlichkeiten_wechsel: {
-          name: "Verbindlichkeiten aus der Annahme gezogener Wechsel und der Ausstellung eigener Wechsel",
-          codes: [],
-          children: {}
-        },
-        verbindlichkeiten_verbundene_unternehmen: {
-          name: "Verbindlichkeiten gegenüber verbundenen Unternehmen",
-          codes: [ "0700-0701", "0705", "0710", "1630-1631", "1635", "1638" ],
-          children: {}
-        },
-        verbindlichkeiten_beteiligungsverhaeltnis: {
-          name: "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
-          codes: [ "0715-0716", "0720", "0725", "1640-1641", "1645", "1648" ],
-          children: {}
-        },
-        sonstige_verbindlichkeiten: {
-          name: "sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen Sicherheit.",
-          codes: [ "0730", "0740", "0750", "0755", "0760", "0764", "0767", "0770", "0774", "0777", "0780", "0784", "0787", "0790", "0799", "1665-1668", "1670-1673", "1675-1678", "1691", "1695-1698", "1700-1709", "1728-1740", "1746-1754", "1767-1768", "1795-1798", "9961" ],
-          children: {}
-        }
-      }
-    }
-  }
-  }.freeze
-
   # Revenue sections in GuV (for account type classification)
   REVENUE_SECTIONS = [
     :umsatzerloese,
@@ -421,6 +104,21 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
   ].freeze
 
   class << self
+    # Load balance sheet structure from JSON file
+    # @return [Hash] Raw JSON structure from bilanz-with-categories.json
+    def load_balance_sheet_structure
+      @balance_sheet_structure ||= begin
+        path = Rails.root.join('contrib', 'bilanz-with-categories.json')
+        JSON.parse(File.read(path), symbolize_names: true)
+      end
+    end
+
+    # Get nested balance sheet categories (dynamically loaded from JSON)
+    # @return [Hash] Transformed nested structure compatible with existing code
+    def nested_balance_sheet_categories
+      @nested_categories ||= transform_json_to_nested_structure(load_balance_sheet_structure)
+    end
+
     # Get the human-readable title for a GuV section
     # @param section_id [Symbol] The section identifier (e.g., :umsatzerloese)
     # @return [String] The section title
@@ -457,40 +155,6 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
       end
     end
 
-    # Get balance sheet category title (stub for future implementation)
-    # @param category_id [Symbol] The category identifier
-    # @return [String] The category title
-    # @raise [ArgumentError] if category_id is unknown
-    def balance_sheet_category_title(category_id)
-      validate_balance_sheet_category!(category_id)
-      BALANCE_SHEET_CATEGORIES[category_id][:title]
-    end
-
-    # Get account codes for balance sheet category (stub for future implementation)
-    # @param category_id [Symbol] The category identifier
-    # @return [Array<String>] Array of account codes
-    # @raise [ArgumentError] if category_id is unknown
-    def balance_sheet_account_codes(category_id)
-      validate_balance_sheet_category!(category_id)
-      expand_account_ranges(BALANCE_SHEET_CATEGORIES[category_id][:accounts])
-    end
-
-    # Filter accounts by balance sheet category (stub for future implementation)
-    # @param account_list [Array<Hash>] List of account hashes with :code key
-    # @param category_id [Symbol] The category identifier
-    # @return [Array<Hash>] Filtered list of accounts
-    # @raise [ArgumentError] if category_id is unknown
-    def find_balance_sheet_accounts(account_list, category_id)
-      validate_balance_sheet_category!(category_id)
-      category_codes = balance_sheet_account_codes(category_id)
-
-      return [] if category_codes.empty?
-
-      account_list.select do |account|
-        category_codes.include?(account[:code])
-      end
-    end
-
     # Get nested category structure for a top-level category
     # @param category_id [Symbol] The top-level category (:anlagevermoegen, :umlaufvermoegen, etc.)
     # @return [Hash] Nested structure with name, codes, children
@@ -499,13 +163,13 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
       validate_nested_category!(category_id)
 
       # Search in aktiva
-      if NESTED_BALANCE_SHEET_CATEGORIES[:aktiva].key?(category_id)
-        return NESTED_BALANCE_SHEET_CATEGORIES[:aktiva][category_id]
+      if nested_balance_sheet_categories[:aktiva].key?(category_id)
+        return nested_balance_sheet_categories[:aktiva][category_id]
       end
 
       # Search in passiva
-      if NESTED_BALANCE_SHEET_CATEGORIES[:passiva].key?(category_id)
-        return NESTED_BALANCE_SHEET_CATEGORIES[:passiva][category_id]
+      if nested_balance_sheet_categories[:passiva].key?(category_id)
+        return nested_balance_sheet_categories[:passiva][category_id]
       end
 
       raise ArgumentError, "Category #{category_id} not found in nested structure"
@@ -515,11 +179,6 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
     # @param category_id [Symbol] Any category identifier
     # @return [String, nil] The German name or nil if not found
     def category_name(category_id)
-      # Check top-level flat categories first (backward compatibility)
-      if BALANCE_SHEET_CATEGORIES.key?(category_id)
-        return BALANCE_SHEET_CATEGORIES[category_id][:title]
-      end
-
       # Search nested structure
       found = find_in_nested_structure(category_id)
       found ? found[:name] : nil
@@ -573,17 +232,143 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
 
     private
 
+    # Transform JSON structure to nested hash format
+    # @param json_data [Hash] Raw JSON data with :aktiva and :passiva keys
+    # @return [Hash] Transformed structure compatible with existing code
+    def transform_json_to_nested_structure(json_data)
+      {
+        aktiva: transform_section_hash(json_data[:aktiva]),
+        passiva: transform_section_hash(json_data[:passiva])
+      }
+    end
+
+    # Transform a section hash (aktiva or passiva)
+    # @param section_data [Hash] Section data from JSON
+    # @return [Hash] Transformed section with category keys
+    def transform_section_hash(section_data)
+      result = {}
+      section_data.each do |name, data|
+        key = name_to_key(name)
+        result[key] = transform_category(name, data)
+      end
+      result
+    end
+
+    # Transform a single category from JSON format to internal format
+    # @param name [String, Symbol] Category name
+    # @param data [Hash] Category data with :codes, :items, :children
+    # @return [Hash] Transformed category with :name, :codes, :children
+    def transform_category(name, data)
+      # Convert to string if it's a symbol (from JSON.parse with symbolize_names: true)
+      name_str = name.to_s
+
+      category = {
+        name: name_str,
+        codes: data[:codes] || [],
+        children: {}
+      }
+
+      # Handle 'items' array (used for top-level categories like Anlagevermögen)
+      if data[:items]
+        data[:items].each do |item|
+          # Some items have only children without a name (e.g., Rückstellungen)
+          if item[:name]
+            item_key = name_to_key(item[:name])
+            category[:children][item_key] = {
+              name: item[:name],
+              codes: item[:codes] || [],
+              children: {}
+            }
+
+            # Handle 'children' within items
+            if item[:children]
+              item[:children].each do |child|
+                child_key = name_to_key(child[:name])
+                category[:children][item_key][:children][child_key] = {
+                  name: child[:name],
+                  codes: child[:codes] || [],
+                  children: {}
+                }
+              end
+            end
+          elsif item[:children]
+            # Item has no name, add children directly to category
+            item[:children].each do |child|
+              child_key = name_to_key(child[:name])
+              category[:children][child_key] = {
+                name: child[:name],
+                codes: child[:codes] || [],
+                children: {}
+              }
+            end
+          end
+        end
+      end
+
+      # Handle direct 'children' (used for categories like Rückstellungen)
+      if data[:children] && data[:items].nil?
+        # Wrap in a single item to match the nested structure
+        data[:children].each do |child|
+          child_key = name_to_key(child[:name])
+          category[:children][child_key] = {
+            name: child[:name],
+            codes: child[:codes] || [],
+            children: {}
+          }
+        end
+      end
+
+      category
+    end
+
+    # Convert German name to symbol key
+    # @param name [String, Symbol] German category name
+    # @return [Symbol] Key for the category
+    def name_to_key(name)
+      # Convert to string if it's a symbol
+      name_str = name.to_s
+
+      # Normalize the name to create a consistent key
+      key = name_str.downcase
+        .gsub(/ä/, 'ae')
+        .gsub(/ö/, 'oe')
+        .gsub(/ü/, 'ue')
+        .gsub(/ß/, 'ss')
+        .gsub(/[^a-z0-9]+/, '_')
+        .gsub(/^_+|_+$/, '')
+        .to_sym
+
+      # Handle special cases for known keys
+      case name_str
+      when "Anlagevermögen" then :anlagevermoegen
+      when "Umlaufvermögen" then :umlaufvermoegen
+      when "Rechnungsabgrenzungsposten" then :rechnungsabgrenzungsposten
+      when "Aktive latente Steuern" then :aktive_latente_steuern
+      when "Aktiver Unterschiedsbetrag aus der Vermögensverrechnung" then :aktiver_unterschiedsbetrag
+      when "Eigenkapital" then :eigenkapital
+      when "Rückstellungen" then :rueckstellungen
+      when "Verbindlichkeiten" then :verbindlichkeiten
+      when "Passive latente Steuern" then :passive_latente_steuern
+      when "Immaterielle Vermögensgegenstände" then :immaterielle_vermogensgegenstaende
+      when "Sachanlagen" then :sachanlagen
+      when "Finanzanlagen" then :finanzanlagen
+      when "Vorräte" then :vorraete
+      when "Forderungen und sonstige Vermögensgegenstände" then :forderungen_sonstige_vermogensgegenstaende
+      when "Wertpapiere" then :wertpapiere_umlaufvermoegen
+      when "Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks" then :liquide_mittel
+      when "Gezeichnetes Kapital" then :gezeichnetes_kapital
+      when "Kapitalrücklage" then :kapitalruecklage
+      when "Gewinnrücklagen" then :gewinnruecklagen
+      when "Gewinnvortrag/Verlustvortrag" then :gewinnvortrag_verlustvortrag
+      else
+        key
+      end
+    end
+
     # Validate that the section_id exists in GUV_SECTIONS
     def validate_guv_section!(section_id)
       unless GUV_SECTIONS.key?(section_id)
         raise ArgumentError, "Unknown GuV section: #{section_id}. Valid sections: #{GUV_SECTIONS.keys.join(', ')}"
-      end
-    end
-
-    # Validate that the category_id exists in BALANCE_SHEET_CATEGORIES
-    def validate_balance_sheet_category!(category_id)
-      unless BALANCE_SHEET_CATEGORIES.key?(category_id)
-        raise ArgumentError, "Unknown balance sheet category: #{category_id}. Valid categories: #{BALANCE_SHEET_CATEGORIES.keys.join(', ')}"
       end
     end
 
@@ -614,8 +399,8 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
 
     # Validate that category exists in nested structure
     def validate_nested_category!(category_id)
-      valid_aktiva = NESTED_BALANCE_SHEET_CATEGORIES[:aktiva].keys
-      valid_passiva = NESTED_BALANCE_SHEET_CATEGORIES[:passiva].keys
+      valid_aktiva = nested_balance_sheet_categories[:aktiva].keys
+      valid_passiva = nested_balance_sheet_categories[:passiva].keys
       valid_categories = valid_aktiva + valid_passiva
 
       unless valid_categories.include?(category_id)
@@ -626,13 +411,13 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
     # Find a category in the nested structure (recursive search)
     def find_in_nested_structure(category_id)
       # Search aktiva
-      NESTED_BALANCE_SHEET_CATEGORIES[:aktiva].each do |key, data|
+      nested_balance_sheet_categories[:aktiva].each do |key, data|
         found = search_category_recursive(key, data, category_id)
         return found if found
       end
 
       # Search passiva
-      NESTED_BALANCE_SHEET_CATEGORIES[:passiva].each do |key, data|
+      nested_balance_sheet_categories[:passiva].each do |key, data|
         found = search_category_recursive(key, data, category_id)
         return found if found
       end
@@ -715,14 +500,14 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
     # @return [Hash, nil] Hash with :side and :top_level_category, or nil if not found
     def find_account_in_nested_structure(account_code)
       # Search aktiva
-      NESTED_BALANCE_SHEET_CATEGORIES[:aktiva].each do |top_key, top_data|
+      nested_balance_sheet_categories[:aktiva].each do |top_key, top_data|
         if account_in_category?(account_code, top_data)
           return { side: :aktiva, top_level_category: top_key }
         end
       end
 
       # Search passiva
-      NESTED_BALANCE_SHEET_CATEGORIES[:passiva].each do |top_key, top_data|
+      nested_balance_sheet_categories[:passiva].each do |top_key, top_data|
         if account_in_category?(account_code, top_data)
           return { side: :passiva, top_level_category: top_key }
         end

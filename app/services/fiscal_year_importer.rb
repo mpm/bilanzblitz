@@ -17,7 +17,8 @@
 #       },
 #       passiva: {
 #         eigenkapital: [{ account_code: "2000", account_name: "Gezeichnetes Kapital", balance: 15000.0 }],
-#         fremdkapital: [],
+#         rueckstellungen: [],
+#         verbindlichkeiten: [],
 #         total: 15000.0
 #       },
 #       balanced: true

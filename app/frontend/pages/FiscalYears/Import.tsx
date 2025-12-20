@@ -24,7 +24,8 @@ export default function FiscalYearImport({ company }: ImportProps) {
   const [anlagevermoegen, setAnlagevermoegen] = useState<AccountEntry[]>([])
   const [umlaufvermoegen, setUmlaufvermoegen] = useState<AccountEntry[]>([])
   const [eigenkapital, setEigenkapital] = useState<AccountEntry[]>([])
-  const [fremdkapital, setFremdkapital] = useState<AccountEntry[]>([])
+  const [rueckstellungen, setRueckstellungen] = useState<AccountEntry[]>([])
+  const [verbindlichkeiten, setVerbindlichkeiten] = useState<AccountEntry[]>([])
 
   const addAccountEntry = (
     setter: React.Dispatch<React.SetStateAction<AccountEntry[]>>
@@ -57,7 +58,7 @@ export default function FiscalYearImport({ company }: ImportProps) {
 
   const aktivaTotal =
     calculateTotal(anlagevermoegen) + calculateTotal(umlaufvermoegen)
-  const passivaTotal = calculateTotal(eigenkapital) + calculateTotal(fremdkapital)
+  const passivaTotal = calculateTotal(eigenkapital) + calculateTotal(rueckstellungen) + calculateTotal(verbindlichkeiten)
   const balanced = Math.abs(aktivaTotal - passivaTotal) < 0.01
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -81,7 +82,8 @@ export default function FiscalYearImport({ company }: ImportProps) {
       },
       passiva: {
         eigenkapital: eigenkapital.filter((e) => e.accountCode && e.balance),
-        fremdkapital: fremdkapital.filter((e) => e.accountCode && e.balance),
+        rueckstellungen: rueckstellungen.filter((e) => e.accountCode && e.balance),
+        verbindlichkeiten: verbindlichkeiten.filter((e) => e.accountCode && e.balance),
         total: passivaTotal,
       },
       balanced: true,
@@ -270,9 +272,14 @@ export default function FiscalYearImport({ company }: ImportProps) {
                   setEigenkapital
                 )}
                 {renderAccountSection(
-                  'Fremdkapital (Liabilities)',
-                  fremdkapital,
-                  setFremdkapital
+                  'Rückstellungen (Provisions)',
+                  rueckstellungen,
+                  setRueckstellungen
+                )}
+                {renderAccountSection(
+                  'Verbindlichkeiten (Liabilities)',
+                  verbindlichkeiten,
+                  setVerbindlichkeiten
                 )}
                 <div className="pt-4 border-t">
                   <div className="flex justify-between items-center">

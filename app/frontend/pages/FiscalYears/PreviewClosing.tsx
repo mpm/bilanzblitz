@@ -20,19 +20,40 @@ interface AccountBalance {
   balance: number
 }
 
+interface BalanceSheetSectionNested {
+  sectionKey: string
+  sectionName: string
+  level: number
+  accounts: AccountBalance[]
+  ownTotal: number
+  total: number
+  accountCount: number
+  totalAccountCount: number
+  children?: BalanceSheetSectionNested[]
+}
+
 interface BalanceSheetData {
   fiscalYear: FiscalYear
   aktiva: {
-    anlagevermoegen: AccountBalance[]
-    umlaufvermoegen: AccountBalance[]
+    sections: Record<string, BalanceSheetSectionNested>
     total: number
   }
   passiva: {
-    eigenkapital: AccountBalance[]
-    fremdkapital: AccountBalance[]
+    sections: Record<string, BalanceSheetSectionNested>
     total: number
   }
   balanced: boolean
+}
+
+// Helper to flatten nested sections
+const flattenSection = (section: BalanceSheetSectionNested): AccountBalance[] => {
+  const accounts = [...section.accounts]
+  if (section.children) {
+    section.children.forEach((child) => {
+      accounts.push(...flattenSection(child))
+    })
+  }
+  return accounts
 }
 
 interface PreviewClosingProps {
@@ -166,16 +187,10 @@ export default function PreviewClosing({
             <CardContent>
               {renderAccountTable(
                 'Aktiva',
-                [
-                  {
-                    label: 'Anlagevermögen (Fixed Assets)',
-                    accounts: balanceSheet.aktiva.anlagevermoegen,
-                  },
-                  {
-                    label: 'Umlaufvermögen (Current Assets)',
-                    accounts: balanceSheet.aktiva.umlaufvermoegen,
-                  },
-                ],
+                Object.entries(balanceSheet.aktiva.sections).map(([_, section]) => ({
+                  label: section.sectionName,
+                  accounts: flattenSection(section),
+                })),
                 balanceSheet.aktiva.total
               )}
             </CardContent>
@@ -189,16 +204,10 @@ export default function PreviewClosing({
             <CardContent>
               {renderAccountTable(
                 'Passiva',
-                [
-                  {
-                    label: 'Eigenkapital (Equity)',
-                    accounts: balanceSheet.passiva.eigenkapital,
-                  },
-                  {
-                    label: 'Fremdkapital (Liabilities)',
-                    accounts: balanceSheet.passiva.fremdkapital,
-                  },
-                ],
+                Object.entries(balanceSheet.passiva.sections).map(([_, section]) => ({
+                  label: section.sectionName,
+                  accounts: flattenSection(section),
+                })),
                 balanceSheet.passiva.total
               )}
             </CardContent>

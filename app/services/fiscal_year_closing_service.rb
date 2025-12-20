@@ -70,6 +70,36 @@ class FiscalYearClosingService
 
   private
 
+  # Helper method to recursively extract all accounts from nested sections
+  def extract_accounts_from_sections(sections_hash)
+    return [] unless sections_hash
+
+    accounts = []
+    sections_hash.each_value do |section|
+      # Add accounts from this section
+      accounts.concat(section[:accounts]) if section[:accounts]
+
+      # Recursively add accounts from children
+      if section[:children] && section[:children].any?
+        section[:children].each do |child_section|
+          accounts.concat(extract_accounts_from_section(child_section))
+        end
+      end
+    end
+    accounts
+  end
+
+  # Helper to extract accounts from a single section (recursive)
+  def extract_accounts_from_section(section)
+    accounts = section[:accounts] || []
+    if section[:children] && section[:children].any?
+      section[:children].each do |child_section|
+        accounts.concat(extract_accounts_from_section(child_section))
+      end
+    end
+    accounts
+  end
+
   def create_sbk_journal_entry(balance_sheet_data)
     # Create journal entry with closing type
     journal_entry = JournalEntry.new(
@@ -111,55 +141,49 @@ class FiscalYearClosingService
     sbk_total_debit = 0
     sbk_total_credit = 0
 
+    # Extract all accounts from nested sections
+    aktiva_accounts = extract_accounts_from_sections(balance_sheet_data[:aktiva][:sections])
+    passiva_accounts = extract_accounts_from_sections(balance_sheet_data[:passiva][:sections])
+
     # Process Aktiva (Assets) - Credit the asset accounts (closing them out), Debit SBK
-    aktiva = balance_sheet_data[:aktiva]
-    [ :anlagevermoegen, :umlaufvermoegen ].each do |section|
-      next unless aktiva[section]
+    aktiva_accounts.each do |account_data|
+      balance = account_data[:balance].to_f
+      next if balance.abs < 0.01
 
-      aktiva[section].each do |account_data|
-        balance = account_data[:balance].to_f
-        next if balance.abs < 0.01
+      account = @company.accounts.find_by(code: account_data[:account_code])
+      next unless account
 
-        account = @company.accounts.find_by(code: account_data[:account_code])
-        next unless account
+      # Credit asset account (closing it)
+      journal_entry.line_items.build(
+        account: account,
+        amount: balance,
+        direction: "credit"
+      )
 
-        # Credit asset account (closing it)
-        journal_entry.line_items.build(
-          account: account,
-          amount: balance,
-          direction: "credit"
-        )
-
-        # Track debit to SBK
-        sbk_total_debit += balance
-      end
+      # Track debit to SBK
+      sbk_total_debit += balance
     end
 
     # Process Passiva (Liabilities & Equity) - Debit the accounts (closing them out), Credit SBK
-    passiva = balance_sheet_data[:passiva]
-    [ :eigenkapital, :fremdkapital ].each do |section|
-      next unless passiva[section]
+    passiva_accounts.each do |account_data|
+      balance = account_data[:balance].to_f
+      next if balance.abs < 0.01
 
-      passiva[section].each do |account_data|
-        balance = account_data[:balance].to_f
-        next if balance.abs < 0.01
+      # Skip the pseudo net_income account (it's already reflected in equity accounts)
+      next if account_data[:account_code] == "net_income"
 
-        # Skip the pseudo net_income account (it's already reflected in equity accounts)
-        next if account_data[:account_code] == "net_income"
+      account = @company.accounts.find_by(code: account_data[:account_code])
+      next unless account
 
-        account = @company.accounts.find_by(code: account_data[:account_code])
-        next unless account
+      # Debit liability/equity account (closing it)
+      journal_entry.line_items.build(
+        account: account,
+        amount: balance,
+        direction: "debit"
+      )
 
-        # Debit liability/equity account (closing it)
-        journal_entry.line_items.build(
-          account: account,
-          amount: balance,
-          direction: "debit"
-        )
-
-        # Track credit to SBK
-        sbk_total_credit += balance
-      end
+      # Track credit to SBK
+      sbk_total_credit += balance
     end
 
     # Create balancing SBK line items
