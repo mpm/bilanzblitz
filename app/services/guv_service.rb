@@ -3,9 +3,10 @@
 class GuVService
   Result = Struct.new(:success?, :data, :errors, keyword_init: true)
 
-  def initialize(company:, fiscal_year:)
+  def initialize(company:, fiscal_year:, only_posted: true)
     @company = company
     @fiscal_year = fiscal_year
+    @only_posted = only_posted
   end
 
   def call
@@ -24,14 +25,16 @@ class GuVService
 
   def calculate_account_balances
     # Query all accounts with their aggregated debit/credit amounts
-    # Only include posted journal entries (GoBD compliance)
+    # Only include posted journal entries (GoBD compliance) when only_posted is true
     # Exclude closing entries (they close out accounts, not part of GuV)
     # Exclude 9xxx accounts (closing accounts, not part of GuV)
-    results = @company.accounts
+    query = @company.accounts
       .joins(line_items: :journal_entry)
       .where(journal_entries: { fiscal_year_id: @fiscal_year.id })
-      .where.not(journal_entries: { posted_at: nil })
-      .where.not(journal_entries: { entry_type: "closing" })
+
+    query = query.where.not(journal_entries: { posted_at: nil }) if @only_posted
+
+    results = query.where.not(journal_entries: { entry_type: "closing" })
       .where.not("accounts.code LIKE '9%'")
       .select(
         "accounts.id",

@@ -1,9 +1,10 @@
 class BalanceSheetService
   Result = Struct.new(:success?, :data, :errors, keyword_init: true)
 
-  def initialize(company:, fiscal_year:)
+  def initialize(company:, fiscal_year:, only_posted: true)
     @company = company
     @fiscal_year = fiscal_year
+    @only_posted = only_posted
   end
 
   def call
@@ -21,7 +22,7 @@ class BalanceSheetService
     grouped_accounts = group_by_balance_sheet_sections(account_balances)
 
     # Calculate GuV data (includes net_income calculation)
-    guv_result = GuVService.new(company: @company, fiscal_year: @fiscal_year).call
+    guv_result = GuVService.new(company: @company, fiscal_year: @fiscal_year, only_posted: @only_posted).call
     guv_data = guv_result.success? ? guv_result.data : nil
 
     # Extract net_income from GuV calculation (reuse instead of recalculating)
@@ -39,13 +40,15 @@ class BalanceSheetService
 
   def calculate_account_balances
     # Query all accounts with their aggregated debit/credit amounts
-    # Only include posted journal entries (GoBD compliance)
+    # Only include posted journal entries (GoBD compliance) when only_posted is true
     # Exclude closing entries (they close out accounts, not part of ongoing balance)
-    results = @company.accounts
+    query = @company.accounts
       .joins(line_items: :journal_entry)
       .where(journal_entries: { fiscal_year_id: @fiscal_year.id })
-      .where.not(journal_entries: { posted_at: nil })
-      .where.not(journal_entries: { entry_type: "closing" })
+
+    query = query.where.not(journal_entries: { posted_at: nil }) if @only_posted
+
+    results = query.where.not(journal_entries: { entry_type: "closing" })
       .select(
         "accounts.id",
         "accounts.code",
@@ -202,7 +205,7 @@ class BalanceSheetService
 
     # Backward compatibility: if no GuV data, calculate it on-the-fly
     unless data[:guv]
-      guv_result = GuVService.new(company: @company, fiscal_year: @fiscal_year).call
+      guv_result = GuVService.new(company: @company, fiscal_year: @fiscal_year, only_posted: @only_posted).call
       data[:guv] = guv_result.data if guv_result.success?
     end
 
