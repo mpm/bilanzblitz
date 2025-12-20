@@ -1,19 +1,19 @@
 {
   "aktiva": {
     "Anlagevermögen": {
-      "cid": "anlagevermoegen",
+      "cid": "b.aktiva.anlagevermoegen",
       "matched_category": null,
       "codes": [],
       "items": [
         {
           "name": "Immaterielle Vermögensgegenstände",
-          "cid": "anlagevermoegen.immaterielle_vermoegensgegenstaende",
+          "cid": "b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte",
-              "cid": "anlagevermoegen.immaterielle_vermoegensgegenstaende.selbst_geschaffene_gewerbliche_schutzrechte_und_aehnliche_re",
+              "cid": "b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende.selbst_geschaffene_gewerbliche_schutzrechte_und_aehnliche_re",
               "matched_category": "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte",
               "codes": [
                 "0043",
@@ -26,7 +26,7 @@
             },
             {
               "name": "entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten",
-              "cid": "anlagevermoegen.immaterielle_vermoegensgegenstaende.entgeltlich_erworbene_konzessionen_gewerbliche_schutzrechte_",
+              "cid": "b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende.entgeltlich_erworbene_konzessionen_gewerbliche_schutzrechte_",
               "matched_category": "Entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten",
               "codes": [
                 "0010",
@@ -39,7 +39,7 @@
             },
             {
               "name": "Geschäfts- oder Firmenwert",
-              "cid": "anlagevermoegen.immaterielle_vermoegensgegenstaende.geschaefts_oder_firmenwert",
+              "cid": "b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende.geschaefts_oder_firmenwert",
               "matched_category": "Geschäfts- oder Firmenwert",
               "codes": [
                 "0035"
@@ -47,7 +47,7 @@
             },
             {
               "name": "geleistete Anzahlungen",
-              "cid": "anlagevermoegen.immaterielle_vermoegensgegenstaende.geleistete_anzahlungen",
+              "cid": "b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende.geleistete_anzahlungen",
               "matched_category": "Geleistete Anzahlungen",
               "codes": [
                 "0038",
@@ -64,13 +64,13 @@
         },
         {
           "name": "Sachanlagen",
-          "cid": "anlagevermoegen.sachanlagen",
+          "cid": "b.aktiva.anlagevermoegen.sachanlagen",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken",
-              "cid": "anlagevermoegen.sachanlagen.grundstuecke_grundstuecksgleiche_rechte_und_bauten_einschlie",
+              "cid": "b.aktiva.anlagevermoegen.sachanlagen.grundstuecke_grundstuecksgleiche_rechte_und_bauten_einschlie",
               "matched_category": "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken",
               "codes": [
                 "0050",
@@ -111,7 +111,7 @@
             },
             {
               "name": "technische Anlagen und Maschinen",
-              "cid": "anlagevermoegen.sachanlagen.technische_anlagen_und_maschinen",
+              "cid": "b.aktiva.anlagevermoegen.sachanlagen.technische_anlagen_und_maschinen",
               "matched_category": "Technische Anlagen und Maschinen",
               "codes": [
                 "0210",
@@ -123,7 +123,7 @@
             },
             {
               "name": "andere Anlagen, Betriebs- und Geschäftsausstattung",
-              "cid": "anlagevermoegen.sachanlagen.andere_anlagen_betriebs_und_geschaeftsausstattung",
+              "cid": "b.aktiva.anlagevermoegen.sachanlagen.andere_anlagen_betriebs_und_geschaeftsausstattung",
               "matched_category": "Andere Anlagen, Betriebs- und Geschäftsausstattung",
               "codes": [
                 "0300",
@@ -145,7 +145,7 @@
             },
             {
               "name": "geleistete Anzahlungen und Anlagen im Bau",
-              "cid": "anlagevermoegen.sachanlagen.geleistete_anzahlungen_und_anlagen_im_bau",
+              "cid": "b.aktiva.anlagevermoegen.sachanlagen.geleistete_anzahlungen_und_anlagen_im_bau",
               "matched_category": "Geleistete Anzahlungen und Anlagen im Bau",
               "codes": [
                 "0079",
@@ -167,13 +167,13 @@
         },
         {
           "name": "Finanzanlagen",
-          "cid": "anlagevermoegen.finanzanlagen",
+          "cid": "b.aktiva.anlagevermoegen.finanzanlagen",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Anteile an verbundenen Unternehmen",
-              "cid": "anlagevermoegen.finanzanlagen.anteile_an_verbundenen_unternehmen",
+              "cid": "b.aktiva.anlagevermoegen.finanzanlagen.anteile_an_verbundenen_unternehmen",
               "matched_category": "Anteile an verbundenen Unternehmen",
               "codes": [
                 "0500",
@@ -188,7 +188,7 @@
             },
             {
               "name": "Ausleihungen an verbundene Unternehmen",
-              "cid": "anlagevermoegen.finanzanlagen.ausleihungen_an_verbundene_unternehmen",
+              "cid": "b.aktiva.anlagevermoegen.finanzanlagen.ausleihungen_an_verbundene_unternehmen",
               "matched_category": "Ausleihungen an verbundene Unternehmen",
               "codes": [
                 "0505",
@@ -199,7 +199,7 @@
             },
             {
               "name": "Beteiligungen",
-              "cid": "anlagevermoegen.finanzanlagen.beteiligungen",
+              "cid": "b.aktiva.anlagevermoegen.finanzanlagen.beteiligungen",
               "matched_category": "Beteiligungen",
               "codes": [
                 "0510",
@@ -212,7 +212,7 @@
             },
             {
               "name": "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
-              "cid": "anlagevermoegen.finanzanlagen.ausleihungen_an_unternehmen_mit_denen_ein_beteiligungsverhae",
+              "cid": "b.aktiva.anlagevermoegen.finanzanlagen.ausleihungen_an_unternehmen_mit_denen_ein_beteiligungsverhae",
               "matched_category": "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "codes": [
                 "0520",
@@ -222,7 +222,7 @@
             },
             {
               "name": "Wertpapiere des Anlagevermögens",
-              "cid": "anlagevermoegen.finanzanlagen.wertpapiere_des_anlagevermoegens",
+              "cid": "b.aktiva.anlagevermoegen.finanzanlagen.wertpapiere_des_anlagevermoegens",
               "matched_category": "Wertpapiere des Anlagevermögens",
               "codes": [
                 "0525",
@@ -233,7 +233,7 @@
             },
             {
               "name": "sonstige Ausleihungen",
-              "cid": "anlagevermoegen.finanzanlagen.sonstige_ausleihungen",
+              "cid": "b.aktiva.anlagevermoegen.finanzanlagen.sonstige_ausleihungen",
               "matched_category": "Sonstige Ausleihungen",
               "codes": [
                 "0540",
@@ -250,19 +250,19 @@
       ]
     },
     "Umlaufvermögen": {
-      "cid": "umlaufvermoegen",
+      "cid": "b.aktiva.umlaufvermoegen",
       "matched_category": null,
       "codes": [],
       "items": [
         {
           "name": "Vorräte",
-          "cid": "umlaufvermoegen.vorraete",
+          "cid": "b.aktiva.umlaufvermoegen.vorraete",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Roh-, Hilfs- und Betriebsstoffe",
-              "cid": "umlaufvermoegen.vorraete.roh_hilfs_und_betriebsstoffe",
+              "cid": "b.aktiva.umlaufvermoegen.vorraete.roh_hilfs_und_betriebsstoffe",
               "matched_category": "Roh-, Hilfs- und Betriebsstoffe",
               "codes": [
                 "3970"
@@ -270,7 +270,7 @@
             },
             {
               "name": "unfertige Erzeugnisse, unfertige Leistungen",
-              "cid": "umlaufvermoegen.vorraete.unfertige_erzeugnisse_unfertige_leistungen",
+              "cid": "b.aktiva.umlaufvermoegen.vorraete.unfertige_erzeugnisse_unfertige_leistungen",
               "matched_category": "Unfertige Erzeugnisse, unfertige Leistungen",
               "codes": [
                 "7000",
@@ -280,7 +280,7 @@
             },
             {
               "name": "fertige Erzeugnisse und Waren",
-              "cid": "umlaufvermoegen.vorraete.fertige_erzeugnisse_und_waren",
+              "cid": "b.aktiva.umlaufvermoegen.vorraete.fertige_erzeugnisse_und_waren",
               "matched_category": "Fertige Erzeugnisse und Waren",
               "codes": [
                 "3980",
@@ -291,7 +291,7 @@
             },
             {
               "name": "geleistete Anzahlungen",
-              "cid": "umlaufvermoegen.vorraete.geleistete_anzahlungen_2",
+              "cid": "b.aktiva.umlaufvermoegen.vorraete.geleistete_anzahlungen_2",
               "matched_category": "Geleistete Anzahlungen",
               "codes": [
                 "0038",
@@ -308,13 +308,13 @@
         },
         {
           "name": "Forderungen und sonstige Vermögensgegenstände",
-          "cid": "umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende",
+          "cid": "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Forderungen aus Lieferungen und Leistungen",
-              "cid": "umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen",
+              "cid": "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen",
               "matched_category": "Forderungen aus Lieferungen und Leistungen",
               "codes": [
                 "9960"
@@ -322,7 +322,7 @@
             },
             {
               "name": "Forderungen gegen verbundene Unternehmen",
-              "cid": "umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen",
+              "cid": "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen",
               "matched_category": "Forderungen gegen verbundene Unternehmen oder Verbindlichkeiten gegenüber verbundenen Unternehmen",
               "codes": [
                 "1310",
@@ -336,7 +336,7 @@
             },
             {
               "name": "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
-              "cid": "umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh",
+              "cid": "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh",
               "matched_category": "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht oder Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "codes": [
                 "1480",
@@ -349,7 +349,7 @@
             },
             {
               "name": "sonstige Vermögensgegenstände",
-              "cid": "umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende",
+              "cid": "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende",
               "matched_category": "Sonstige Vermögensgegenstände",
               "codes": [
                 "1350",
@@ -410,13 +410,13 @@
         },
         {
           "name": "Wertpapiere",
-          "cid": "umlaufvermoegen.wertpapiere",
+          "cid": "b.aktiva.umlaufvermoegen.wertpapiere",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Anteile an verbundenen Unternehmen",
-              "cid": "umlaufvermoegen.wertpapiere.anteile_an_verbundenen_unternehmen_2",
+              "cid": "b.aktiva.umlaufvermoegen.wertpapiere.anteile_an_verbundenen_unternehmen_2",
               "matched_category": "Anteile an verbundenen Unternehmen",
               "codes": [
                 "0500",
@@ -431,7 +431,7 @@
             },
             {
               "name": "sonstige Wertpapiere",
-              "cid": "umlaufvermoegen.wertpapiere.sonstige_wertpapiere",
+              "cid": "b.aktiva.umlaufvermoegen.wertpapiere.sonstige_wertpapiere",
               "matched_category": "Sonstige Wertpapiere",
               "codes": [
                 "1329",
@@ -443,55 +443,55 @@
         },
         {
           "name": "Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks",
-          "cid": "umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut",
+          "cid": "b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut",
           "matched_category": null,
           "codes": []
         }
       ]
     },
     "Rechnungsabgrenzungsposten": {
-      "cid": "rechnungsabgrenzungsposten",
+      "cid": "b.aktiva.rechnungsabgrenzungsposten",
       "matched_category": null,
       "codes": []
     },
     "Aktive latente Steuern": {
-      "cid": "aktive_latente_steuern",
+      "cid": "b.aktiva.aktive_latente_steuern",
       "matched_category": null,
       "codes": []
     },
     "Aktiver Unterschiedsbetrag aus der Vermögensverrechnung": {
-      "cid": "aktiver_unterschiedsbetrag_aus_der_vermoegensverrechnung",
+      "cid": "b.aktiva.aktiver_unterschiedsbetrag_aus_der_vermoegensverrechnung",
       "matched_category": null,
       "codes": []
     }
   },
   "passiva": {
     "Eigenkapital": {
-      "cid": "eigenkapital",
+      "cid": "b.passiva.eigenkapital",
       "matched_category": null,
       "codes": [],
       "items": [
         {
           "name": "Gezeichnetes Kapital",
-          "cid": "eigenkapital.gezeichnetes_kapital",
+          "cid": "b.passiva.eigenkapital.gezeichnetes_kapital",
           "matched_category": null,
           "codes": []
         },
         {
           "name": "Kapitalrücklage",
-          "cid": "eigenkapital.kapitalruecklage",
+          "cid": "b.passiva.eigenkapital.kapitalruecklage",
           "matched_category": null,
           "codes": []
         },
         {
           "name": "Gewinnrücklagen",
-          "cid": "eigenkapital.gewinnruecklagen",
+          "cid": "b.passiva.eigenkapital.gewinnruecklagen",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "gesetzliche Rücklage",
-              "cid": "eigenkapital.gewinnruecklagen.gesetzliche_ruecklage",
+              "cid": "b.passiva.eigenkapital.gewinnruecklagen.gesetzliche_ruecklage",
               "matched_category": "Gesetzliche Rücklage",
               "codes": [
                 "0846"
@@ -499,7 +499,7 @@
             },
             {
               "name": "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
-              "cid": "eigenkapital.gewinnruecklagen.ruecklage_fuer_anteile_an_einem_herrschenden_oder_mehrheitli",
+              "cid": "b.passiva.eigenkapital.gewinnruecklagen.ruecklage_fuer_anteile_an_einem_herrschenden_oder_mehrheitli",
               "matched_category": "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
               "codes": [
                 "0849"
@@ -507,7 +507,7 @@
             },
             {
               "name": "satzungsmäßige Rücklagen",
-              "cid": "eigenkapital.gewinnruecklagen.satzungsmaessige_ruecklagen",
+              "cid": "b.passiva.eigenkapital.gewinnruecklagen.satzungsmaessige_ruecklagen",
               "matched_category": "Satzungsmäßige Rücklagen",
               "codes": [
                 "0851"
@@ -515,7 +515,7 @@
             },
             {
               "name": "andere Gewinnrücklagen",
-              "cid": "eigenkapital.gewinnruecklagen.andere_gewinnruecklagen",
+              "cid": "b.passiva.eigenkapital.gewinnruecklagen.andere_gewinnruecklagen",
               "matched_category": "Andere Gewinnrücklagen",
               "codes": [
                 "0848",
@@ -534,20 +534,20 @@
         },
         {
           "name": "Gewinnvortrag/Verlustvortrag",
-          "cid": "eigenkapital.gewinnvortragverlustvortrag",
+          "cid": "b.passiva.eigenkapital.gewinnvortragverlustvortrag",
           "matched_category": null,
           "codes": []
         },
         {
           "name": "Jahresüberschuß/Jahresfehlbetrag",
-          "cid": "eigenkapital.jahresueberschussjahresfehlbetrag",
+          "cid": "b.passiva.eigenkapital.jahresueberschussjahresfehlbetrag",
           "matched_category": null,
           "codes": []
         }
       ]
     },
     "Rückstellungen": {
-      "cid": "rueckstellungen",
+      "cid": "b.passiva.rueckstellungen",
       "matched_category": null,
       "codes": [],
       "items": [
@@ -557,7 +557,7 @@
           "children": [
             {
               "name": "Rückstellungen für Pensionen und ähnliche Verpflichtungen",
-              "cid": "rueckstellungen.rueckstellungen_fuer_pensionen_und_aehnliche_verpflichtungen",
+              "cid": "b.passiva.rueckstellungen.rueckstellungen_fuer_pensionen_und_aehnliche_verpflichtungen",
               "matched_category": "Rückstellungen für Pensionen und ähnliche Verpflichtungen",
               "codes": [
                 "0950",
@@ -568,7 +568,7 @@
             },
             {
               "name": "Steuerrückstellungen",
-              "cid": "rueckstellungen.steuerrueckstellungen",
+              "cid": "b.passiva.rueckstellungen.steuerrueckstellungen",
               "matched_category": "Steuerrückstellungen",
               "codes": [
                 "0955",
@@ -580,7 +580,7 @@
             },
             {
               "name": "sonstige Rückstellungen",
-              "cid": "rueckstellungen.sonstige_rueckstellungen",
+              "cid": "b.passiva.rueckstellungen.sonstige_rueckstellungen",
               "matched_category": "Sonstige Rückstellungen",
               "codes": [
                 "0961",
@@ -602,7 +602,7 @@
       ]
     },
     "Verbindlichkeiten": {
-      "cid": "verbindlichkeiten",
+      "cid": "b.passiva.verbindlichkeiten",
       "matched_category": null,
       "codes": [],
       "items": [
@@ -612,7 +612,7 @@
           "children": [
             {
               "name": "Anleihen, davon konvertibel",
-              "cid": "verbindlichkeiten.anleihen_davon_konvertibel",
+              "cid": "b.passiva.verbindlichkeiten.anleihen_davon_konvertibel",
               "matched_category": "Anleihen",
               "codes": [
                 "0600",
@@ -627,7 +627,7 @@
             },
             {
               "name": "Verbindlichkeiten gegenüber Kreditinstituten",
-              "cid": "verbindlichkeiten.verbindlichkeiten_gegenueber_kreditinstituten",
+              "cid": "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_kreditinstituten",
               "matched_category": "Verbindlichkeiten gegenüber Kreditinstituten",
               "codes": [
                 "0699",
@@ -636,7 +636,7 @@
             },
             {
               "name": "erhaltene Anzahlungen auf Bestellungen",
-              "cid": "verbindlichkeiten.erhaltene_anzahlungen_auf_bestellungen",
+              "cid": "b.passiva.verbindlichkeiten.erhaltene_anzahlungen_auf_bestellungen",
               "matched_category": "Erhaltene Anzahlungen auf Bestellungen (Passiva)",
               "codes": [
                 "1710",
@@ -653,7 +653,7 @@
             },
             {
               "name": "Verbindlichkeiten aus Lieferungen und Leistungen",
-              "cid": "verbindlichkeiten.verbindlichkeiten_aus_lieferungen_und_leistungen",
+              "cid": "b.passiva.verbindlichkeiten.verbindlichkeiten_aus_lieferungen_und_leistungen",
               "matched_category": "Verbindlichkeiten aus Lieferungen und Leistungen",
               "codes": [
                 "9964"
@@ -661,13 +661,13 @@
             },
             {
               "name": "Verbindlichkeiten aus der Annahme gezogener Wechsel und der Ausstellung eigener Wechsel",
-              "cid": "verbindlichkeiten.verbindlichkeiten_aus_der_annahme_gezogener_wechsel_und_der_",
+              "cid": "b.passiva.verbindlichkeiten.verbindlichkeiten_aus_der_annahme_gezogener_wechsel_und_der_",
               "matched_category": null,
               "codes": []
             },
             {
               "name": "Verbindlichkeiten gegenüber verbundenen Unternehmen",
-              "cid": "verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen",
+              "cid": "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen",
               "matched_category": "Verbindlichkeiten gegenüber verbundenen Unternehmen oder Forderungen gegen verbundene Unternehmen",
               "codes": [
                 "0700",
@@ -682,7 +682,7 @@
             },
             {
               "name": "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
-              "cid": "verbindlichkeiten.verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_betei",
+              "cid": "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_betei",
               "matched_category": "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht oder Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "codes": [
                 "0715",
@@ -697,7 +697,7 @@
             },
             {
               "name": "sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen Sicherheit",
-              "cid": "verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen",
+              "cid": "b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen",
               "matched_category": "Sonstige Verbindlichkeiten",
               "codes": [
                 "0730",
@@ -778,12 +778,12 @@
       ]
     },
     "Rechnungsabgrenzungsposten": {
-      "cid": "rechnungsabgrenzungsposten",
+      "cid": "b.passiva.rechnungsabgrenzungsposten",
       "matched_category": null,
       "codes": []
     },
     "Passive latente Steuern": {
-      "cid": "passive_latente_steuern",
+      "cid": "b.passiva.passive_latente_steuern",
       "matched_category": null,
       "codes": []
     }
