@@ -269,7 +269,7 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
         },
         liquide_mittel: {
           name: "Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks",
-          codes: [ "1000", "1010", "1020", "1330", "9962" ],
+          codes: [ "1000", "1010", "1020", "1200", "1330", "9962" ],
           children: {}
         }
       }
@@ -319,7 +319,7 @@ NESTED_BALANCE_SHEET_CATEGORIES = {
         },
         gewinnvortrag_verlustvortrag: {
           name: "Gewinnvortrag/Verlustvortrag",
-          codes: [],
+          codes: ["0868"],
           children: {}
         }
       }
