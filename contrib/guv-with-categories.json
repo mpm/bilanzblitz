@@ -1,6 +1,6 @@
 {
   "Umsatzerlöse": {
-    "cid": "71e9b34",
+    "cid": "guv.umsatzerloese",
     "matched_category": "Umsatzerlöse",
     "codes": [
       "2750",
@@ -122,12 +122,12 @@
     ]
   },
   "Erhöhung oder Verminderung des Bestands an fertigen und unfertigen Erzeugnissen": {
-    "cid": null,
+    "cid": "guv.erhoehung_oder_verminderung_des_bestands_an_fertigen_und_unf",
     "matched_category": null,
     "codes": []
   },
   "andere aktivierte Eigenleistungen": {
-    "cid": "89823b6",
+    "cid": "guv.andere_aktivierte_eigenleistungen",
     "matched_category": "Andere aktivierte Eigenleistungen",
     "codes": [
       "8990",
@@ -136,7 +136,7 @@
     ]
   },
   "sonstige betriebliche Erträge": {
-    "cid": "025b099",
+    "cid": "guv.sonstige_betriebliche_ertraege",
     "matched_category": "Sonstige betriebliche Erträge",
     "codes": [
       "2315",
@@ -250,13 +250,13 @@
     ]
   },
   "Materialaufwand": {
-    "cid": null,
+    "cid": "guv.materialaufwand",
     "matched_category": null,
     "codes": [],
     "children": [
       {
         "name": "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
-        "cid": "70b8f68",
+        "cid": "guv.materialaufwand.aufwendungen_fuer_roh_hilfs_und_betriebsstoffe_und_fuer_bezo",
         "matched_category": "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
         "codes": [
           "3000",
@@ -391,7 +391,7 @@
       },
       {
         "name": "Aufwendungen für bezogene Leistungen",
-        "cid": "9eb6168",
+        "cid": "guv.materialaufwand.aufwendungen_fuer_bezogene_leistungen",
         "matched_category": "Aufwendungen für bezogene Leistungen",
         "codes": [
           "3106",
@@ -439,13 +439,13 @@
     ]
   },
   "Personalaufwand": {
-    "cid": null,
+    "cid": "guv.personalaufwand",
     "matched_category": null,
     "codes": [],
     "children": [
       {
         "name": "Löhne und Gehälter",
-        "cid": "ab916d8",
+        "cid": "guv.personalaufwand.loehne_und_gehaelter",
         "matched_category": "Löhne und Gehälter",
         "codes": [
           "4100",
@@ -486,7 +486,7 @@
       },
       {
         "name": "soziale Abgaben und Aufwendungen für Altersversorgung und für Unterstützung, davon für Altersversorgung",
-        "cid": "4fbd2f6",
+        "cid": "guv.personalaufwand.soziale_abgaben_und_aufwendungen_fuer_altersversorgung_und_f",
         "matched_category": "Soziale Abgaben und Aufwendungen für Altersversorgung und für Unterstützung",
         "codes": [
           "4130",
@@ -506,36 +506,26 @@
     ]
   },
   "Abschreibungen": {
-    "cid": "df5d0f3",
-    "matched_category": "Abschreibungen auf Vermögensgegenstände des Umlaufvermögens, soweit diese die in der Kapitalgesellschaft üblichen Abschreibungen überschreiten",
-    "codes": [
-      "2430",
-      "2431",
-      "2436",
-      "2440",
-      "2441",
-      "4880",
-      "4882",
-      "4892",
-      "4893"
-    ],
+    "cid": "guv.abschreibungen",
+    "matched_category": null,
+    "codes": [],
     "children": [
       {
         "name": "auf immaterielle Vermögensgegenstände des Anlagevermögens und Sachanlagen",
-        "cid": null,
+        "cid": "guv.abschreibungen.auf_immaterielle_vermoegensgegenstaende_des_anlagevermoegens",
         "matched_category": null,
         "codes": []
       },
       {
         "name": "auf Vermögensgegenstände des Umlaufvermögens, soweit diese die in der Kapitalgesellschaft üblichen Abschreibungen überschreiten",
-        "cid": null,
+        "cid": "guv.abschreibungen.auf_vermoegensgegenstaende_des_umlaufvermoegens_soweit_diese",
         "matched_category": null,
         "codes": []
       }
     ]
   },
   "sonstige betriebliche Aufwendungen": {
-    "cid": "a08a930",
+    "cid": "guv.sonstige_betriebliche_aufwendungen",
     "matched_category": "Sonstige betriebliche Aufwendungen",
     "codes": [
       "2004",
@@ -739,7 +729,7 @@
     ]
   },
   "Erträge aus Beteiligungen, davon aus verbundenen Unternehmen": {
-    "cid": "845aafe",
+    "cid": "guv.ertraege_aus_beteiligungen_davon_aus_verbundenen_unternehmen",
     "matched_category": "Erträge aus Beteiligungen",
     "codes": [
       "2600",
@@ -753,7 +743,7 @@
     ]
   },
   "Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens, davon aus verbundenen Unternehmen": {
-    "cid": "db92d20",
+    "cid": "guv.ertraege_aus_anderen_wertpapieren_und_ausleihungen_des_finan",
     "matched_category": "Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens",
     "codes": [
       "2620",
@@ -771,7 +761,7 @@
     ]
   },
   "sonstige Zinsen und ähnliche Erträge, davon aus verbundenen Unternehmen": {
-    "cid": "a2be938",
+    "cid": "guv.sonstige_zinsen_und_aehnliche_ertraege_davon_aus_verbundenen",
     "matched_category": "Sonstige Zinsen und ähnliche Erträge",
     "codes": [
       "2650",
@@ -792,7 +782,7 @@
     ]
   },
   "Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens": {
-    "cid": "0c22907",
+    "cid": "guv.abschreibungen_auf_finanzanlagen_und_auf_wertpapiere_des_uml",
     "matched_category": "Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens",
     "codes": [
       "4866",
@@ -808,7 +798,7 @@
     ]
   },
   "Zinsen und ähnliche Aufwendungen, davon an verbundene Unternehmen": {
-    "cid": "b1eb29f",
+    "cid": "guv.zinsen_und_aehnliche_aufwendungen_davon_an_verbundene_untern",
     "matched_category": "Zinsen und ähnliche Aufwendungen",
     "codes": [
       "2100",
@@ -847,17 +837,17 @@
     ]
   },
   "Steuern vom Einkommen und vom Ertrag": {
-    "cid": null,
+    "cid": "guv.steuern_vom_einkommen_und_vom_ertrag",
     "matched_category": null,
     "codes": []
   },
   "Ergebnis nach Steuern": {
-    "cid": null,
+    "cid": "guv.ergebnis_nach_steuern",
     "matched_category": null,
     "codes": []
   },
   "sonstige Steuern": {
-    "cid": "f470b40",
+    "cid": "guv.sonstige_steuern",
     "matched_category": "Sonstige Steuern",
     "codes": [
       "2285",
@@ -871,7 +861,7 @@
     ]
   },
   "Jahresüberschuss/Jahresfehlbetrag": {
-    "cid": null,
+    "cid": "guv.jahresueberschussjahresfehlbetrag",
     "matched_category": null,
     "codes": []
   }

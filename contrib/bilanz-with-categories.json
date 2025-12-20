@@ -1,19 +1,19 @@
 {
   "aktiva": {
     "Anlagevermögen": {
-      "cid": null,
+      "cid": "anlagevermoegen",
       "matched_category": null,
       "codes": [],
       "items": [
         {
           "name": "Immaterielle Vermögensgegenstände",
-          "cid": null,
+          "cid": "anlagevermoegen.immaterielle_vermoegensgegenstaende",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte",
-              "cid": "9f184e6",
+              "cid": "anlagevermoegen.immaterielle_vermoegensgegenstaende.selbst_geschaffene_gewerbliche_schutzrechte_und_aehnliche_re",
               "matched_category": "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte",
               "codes": [
                 "0043",
@@ -26,7 +26,7 @@
             },
             {
               "name": "entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten",
-              "cid": "33e12bd",
+              "cid": "anlagevermoegen.immaterielle_vermoegensgegenstaende.entgeltlich_erworbene_konzessionen_gewerbliche_schutzrechte_",
               "matched_category": "Entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten",
               "codes": [
                 "0010",
@@ -39,7 +39,7 @@
             },
             {
               "name": "Geschäfts- oder Firmenwert",
-              "cid": "83d3256",
+              "cid": "anlagevermoegen.immaterielle_vermoegensgegenstaende.geschaefts_oder_firmenwert",
               "matched_category": "Geschäfts- oder Firmenwert",
               "codes": [
                 "0035"
@@ -47,7 +47,7 @@
             },
             {
               "name": "geleistete Anzahlungen",
-              "cid": "3bf5fd9",
+              "cid": "anlagevermoegen.immaterielle_vermoegensgegenstaende.geleistete_anzahlungen",
               "matched_category": "Geleistete Anzahlungen",
               "codes": [
                 "0038",
@@ -64,13 +64,13 @@
         },
         {
           "name": "Sachanlagen",
-          "cid": null,
+          "cid": "anlagevermoegen.sachanlagen",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken",
-              "cid": "0f8706c",
+              "cid": "anlagevermoegen.sachanlagen.grundstuecke_grundstuecksgleiche_rechte_und_bauten_einschlie",
               "matched_category": "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken",
               "codes": [
                 "0050",
@@ -111,7 +111,7 @@
             },
             {
               "name": "technische Anlagen und Maschinen",
-              "cid": "f667c84",
+              "cid": "anlagevermoegen.sachanlagen.technische_anlagen_und_maschinen",
               "matched_category": "Technische Anlagen und Maschinen",
               "codes": [
                 "0210",
@@ -123,7 +123,7 @@
             },
             {
               "name": "andere Anlagen, Betriebs- und Geschäftsausstattung",
-              "cid": "c82f2bc",
+              "cid": "anlagevermoegen.sachanlagen.andere_anlagen_betriebs_und_geschaeftsausstattung",
               "matched_category": "Andere Anlagen, Betriebs- und Geschäftsausstattung",
               "codes": [
                 "0300",
@@ -145,7 +145,7 @@
             },
             {
               "name": "geleistete Anzahlungen und Anlagen im Bau",
-              "cid": "cb3c64b",
+              "cid": "anlagevermoegen.sachanlagen.geleistete_anzahlungen_und_anlagen_im_bau",
               "matched_category": "Geleistete Anzahlungen und Anlagen im Bau",
               "codes": [
                 "0079",
@@ -167,13 +167,13 @@
         },
         {
           "name": "Finanzanlagen",
-          "cid": null,
+          "cid": "anlagevermoegen.finanzanlagen",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Anteile an verbundenen Unternehmen",
-              "cid": "295baa8",
+              "cid": "anlagevermoegen.finanzanlagen.anteile_an_verbundenen_unternehmen",
               "matched_category": "Anteile an verbundenen Unternehmen",
               "codes": [
                 "0500",
@@ -188,7 +188,7 @@
             },
             {
               "name": "Ausleihungen an verbundene Unternehmen",
-              "cid": "f081ed5",
+              "cid": "anlagevermoegen.finanzanlagen.ausleihungen_an_verbundene_unternehmen",
               "matched_category": "Ausleihungen an verbundene Unternehmen",
               "codes": [
                 "0505",
@@ -199,7 +199,7 @@
             },
             {
               "name": "Beteiligungen",
-              "cid": "cf8c52f",
+              "cid": "anlagevermoegen.finanzanlagen.beteiligungen",
               "matched_category": "Beteiligungen",
               "codes": [
                 "0510",
@@ -212,7 +212,7 @@
             },
             {
               "name": "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
-              "cid": "65d4636",
+              "cid": "anlagevermoegen.finanzanlagen.ausleihungen_an_unternehmen_mit_denen_ein_beteiligungsverhae",
               "matched_category": "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "codes": [
                 "0520",
@@ -222,7 +222,7 @@
             },
             {
               "name": "Wertpapiere des Anlagevermögens",
-              "cid": "2f62318",
+              "cid": "anlagevermoegen.finanzanlagen.wertpapiere_des_anlagevermoegens",
               "matched_category": "Wertpapiere des Anlagevermögens",
               "codes": [
                 "0525",
@@ -233,7 +233,7 @@
             },
             {
               "name": "sonstige Ausleihungen",
-              "cid": "e50a597",
+              "cid": "anlagevermoegen.finanzanlagen.sonstige_ausleihungen",
               "matched_category": "Sonstige Ausleihungen",
               "codes": [
                 "0540",
@@ -250,19 +250,19 @@
       ]
     },
     "Umlaufvermögen": {
-      "cid": null,
+      "cid": "umlaufvermoegen",
       "matched_category": null,
       "codes": [],
       "items": [
         {
           "name": "Vorräte",
-          "cid": null,
+          "cid": "umlaufvermoegen.vorraete",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Roh-, Hilfs- und Betriebsstoffe",
-              "cid": "3afbd67",
+              "cid": "umlaufvermoegen.vorraete.roh_hilfs_und_betriebsstoffe",
               "matched_category": "Roh-, Hilfs- und Betriebsstoffe",
               "codes": [
                 "3970"
@@ -270,7 +270,7 @@
             },
             {
               "name": "unfertige Erzeugnisse, unfertige Leistungen",
-              "cid": "567aba3",
+              "cid": "umlaufvermoegen.vorraete.unfertige_erzeugnisse_unfertige_leistungen",
               "matched_category": "Unfertige Erzeugnisse, unfertige Leistungen",
               "codes": [
                 "7000",
@@ -280,7 +280,7 @@
             },
             {
               "name": "fertige Erzeugnisse und Waren",
-              "cid": "2fbb718",
+              "cid": "umlaufvermoegen.vorraete.fertige_erzeugnisse_und_waren",
               "matched_category": "Fertige Erzeugnisse und Waren",
               "codes": [
                 "3980",
@@ -291,7 +291,7 @@
             },
             {
               "name": "geleistete Anzahlungen",
-              "cid": "3bf5fd9",
+              "cid": "umlaufvermoegen.vorraete.geleistete_anzahlungen_2",
               "matched_category": "Geleistete Anzahlungen",
               "codes": [
                 "0038",
@@ -308,13 +308,13 @@
         },
         {
           "name": "Forderungen und sonstige Vermögensgegenstände",
-          "cid": null,
+          "cid": "umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Forderungen aus Lieferungen und Leistungen",
-              "cid": "0dfba5e",
+              "cid": "umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen",
               "matched_category": "Forderungen aus Lieferungen und Leistungen",
               "codes": [
                 "9960"
@@ -322,7 +322,7 @@
             },
             {
               "name": "Forderungen gegen verbundene Unternehmen",
-              "cid": "4c037fb",
+              "cid": "umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen",
               "matched_category": "Forderungen gegen verbundene Unternehmen oder Verbindlichkeiten gegenüber verbundenen Unternehmen",
               "codes": [
                 "1310",
@@ -336,7 +336,7 @@
             },
             {
               "name": "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
-              "cid": "769c4ae",
+              "cid": "umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh",
               "matched_category": "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht oder Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "codes": [
                 "1480",
@@ -349,7 +349,7 @@
             },
             {
               "name": "sonstige Vermögensgegenstände",
-              "cid": "ff6662b",
+              "cid": "umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende",
               "matched_category": "Sonstige Vermögensgegenstände",
               "codes": [
                 "1350",
@@ -410,13 +410,13 @@
         },
         {
           "name": "Wertpapiere",
-          "cid": null,
+          "cid": "umlaufvermoegen.wertpapiere",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "Anteile an verbundenen Unternehmen",
-              "cid": "295baa8",
+              "cid": "umlaufvermoegen.wertpapiere.anteile_an_verbundenen_unternehmen_2",
               "matched_category": "Anteile an verbundenen Unternehmen",
               "codes": [
                 "0500",
@@ -431,7 +431,7 @@
             },
             {
               "name": "sonstige Wertpapiere",
-              "cid": "5d365e0",
+              "cid": "umlaufvermoegen.wertpapiere.sonstige_wertpapiere",
               "matched_category": "Sonstige Wertpapiere",
               "codes": [
                 "1329",
@@ -443,80 +443,55 @@
         },
         {
           "name": "Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks",
-          "cid": "d2bf9b0",
-          "matched_category": "Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks",
-          "codes": [
-            "1000",
-            "1010",
-            "1020",
-            "1330",
-            "9962"
-          ]
+          "cid": "umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut",
+          "matched_category": null,
+          "codes": []
         }
       ]
     },
     "Rechnungsabgrenzungsposten": {
-      "cid": "b09db6e",
-      "matched_category": "Rechnungsabgrenzungsposten (Aktiva)",
-      "codes": [
-        "0980",
-        "0984",
-        "0985",
-        "0986"
-      ]
+      "cid": "rechnungsabgrenzungsposten",
+      "matched_category": null,
+      "codes": []
     },
     "Aktive latente Steuern": {
-      "cid": "b10af1f",
-      "matched_category": "Aktive latente Steuern",
-      "codes": [
-        "0983"
-      ]
+      "cid": "aktive_latente_steuern",
+      "matched_category": null,
+      "codes": []
     },
     "Aktiver Unterschiedsbetrag aus der Vermögensverrechnung": {
-      "cid": "a2ca92c",
-      "matched_category": "Aktiver Unterschiedsbetrag aus der Vermögensverrechnung oder sonstige Rückstellungen",
-      "codes": [
-        "1354"
-      ]
+      "cid": "aktiver_unterschiedsbetrag_aus_der_vermoegensverrechnung",
+      "matched_category": null,
+      "codes": []
     }
   },
   "passiva": {
     "Eigenkapital": {
-      "cid": null,
+      "cid": "eigenkapital",
       "matched_category": null,
       "codes": [],
       "items": [
         {
           "name": "Gezeichnetes Kapital",
-          "cid": "e7d751a",
-          "matched_category": "Gezeichnetes Kapital",
-          "codes": [
-            "0800",
-            "0809"
-          ]
+          "cid": "eigenkapital.gezeichnetes_kapital",
+          "matched_category": null,
+          "codes": []
         },
         {
           "name": "Kapitalrücklage",
-          "cid": "3de362b",
-          "matched_category": "Kapitalrücklage",
-          "codes": [
-            "0840",
-            "0841",
-            "0842",
-            "0843",
-            "0844",
-            "0845"
-          ]
+          "cid": "eigenkapital.kapitalruecklage",
+          "matched_category": null,
+          "codes": []
         },
         {
           "name": "Gewinnrücklagen",
-          "cid": null,
+          "cid": "eigenkapital.gewinnruecklagen",
           "matched_category": null,
           "codes": [],
           "children": [
             {
               "name": "gesetzliche Rücklage",
-              "cid": "72c3cb7",
+              "cid": "eigenkapital.gewinnruecklagen.gesetzliche_ruecklage",
               "matched_category": "Gesetzliche Rücklage",
               "codes": [
                 "0846"
@@ -524,7 +499,7 @@
             },
             {
               "name": "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
-              "cid": "b07b807",
+              "cid": "eigenkapital.gewinnruecklagen.ruecklage_fuer_anteile_an_einem_herrschenden_oder_mehrheitli",
               "matched_category": "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
               "codes": [
                 "0849"
@@ -532,7 +507,7 @@
             },
             {
               "name": "satzungsmäßige Rücklagen",
-              "cid": "91621a3",
+              "cid": "eigenkapital.gewinnruecklagen.satzungsmaessige_ruecklagen",
               "matched_category": "Satzungsmäßige Rücklagen",
               "codes": [
                 "0851"
@@ -540,7 +515,7 @@
             },
             {
               "name": "andere Gewinnrücklagen",
-              "cid": "46c38ad",
+              "cid": "eigenkapital.gewinnruecklagen.andere_gewinnruecklagen",
               "matched_category": "Andere Gewinnrücklagen",
               "codes": [
                 "0848",
@@ -559,30 +534,30 @@
         },
         {
           "name": "Gewinnvortrag/Verlustvortrag",
-          "cid": null,
+          "cid": "eigenkapital.gewinnvortragverlustvortrag",
           "matched_category": null,
           "codes": []
         },
         {
           "name": "Jahresüberschuß/Jahresfehlbetrag",
-          "cid": null,
+          "cid": "eigenkapital.jahresueberschussjahresfehlbetrag",
           "matched_category": null,
           "codes": []
         }
       ]
     },
     "Rückstellungen": {
-      "cid": "bfb67d7",
-      "matched_category": "Rückstellungen für Pensionen und ähnliche Verpflichtungen oder aktiver Unterschiedsbetrag aus der Vermögensverrechnung",
-      "codes": [
-        "0951"
-      ],
+      "cid": "rueckstellungen",
+      "matched_category": null,
+      "codes": [],
       "items": [
         {
+          "name": "",
+          "codes": "",
           "children": [
             {
               "name": "Rückstellungen für Pensionen und ähnliche Verpflichtungen",
-              "cid": "d3ba182",
+              "cid": "rueckstellungen.rueckstellungen_fuer_pensionen_und_aehnliche_verpflichtungen",
               "matched_category": "Rückstellungen für Pensionen und ähnliche Verpflichtungen",
               "codes": [
                 "0950",
@@ -593,7 +568,7 @@
             },
             {
               "name": "Steuerrückstellungen",
-              "cid": "1b005d2",
+              "cid": "rueckstellungen.steuerrueckstellungen",
               "matched_category": "Steuerrückstellungen",
               "codes": [
                 "0955",
@@ -605,7 +580,7 @@
             },
             {
               "name": "sonstige Rückstellungen",
-              "cid": "0e23ee1",
+              "cid": "rueckstellungen.sonstige_rueckstellungen",
               "matched_category": "Sonstige Rückstellungen",
               "codes": [
                 "0961",
@@ -627,23 +602,17 @@
       ]
     },
     "Verbindlichkeiten": {
-      "cid": "cd7a79d",
-      "matched_category": "Verbindlichkeiten gegenüber Kreditinstituten oder Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks",
-      "codes": [
-        "0630",
-        "0640",
-        "0650",
-        "0660",
-        "0670",
-        "0680",
-        "0690"
-      ],
+      "cid": "verbindlichkeiten",
+      "matched_category": null,
+      "codes": [],
       "items": [
         {
+          "name": "",
+          "codes": "",
           "children": [
             {
               "name": "Anleihen, davon konvertibel",
-              "cid": "422d72e",
+              "cid": "verbindlichkeiten.anleihen_davon_konvertibel",
               "matched_category": "Anleihen",
               "codes": [
                 "0600",
@@ -658,7 +627,7 @@
             },
             {
               "name": "Verbindlichkeiten gegenüber Kreditinstituten",
-              "cid": "e553b7e",
+              "cid": "verbindlichkeiten.verbindlichkeiten_gegenueber_kreditinstituten",
               "matched_category": "Verbindlichkeiten gegenüber Kreditinstituten",
               "codes": [
                 "0699",
@@ -667,7 +636,7 @@
             },
             {
               "name": "erhaltene Anzahlungen auf Bestellungen",
-              "cid": "77a9924",
+              "cid": "verbindlichkeiten.erhaltene_anzahlungen_auf_bestellungen",
               "matched_category": "Erhaltene Anzahlungen auf Bestellungen (Passiva)",
               "codes": [
                 "1710",
@@ -684,7 +653,7 @@
             },
             {
               "name": "Verbindlichkeiten aus Lieferungen und Leistungen",
-              "cid": "d93c3ff",
+              "cid": "verbindlichkeiten.verbindlichkeiten_aus_lieferungen_und_leistungen",
               "matched_category": "Verbindlichkeiten aus Lieferungen und Leistungen",
               "codes": [
                 "9964"
@@ -692,13 +661,13 @@
             },
             {
               "name": "Verbindlichkeiten aus der Annahme gezogener Wechsel und der Ausstellung eigener Wechsel",
-              "cid": null,
+              "cid": "verbindlichkeiten.verbindlichkeiten_aus_der_annahme_gezogener_wechsel_und_der_",
               "matched_category": null,
               "codes": []
             },
             {
               "name": "Verbindlichkeiten gegenüber verbundenen Unternehmen",
-              "cid": "3a1c2f9",
+              "cid": "verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen",
               "matched_category": "Verbindlichkeiten gegenüber verbundenen Unternehmen oder Forderungen gegen verbundene Unternehmen",
               "codes": [
                 "0700",
@@ -713,7 +682,7 @@
             },
             {
               "name": "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
-              "cid": "4bc8791",
+              "cid": "verbindlichkeiten.verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_betei",
               "matched_category": "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht oder Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "codes": [
                 "0715",
@@ -728,7 +697,7 @@
             },
             {
               "name": "sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen Sicherheit",
-              "cid": "eb85992",
+              "cid": "verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen",
               "matched_category": "Sonstige Verbindlichkeiten",
               "codes": [
                 "0730",
@@ -809,21 +778,14 @@
       ]
     },
     "Rechnungsabgrenzungsposten": {
-      "cid": "b09db6e",
-      "matched_category": "Rechnungsabgrenzungsposten (Aktiva)",
-      "codes": [
-        "0980",
-        "0984",
-        "0985",
-        "0986"
-      ]
+      "cid": "rechnungsabgrenzungsposten",
+      "matched_category": null,
+      "codes": []
     },
     "Passive latente Steuern": {
-      "cid": "6bb674c",
-      "matched_category": "Passive latente Steuern",
-      "codes": [
-        "0968"
-      ]
+      "cid": "passive_latente_steuern",
+      "matched_category": null,
+      "codes": []
     }
   }
 }
