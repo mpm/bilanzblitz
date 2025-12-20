@@ -1,0 +1,103 @@
+
+--
+
+More bugfixes/enhancements:
+
+* Allow editing the associated jounral entry from bank transactions View
+* Prepare for a "compact"/auto view in journal entry (abstracts away VAT etc.)
+* In balance sheet or GuV when accounts are listed, allow clicking on them to go to the ledger account's content
+
+* Rename account model to ledger_account
+* Support official sub structure for GuV and bilanz.
+
+--
+
+
+Next steps later one
+
+You asked:
+Maintain backward compatibility by keeping existing methods like find_balance_sheet_accounts() that return flat arrays, while adding new methods that return nested BalanceSheetSection trees. This minimizes breaking changes.
+
+We picked to keep the existing methods. Now make a plan to transition correctly to BalanceSheetSectionTrees
+
+Future tasks can render the nested categories on the frontend using the nestedAktiva and nestedPassiva fields from the balance sheet data.
+
+2. Do not use Verbindlichkeiten and  Rückstellungen together as Fremdkapital. These should stay separate posts like in HGB 266.
+
+
+3. Map offical balance section names to the english translations (search for "Section 266" here: https://www.gesetze-im-internet.de/englisch_hgb/englisch_hgb.html)
+
+
+4. Check if really all SKR03 PDF categories were mapped to either GuV or Balance sheet sections. I suspect that this is not the case, because they were named differently in different situations.
+Write a script to check this, or if there are unmatched PDF categories at the end of running parse_chart_of_accounts.
+
+
+5. add the special case handling for some balance sheet positions. a stub method was implemented in account_map.
+
+also, check how to hardcode the account types for the following uncategorized account ids:
+ℹ️  INFO: Account 4855 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 4856 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 4859 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 4860 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 4862 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 4865 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 7090 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 7095 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 8960 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 8970 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 8975 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 8977 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 8980 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 10000 not found in AccountMap categories, using fallback
+ℹ️  INFO: Account 70000 not found in AccountMap categories, using fallback
+
+
+TASK description for implementing remainign account checks:
+
+Task Description for Future Implementation
+
+Category-Based Account Type Determination - Remaining Tasks
+
+Context:
+We've implemented category-based account type determination for SKR03, which fixed structural issues with the previous range-based approach (e.g., account 0750 is now correctly classified as "liability"). However, two tasks were deferred for future implementation.
+
+Task 1: Implement Special Category Handling
+
+Currently, there's a stub method check_special_category_handling() in AccountMap that always returns nil. This method needs to be implemented to handle special balance sheet categories that require explicit classification:
+
+- Rechnungsabgrenzungsposten (RAP)
+ - Aktive RAP (ARAP) - prepaid expenses → "asset"
+ - Passive RAP (PRAP) - deferred income → "liability"
+
+- Latente Steuern (Deferred Taxes)
+ - Aktive latente Steuern → "asset"
+ - Passive latente Steuern → "liability"
+
+- Other special categories
+ - Sonderposten mit Rücklageanteil → "liability"
+ - Aktiver Unterschiedsbetrag aus Vermögensverrechnung → "asset"
+
+Challenge: These categories are not currently present in NESTED_BALANCE_SHEET_CATEGORIES. Investigation is needed to determine where they appear in the SKR03 structure and how to identify them.
+
+Task 2: Handle Accounts with No Category (NONE)
+
+During the seed process, some accounts logged INFO messages indicating they weren't found in any AccountMap category. Examples include:
+- Accounts 4855, 4856, 4859, 4860, 4862, 4865 (likely expense accounts)
+- Accounts 7090, 7095 (inventory/production accounts)
+- Accounts 8960, 8970, 8975, 8977, 8980 (revenue accounts)
+- Accounts 10000, 70000 (special accounts)
+
+These accounts have category = "NONE" in the CSV and fall back to range-based classification. For correctness and completeness:
+- Research each account code to understand its purpose
+- Manually determine the correct account type
+- Add explicit hardcoded mappings (either in AccountMap or in the rake task)
+
+Deliverables:
+1. Implemented check_special_category_handling() method with correct logic
+2. Mapping table/hash for NONE-category accounts with their correct types
+3. Updated tests covering special categories and NONE accounts
+4. Documentation explaining special handling rules
+
+Goal:
+Eliminate fallback logic entirely and ensure every SKR03 account has an explicitly determined, correct account type based on accounting principles rather than number ranges.
+
