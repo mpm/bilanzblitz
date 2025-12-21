@@ -77,6 +77,22 @@ class BalanceSheetService
 
       next nil unless position # Skip P&L accounts and zero balances
 
+      # FIXME: This code snippet was added to fix the issue that Verlustvortrag (0868) was added to Eigenkapital
+      # on balance sheet. It should be subtracted instead.
+      # TODO: it needs to be checked if this works too if there is a Gewinnvortrag instead. And it needs to be checked
+      # if there is a better place to put this logic- somewhere were it is centrally controlled whether the sum is
+      # added or substracted from the balance sheet calculation
+      if account.account_type == "equity" && position[:rsid] == "b.passiva.eigenkapital.gewinnvortragverlustvortrag"
+       # Check if this is a loss account based on name or code
+       if account.name.include?("Verlustvortrag") || account.code.in?(["0868", "2868"])
+         position = position.merge(
+           balance: -position[:balance],  # Make it negative
+           original_balance: position[:balance]  # Keep original for display
+         )
+       end
+     end
+
+
       {
         id: account.id,
         code: account.code,
