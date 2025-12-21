@@ -66,6 +66,53 @@ This replaces the old range-based approach which was structurally incorrect for 
 - `contrib/guv-with-categories.json` - GuV mappings
 - `contrib/generate_account_map_ranges.rb` - Helper script
 
+### PresentationRule
+
+**Purpose**: Determines where account balances appear on the balance sheet based on saldo direction (Bilanzierungsregeln).
+
+**Location**: `app/services/presentation_rule.rb`
+
+**Key Concept**: Some accounts can appear on either side of the balance sheet depending on their balance direction. For example:
+- Account 1499 (Forderungen L&L): Debit balance → Aktiva, Credit balance → Sonstige Verbindlichkeiten
+- Bank accounts: Debit balance → Liquide Mittel, Credit balance → Verbindlichkeiten ggü. Kreditinstituten
+
+**Available Rules**:
+- `asset_only` - Always on Aktiva side (e.g., fixed assets, inventory)
+- `liability_only` - Always on Passiva side (e.g., provisions)
+- `equity_only` - Always in Eigenkapital
+- `pnl_only` - P&L accounts (never on balance sheet)
+- `fll_standard` - Forderungen aus L&L (saldo-dependent)
+- `vll_standard` - Verbindlichkeiten aus L&L (saldo-dependent)
+- `bank_bidirectional` - Bank accounts (saldo-dependent)
+- `tax_standard` - Tax accounts (saldo-dependent)
+- `receivable_affiliated` - Forderungen gg. verbundene Unternehmen (saldo-dependent)
+- `payable_affiliated` - Verbindlichkeiten gg. verbundene Unternehmen (saldo-dependent)
+
+**Key Method**:
+```ruby
+# Apply presentation rule to determine balance sheet position
+position = PresentationRule.apply(
+  :fll_standard,           # rule identifier
+  total_debit: 1500.0,     # total debit amount
+  total_credit: 500.0,     # total credit amount
+  semantic_cid: "b.aktiva.umlaufvermoegen.forderungen..."  # fallback position
+)
+
+# Returns: { cid: "b.aktiva.umlaufvermoegen.forderungen...",
+#            balance: 1000.0,
+#            side: :aktiva,
+#            debit_balance: true }
+```
+
+**Integration**:
+- `AccountTemplate` and `Account` models have `presentation_rule` field
+- `BalanceSheetService` applies presentation rules when calculating account positions
+- Rules are assigned during SKR03 import via `contrib/generate_presentation_rules.rb`
+
+**German Terminology**:
+- Fachliche Kategorie (Semantic Category) = The account's logical meaning (stored in `cid`)
+- Bilanzierungsregel (Presentation Rule) = Rule determining presentation based on saldo
+
 ### BalanceSheetSection
 
 **Purpose**: Helper class for nested balance sheet structure with hierarchical subcategories.
@@ -115,6 +162,7 @@ TaxFormFieldMap.kst_section_label(:adjustments)
 **Key Features**:
 - Queries posted journal entries for fiscal year
 - Excludes closing entries (`entry_type: 'closing'`)
+- Applies `PresentationRule` to determine saldo-dependent account positioning
 - Uses `AccountMap` and `BalanceSheetSection` for nested categorization
 - Integrates with `GuVService` for net income calculation
 - Validates Aktiva = Passiva

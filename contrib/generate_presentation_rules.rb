@@ -154,10 +154,24 @@ end
 
 # Parses account codes from OCR result strings
 class AccountCodeParser
+  # Maximum size for a range to be expanded (to avoid placeholder ranges like 10000-69999)
+  MAX_RANGE_SIZE = 100
+
+  # Known placeholder ranges to skip (Debitoren/Kreditoren ranges)
+  PLACEHOLDER_RANGES = [
+    /10000-69999/,  # Debitoren (customer accounts)
+    /70000-99999/   # Kreditoren (vendor accounts)
+  ].freeze
+
   # Parse account codes from the right column of OCR results
   # Format: "1400 Description; 1401 Description; R 1402-1499"
   def self.parse(codes_string)
     return [] if codes_string.nil? || codes_string.empty?
+
+    # Skip known placeholder ranges
+    PLACEHOLDER_RANGES.each do |pattern|
+      return [] if codes_string.match?(pattern)
+    end
 
     codes = []
 
@@ -183,6 +197,14 @@ class AccountCodeParser
           end_code = start_code[0, 4 - end_suffix.length] + end_suffix
         else
           end_code = end_suffix
+        end
+
+        range_size = end_code.to_i - start_code.to_i + 1
+
+        # Skip ranges that are too large (likely placeholders)
+        if range_size > MAX_RANGE_SIZE
+          # Don't expand, just skip this range
+          next
         end
 
         # Add all codes in range
