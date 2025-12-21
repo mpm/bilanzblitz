@@ -1,11 +1,13 @@
 import React from 'react'
 import { formatCurrency } from '@/utils/formatting'
 import { BalanceSheetSectionNested } from '@/types/accounting'
+import { AccountLedgerPopover } from '@/components/accounts/AccountLedgerPopover'
 
 interface BalanceSheetSectionProps {
   title: string
   sections: Record<string, BalanceSheetSectionNested>
   total: number
+  fiscalYearId: number | null
   showPreviousYear?: boolean
 }
 
@@ -24,6 +26,7 @@ export const BalanceSheetSection = ({
   title,
   sections,
   total,
+  fiscalYearId,
   showPreviousYear = false,
 }: BalanceSheetSectionProps) => {
   // Recursive function to render nested sections
@@ -31,7 +34,8 @@ export const BalanceSheetSection = ({
     section: BalanceSheetSectionNested,
     depth: number,
     prefix: string,
-    showPreviousYear: boolean
+    showPreviousYear: boolean,
+    fiscalYearId: number | null
   ): React.ReactNode[] => {
     const rows: React.ReactNode[] = []
 
@@ -64,9 +68,17 @@ export const BalanceSheetSection = ({
         >
           <td className={`py-1.5 ${depth === 0 ? 'pl-6' : depth === 1 ? 'pl-10' : depth === 2 ? 'pl-14' : 'pl-18'}`}>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs text-muted-foreground">
-                {account.code}
-              </span>
+              {fiscalYearId && account.id ? (
+                <AccountLedgerPopover accountId={account.id} fiscalYearId={fiscalYearId}>
+                  <button className="font-mono text-xs text-muted-foreground hover:text-primary hover:underline cursor-pointer transition-colors">
+                    {account.code}
+                  </button>
+                </AccountLedgerPopover>
+              ) : (
+                <span className="font-mono text-xs text-muted-foreground">
+                  {account.code}
+                </span>
+              )}
               <span className="text-sm">{account.name}</span>
             </div>
           </td>
@@ -86,7 +98,7 @@ export const BalanceSheetSection = ({
     if (section.children && section.children.length > 0) {
       section.children.forEach((child, index) => {
         const childPrefix = depth === 0 ? getRomanNumeral(index) : depth === 1 ? `${index + 1}` : ''
-        const childRows = renderNestedSection(child, depth + 1, childPrefix, showPreviousYear)
+        const childRows = renderNestedSection(child, depth + 1, childPrefix, showPreviousYear, fiscalYearId)
         rows.push(...childRows)
       })
 
@@ -148,7 +160,7 @@ export const BalanceSheetSection = ({
             <>
               {sectionEntries.map((section, index) => {
                 const prefix = getLetterPrefix(index)
-                const rows = renderNestedSection(section, 0, prefix, showPreviousYear)
+                const rows = renderNestedSection(section, 0, prefix, showPreviousYear, fiscalYearId)
                 return <React.Fragment key={section.sectionKey}>{rows}</React.Fragment>
               })}
               {/* Spacer row to push footer to bottom */}

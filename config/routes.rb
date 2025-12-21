@@ -50,9 +50,12 @@ Rails.application.routes.draw do
   resources :opening_balances, only: [ :new, :create ]
 
   # Accounts API (for account search)
-  resources :accounts, only: [ :index ] do
+  resources :accounts, only: [ :index, :show ] do
     collection do
       get :recent
+    end
+    member do
+      get :ledger
     end
   end
 

@@ -162,6 +162,7 @@ export default function BalanceSheet({
                 title="Aktiva (Assets)"
                 sections={balanceSheet.aktiva.sections}
                 total={balanceSheet.aktiva.total}
+                fiscalYearId={selectedFiscalYearId}
                 showPreviousYear={SHOW_PREVIOUS_YEAR}
               />
 
@@ -170,6 +171,7 @@ export default function BalanceSheet({
                 title="Passiva (Liabilities & Equity)"
                 sections={balanceSheet.passiva.sections}
                 total={balanceSheet.passiva.total}
+                fiscalYearId={selectedFiscalYearId}
                 showPreviousYear={SHOW_PREVIOUS_YEAR}
               />
             </div>
@@ -178,6 +180,7 @@ export default function BalanceSheet({
             {balanceSheet.guv && (
               <GuVSection
                 guv={balanceSheet.guv}
+                fiscalYearId={selectedFiscalYearId}
                 showPreviousYear={SHOW_PREVIOUS_YEAR}
               />
             )}

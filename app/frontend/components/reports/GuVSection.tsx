@@ -1,13 +1,15 @@
 import React from 'react'
 import { formatCurrency } from '@/utils/formatting'
 import { GuVData } from '@/types/accounting'
+import { AccountLedgerPopover } from '@/components/accounts/AccountLedgerPopover'
 
 interface GuVSectionProps {
   guv: GuVData
+  fiscalYearId: number | null
   showPreviousYear?: boolean
 }
 
-export const GuVSection = ({ guv, showPreviousYear = false }: GuVSectionProps) => {
+export const GuVSection = ({ guv, fiscalYearId, showPreviousYear = false }: GuVSectionProps) => {
   return (
     <div className="mt-12">
       <h2 className="text-2xl font-semibold mb-2">
@@ -62,9 +64,17 @@ export const GuVSection = ({ guv, showPreviousYear = false }: GuVSectionProps) =
                   >
                     <td className="py-2 pl-6">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm text-muted-foreground">
-                          {account.code}
-                        </span>
+                        {fiscalYearId && account.id ? (
+                          <AccountLedgerPopover accountId={account.id} fiscalYearId={fiscalYearId}>
+                            <button className="font-mono text-sm text-muted-foreground hover:text-primary hover:underline cursor-pointer transition-colors">
+                              {account.code}
+                            </button>
+                          </AccountLedgerPopover>
+                        ) : (
+                          <span className="font-mono text-sm text-muted-foreground">
+                            {account.code}
+                          </span>
+                        )}
                         <span className="text-sm">{account.name}</span>
                       </div>
                     </td>

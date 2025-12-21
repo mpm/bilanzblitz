@@ -56,6 +56,7 @@ class GuVService
       )
 
       {
+        id: account.id,
         code: account.code,
         name: account.name,
         type: account.account_type,

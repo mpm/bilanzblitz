@@ -21,6 +21,7 @@ import {
   FileCheck,
   Settings,
   LogOut,
+  BookOpen,
 } from 'lucide-react'
 
 interface FiscalYear {
@@ -34,7 +35,7 @@ interface AppLayoutProps {
     id: number
     name: string
   }
-  currentPage: 'dashboard' | 'bank-accounts' | 'journal-entries' | 'documents' | 'reports' | 'balance-sheet' | 'fiscal-years' | 'tax-reports'
+  currentPage: 'dashboard' | 'bank-accounts' | 'journal-entries' | 'accounts' | 'documents' | 'reports' | 'balance-sheet' | 'fiscal-years' | 'tax-reports'
   children: React.ReactNode
 }
 
@@ -123,6 +124,7 @@ export function AppLayout({ company, currentPage, children }: AppLayoutProps) {
   const navItems = [
     { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', enabled: true },
     { key: 'journal-entries', label: 'Journal Entries', icon: FileText, href: '/journal_entries', enabled: true },
+    { key: 'accounts', label: 'Chart of Accounts', icon: BookOpen, href: '/accounts', enabled: true },
     { key: 'bank-accounts', label: 'Bank Accounts', icon: Wallet, href: '/bank_accounts', enabled: true },
     { key: 'documents', label: 'Documents', icon: FileText, href: '/documents', enabled: true },
     { key: 'reports', label: 'Reports', icon: BarChart3, href: '/reports/balance_sheet', enabled: true },

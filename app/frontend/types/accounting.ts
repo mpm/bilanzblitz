@@ -2,6 +2,7 @@
 
 // Account balance interface (shared by Balance Sheet and GuV)
 export interface AccountBalance {
+  id?: number  // Optional, needed for ledger popover integration
   code: string
   name: string
   balance: number
@@ -79,4 +80,47 @@ export interface BalanceSheetSectionNested {
   accountCount: number
   totalAccountCount: number
   children?: BalanceSheetSectionNested[]
+}
+
+// Account with statistics (for account overview)
+export interface AccountWithStats {
+  id: number
+  code: string
+  name: string
+  accountType: string
+  balance: number
+  lineItemCount: number
+}
+
+// Line item detail in ledger view
+export interface LineItemDetail {
+  id: number
+  amount: number
+  direction: 'debit' | 'credit'
+  description: string | null
+  accountCode: string
+  accountName: string
+}
+
+// Line items grouped by journal entry
+export interface LineItemGroup {
+  journalEntryId: number
+  bookingDate: string
+  description: string
+  postedAt: string | null
+  fiscalYearClosed: boolean
+  lineItems: LineItemDetail[]
+}
+
+// Account ledger data structure
+export interface AccountLedgerData {
+  account: {
+    id: number
+    code: string
+    name: string
+    accountType: string
+  }
+  fiscalYear: FiscalYear | null
+  balance: number
+  lineItemGroups: LineItemGroup[]
 }

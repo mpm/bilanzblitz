@@ -78,6 +78,7 @@ class BalanceSheetService
       next nil unless position # Skip P&L accounts and zero balances
 
       {
+        id: account.id,
         code: account.code,
         name: account.name,
         type: account.account_type,
