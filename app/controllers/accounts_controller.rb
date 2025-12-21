@@ -7,7 +7,10 @@ class AccountsController < ApplicationController
     # Check if this is an API request (JSON) or page request (HTML/Inertia)
     respond_to do |format|
       format.json do
-        existing_accounts = @company.accounts.for_booking
+        # TODO: why was this previously using .for_booking as scope?
+        # Prevented me from using 9805 account (needed to adjust the opening balance).
+        # existing_accounts = @company.accounts #.for_booking
+        existing_accounts = @company.accounts
 
         if params[:search].present?
           existing_accounts = existing_accounts.search_by_code_or_name(params[:search])
