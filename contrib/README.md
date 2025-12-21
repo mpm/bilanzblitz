@@ -179,13 +179,6 @@ This script:
 
 The generated files use Report Section IDs (RSIDs) (e.g., `b.aktiva.anlagevermoegen.sachanlagen`) for identification.
 
-### Alternative: Legacy Single-Step Approach
-
-
-**Deprecated**: The script `parse_chart_of_accounts.rb` provides a legacy single-step approach but is **not recommended** because it performs fuzzy matching without manual review, provides no visibility into unmatched SKR03 classifications, and offers no opportunity to correct matching errors.
-
-Use the three-stage workflow (generate category mapping → generate presentation rules → review → build) instead.
-
 ## Output Files
 
 The recommended three-stage workflow (`generate_category_mapping.rb` → `generate_presentation_rules.rb` → `build_category_json.rb`) generates the following files:
