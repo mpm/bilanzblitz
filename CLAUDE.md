@@ -54,6 +54,9 @@ This project runs in a devcontainer. Use the `./dc` helper script:
 
 # Check for TypeScript errors
 ./dc npm run check
+
+# Manage SKR03 account mappings
+./dc bin/skr03_mapper help
 ```
 
 The `./dc` script is shorthand for `devcontainer exec --workspace-folder .`

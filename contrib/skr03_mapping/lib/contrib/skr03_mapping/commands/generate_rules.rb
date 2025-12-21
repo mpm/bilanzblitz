@@ -38,7 +38,7 @@ module Contrib
             "Review #{output_file}",
             "Verify/fix detected rules, especially 'needs_review' entries",
             "Assign rules to 'unknown' classifications",
-            "Run: ruby contrib/skr03_mapping/bin/skr03_mapper build-json"
+            "Run: bin/skr03_mapper build-json"
           ])
         end
       end

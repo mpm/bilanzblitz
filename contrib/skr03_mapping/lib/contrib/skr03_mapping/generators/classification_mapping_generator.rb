@@ -112,8 +112,9 @@ module Contrib
             f.puts "# ================================"
             f.puts "#"
             f.puts "# This file maps official HGB balance sheet and GuV categories to SKR03 account classifications."
-            f.puts "# It can be manually edited to fix incorrect matches before generating final JSON files."
-            f.puts "#"
+             f.puts "# It can be manually edited to fix incorrect matches before generating final JSON files."
+             f.puts "# After manual review/correction, run: bin/skr03_mapper generate-rules"
+             f.puts "#"
             f.puts "# Field Definitions:"
             f.puts "#   name: Official HGB category name (for reference)"
             f.puts "#   match_status:"
@@ -175,10 +176,11 @@ module Contrib
           puts "  Unmatched SKR03 classifications: #{unmatched_skr03.length}"
           puts
           if unmatched_skr03.any?
-            puts "⚠️  WARNING: #{unmatched_skr03.length} SKR03 classifications were not matched!"
-            puts "   These accounts will be missing from your balance sheet/GuV."
-            puts "   See the end of skr03-section-mapping.yml for the full list."
-            puts
+             puts "⚠️  WARNING: #{unmatched_skr03.length} SKR03 classifications were not matched!"
+             puts "   These accounts will be missing from your balance sheet/GuV."
+             puts "   See the end of skr03-section-mapping.yml for the full list."
+             puts "   Run 'bin/skr03_mapper generate-rules' after manual review."
+             puts
           end
         end
 

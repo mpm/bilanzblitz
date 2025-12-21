@@ -3,6 +3,7 @@
 #
 # This file maps official HGB balance sheet and GuV categories to SKR03 account classifications.
 # It can be manually edited to fix incorrect matches before generating final JSON files.
+# After manual review/correction, run: bin/skr03_mapper generate-rules
 #
 # Field Definitions:
 #   name: Official HGB category name (for reference)

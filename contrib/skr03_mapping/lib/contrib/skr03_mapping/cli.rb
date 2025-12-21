@@ -102,7 +102,7 @@ module Contrib
           SKR03 Mapper - Unified CLI for SKR03 to HGB Mapping
 
           Usage:
-            skr03_mapper COMMAND [OPTIONS]
+            bin/skr03_mapper COMMAND [OPTIONS]
 
           Commands:
             generate-mapping    Generate classification mapping YAML (alias: map-categories)
@@ -115,16 +115,16 @@ module Contrib
 
           Examples:
             # Generate category mapping
-            ruby contrib/skr03_mapping/bin/skr03_mapper generate-mapping
+            bin/skr03_mapper generate-mapping
 
             # Generate presentation rules
-            ruby contrib/skr03_mapping/bin/skr03_mapper generate-rules
+            bin/skr03_mapper generate-rules
 
             # Build final JSON files
-            ruby contrib/skr03_mapping/bin/skr03_mapper build-json
+            bin/skr03_mapper build-json
 
           For more information on a specific command, run:
-            skr03_mapper help COMMAND
+            bin/skr03_mapper help COMMAND
         HELP
       end
 
@@ -138,7 +138,7 @@ module Contrib
             Generate Classification Mapping YAML
 
             Usage:
-              skr03_mapper generate-mapping [OPTIONS]
+              bin/skr03_mapper generate-mapping [OPTIONS]
 
             Options:
               --data-dir DIR      Input data directory (default: current directory)
@@ -161,7 +161,7 @@ module Contrib
               - skr03-section-mapping.yml (human-editable)
 
             Example:
-              ruby contrib/skr03_mapping/bin/skr03_mapper generate-mapping --output my-mapping.yml
+              bin/skr03_mapper generate-mapping --output my-mapping.yml
           HELP
 
         when 'generate-rules', 'detect-rules'
@@ -169,7 +169,7 @@ module Contrib
             Generate Presentation Rules YAML
 
             Usage:
-              skr03_mapper generate-rules [OPTIONS]
+              bin/skr03_mapper generate-rules [OPTIONS]
 
             Options:
               --ocr-file FILE     OCR results file (default: skr03-ocr-results.json)
@@ -188,7 +188,7 @@ module Contrib
               - skr03-presentation-rules.yml (human-editable)
 
             Example:
-              ruby contrib/skr03_mapping/bin/skr03_mapper generate-rules --output my-rules.yml
+              bin/skr03_mapper generate-rules --output my-rules.yml
           HELP
 
         when 'build-json', 'build'
@@ -196,7 +196,7 @@ module Contrib
             Build Final JSON and CSV Files
 
             Usage:
-              skr03_mapper build-json [OPTIONS]
+              bin/skr03_mapper build-json [OPTIONS]
 
             Options:
               --mapping FILE      Section mapping YAML (default: skr03-section-mapping.yml)
@@ -224,7 +224,7 @@ module Contrib
               - skr03-accounts.csv
 
             Example:
-              ruby contrib/skr03_mapping/bin/skr03_mapper build-json --output-dir output/
+              bin/skr03_mapper build-json --output-dir output/
           HELP
         end
       end

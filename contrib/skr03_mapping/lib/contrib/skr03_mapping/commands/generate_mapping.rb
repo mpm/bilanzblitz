@@ -34,7 +34,7 @@ module Contrib
             "Review #{output_file} and fix any incorrect matches",
             "Check unmatched SKR03 classifications at the end of the file",
             "Manually assign unmatched SKR03 classifications to appropriate HGB categories",
-            "Run: ruby contrib/skr03_mapping/bin/skr03_mapper generate-rules"
+            "Run: bin/skr03_mapper generate-rules"
           ])
         end
       end

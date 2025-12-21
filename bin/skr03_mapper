@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# This is a helper script to run the SKR03 mapper CLI tool from the project root.
+# It delegates execution to the actual implementation in contrib/skr03_mapping/bin/skr03_mapper.
+
+PROJECT_ROOT = File.expand_path("..", __dir__)
+MAPPER_PATH = File.join(PROJECT_ROOT, "contrib", "skr03_mapping", "bin", "skr03_mapper")
+
+# Pass all arguments to the actual mapper
+exec "ruby", MAPPER_PATH, *ARGV
