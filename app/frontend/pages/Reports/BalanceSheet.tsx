@@ -138,8 +138,7 @@ export default function BalanceSheet({
                   Balance sheet does not balance! This indicates a data integrity
                   issue. Please review journal entries.
                   <div className="mt-2 text-xs">
-                    Aktiva: {formatCurrency(balanceSheet.aktiva.total)} |
-                    Passiva: {formatCurrency(balanceSheet.passiva.total)}
+                    Unresolved difference: {formatCurrency(Math.abs(balanceSheet.passiva.total - balanceSheet.aktiva.total))}
                   </div>
                 </AlertDescription>
               </Alert>
