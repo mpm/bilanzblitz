@@ -11,14 +11,14 @@
 #
 # Input Files:
 # - skr03-ocr-results.json: OCR results from SKR03 PDF (category → account codes)
-# - bilanz-aktiva.json: Balance sheet structure (Aktiva/Assets)
-# - bilanz-passiva.json: Balance sheet structure (Passiva/Liabilities & Equity)
-# - guv.json: Profit & Loss (GuV) structure according to § 275 Abs. 2 HGB
+# - hgb-bilanz-aktiva.json: Balance sheet structure (Aktiva/Assets)
+# - hgb-bilanz-passiva.json: Balance sheet structure (Passiva/Liabilities & Equity)
+# - hgb-guv.json: Profit & Loss (GuV) structure according to § 275 Abs. 2 HGB
 #
 # Output Files:
 # - skr03-accounts.csv: All account codes with descriptions and category hashes
-# - bilanz-with-categories.json: Balance sheet with category IDs and account codes
-# - guv-with-categories.json: GuV with category IDs and account codes
+# - bilanz-sections-mapping.json: Balance sheet with category IDs and account codes
+# - guv-sections-mapping.json: GuV with category IDs and account codes
 #
 # The script uses fuzzy matching to associate parsed category names with official
 # German accounting category names, then maps them to account codes.
@@ -245,7 +245,7 @@ class ParserTools
 end
 
 # CharOfAccountsParser orchestrates the parsing workflow:
-# 1. Loads input JSON files (bilanz-aktiva, bilanz-passiva, guv, skr03-ocr-results)
+# 1. Loads input JSON files (hgb-bilanz-aktiva, hgb-bilanz-passiva, hgb-guv, skr03-ocr-results)
 # 2. Parses and categorizes account codes from OCR results
 # 3. Performs fuzzy matching between official names and parsed categories
 # 4. Generates output files with category IDs (cid) and account code mappings
@@ -300,9 +300,9 @@ class CharOfAccountsParser
                             "Kosten bei Anwendung des Umsatzkostenverfahrens" ]
 
   def initialize
-    @bilanz_aktiva = JSON.parse(File.readlines("bilanz-aktiva.json").join("\n"))
-    @bilanz_passiva = JSON.parse(File.readlines("bilanz-passiva.json").join("\n"))
-    @guv = JSON.parse(File.readlines("guv.json").join("\n"))
+    @bilanz_aktiva = JSON.parse(File.readlines("hgb-bilanz-aktiva.json").join("\n"))
+    @bilanz_passiva = JSON.parse(File.readlines("hgb-bilanz-passiva.json").join("\n"))
+    @guv = JSON.parse(File.readlines("hgb-guv.json").join("\n"))
 
     @positions = {}
 
@@ -350,7 +350,7 @@ class CharOfAccountsParser
   # Builds a transformed structure with category IDs (cid), matched category names,
   # and associated account codes for each section, item, and child.
   #
-  # @param bdata [Hash] Balance sheet data (from bilanz-aktiva.json or bilanz-passiva.json)
+  # @param bdata [Hash] Balance sheet data (from hgb-bilanz-aktiva.json or hgb-bilanz-passiva.json)
   # @param positions [Hash] Parsed category positions from OCR results
   # @param cid_to_codes [Hash] Mapping from category ID to account codes
   # @return [Hash] Transformed balance sheet structure with cid and codes attributes
@@ -380,7 +380,7 @@ class CharOfAccountsParser
       else
         p = result[:partial] ? "[P] " : ""
         cid = ParserTools.category_hash(result[:original_category])
-        puts "  --> #{p}#{result[:original_category]} (cid: #{cid})"
+        puts "  --> #{p}#{result[:original_category]} (rsid: #{cid})"
       end
     end
 
@@ -394,11 +394,11 @@ class CharOfAccountsParser
       section_obj = {}
       if section_match && !section_match[:no_match]
         cid = ParserTools.category_hash(section_match[:original_category])
-        section_obj[:cid] = cid
+        section_obj[:rsid] = cid
         section_obj[:matched_category] = section_match[:original_category]
         section_obj[:codes] = cid_to_codes[cid] || []
       else
-        section_obj[:cid] = nil
+        section_obj[:rsid] = nil
         section_obj[:matched_category] = nil
         section_obj[:codes] = []
       end
@@ -416,11 +416,11 @@ class CharOfAccountsParser
 
             if item_match && !item_match[:no_match]
               cid = ParserTools.category_hash(item_match[:original_category])
-              item_obj[:cid] = cid
+              item_obj[:rsid] = cid
               item_obj[:matched_category] = item_match[:original_category]
               item_obj[:codes] = cid_to_codes[cid] || []
             else
-              item_obj[:cid] = nil
+              item_obj[:rsid] = nil
               item_obj[:matched_category] = nil
               item_obj[:codes] = []
             end
@@ -436,16 +436,17 @@ class CharOfAccountsParser
 
               child_obj = { name: clean_child_name }
 
-              if child_match && !child_match[:no_match]
-                cid = ParserTools.category_hash(child_match[:original_category])
-                child_obj[:cid] = cid
-                child_obj[:matched_category] = child_match[:original_category]
-                child_obj[:codes] = cid_to_codes[cid] || []
-              else
-                child_obj[:cid] = nil
-                child_obj[:matched_category] = nil
-                child_obj[:codes] = []
-              end
+               if child_match && !child_match[:no_match]
+                 cid = ParserTools.category_hash(child_match[:original_category])
+                 child_obj[:rsid] = cid
+                 child_obj[:matched_category] = child_match[:original_category]
+                 child_obj[:codes] = cid_to_codes[cid] || []
+               else
+                 child_obj[:rsid] = nil
+                 child_obj[:matched_category] = nil
+                 child_obj[:codes] = []
+               end
+
 
               child_obj
             end
@@ -465,7 +466,7 @@ class CharOfAccountsParser
   # Builds a transformed structure with category IDs (cid), matched category names,
   # and associated account codes for each section and child.
   #
-  # @param bdata [Hash] GuV data (from guv.json) following § 275 Abs. 2 HGB structure
+  # @param bdata [Hash] GuV data (from hgb-guv.json) following § 275 Abs. 2 HGB structure
   # @param positions [Hash] Parsed category positions from OCR results
   # @param cid_to_codes [Hash] Mapping from category ID to account codes
   # @return [Hash] Transformed GuV structure with cid and codes attributes
@@ -491,7 +492,7 @@ class CharOfAccountsParser
       else
         p = result[:partial] ? "[P] " : ""
         cid = ParserTools.category_hash(result[:original_category])
-        puts "  --> #{p}#{result[:original_category]} (cid: #{cid})"
+        puts "  --> #{p}#{result[:original_category]} (rsid: #{cid})"
       end
     end
 
@@ -505,11 +506,11 @@ class CharOfAccountsParser
       section_obj = {}
       if match_result && !match_result[:no_match]
         cid = ParserTools.category_hash(match_result[:original_category])
-        section_obj[:cid] = cid
+        section_obj[:rsid] = cid
         section_obj[:matched_category] = match_result[:original_category]
         section_obj[:codes] = cid_to_codes[cid] || []
       else
-        section_obj[:cid] = nil
+        section_obj[:rsid] = nil
         section_obj[:matched_category] = nil
         section_obj[:codes] = []
       end
@@ -522,11 +523,11 @@ class CharOfAccountsParser
 
           if child_match && !child_match[:no_match]
             cid = ParserTools.category_hash(child_match[:original_category])
-            child_obj[:cid] = cid
+            child_obj[:rsid] = cid
             child_obj[:matched_category] = child_match[:original_category]
             child_obj[:codes] = cid_to_codes[cid] || []
           else
-            child_obj[:cid] = nil
+            child_obj[:rsid] = nil
             child_obj[:matched_category] = nil
             child_obj[:codes] = []
           end
@@ -586,12 +587,12 @@ class CharOfAccountsParser
     mapping
   end
 
-  # Generates bilanz-with-categories.json and guv-with-categories.json files.
+  # Generates bilanz-sections-mapping.json and guv-sections-mapping.json files.
   # These files contain the complete mapping from German accounting standard
   # categories to their category IDs (cid) and associated SKR03 account codes.
   #
   # Output structure includes:
-  # - cid: 7-character hash identifying the category
+  # - rsid: identifying the category
   # - matched_category: The original parsed category name
   # - codes: Array of account codes belonging to this category
   # - children: Nested sub-categories (where applicable)
@@ -610,19 +611,19 @@ class CharOfAccountsParser
     }
 
     # Save the transformed balance sheet structure
-    File.open("bilanz-with-categories.json", "w") do |f|
+    File.open("bilanz-sections-mapping.json", "w") do |f|
       f.puts JSON.pretty_generate(transformed_bilanz)
     end
-    puts "\nUpdated bilanz-with-categories.json"
+    puts "\nUpdated bilanz-sections-mapping.json"
 
     puts "\n--- associate_guv_names:"
     transformed_guv = associate_guv_names(@guv, positions, cid_to_codes)
 
     # Save the transformed structure
-    File.open("guv-with-categories.json", "w") do |f|
+    File.open("guv-sections-mapping.json", "w") do |f|
       f.puts JSON.pretty_generate(transformed_guv)
     end
-    puts "\nUpdated guv-with-categories.json"
+    puts "\nUpdated guv-sections-mapping.json"
   end
 end
 

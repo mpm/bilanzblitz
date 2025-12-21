@@ -102,5 +102,5 @@ RSpec.describe AccountMap do
 
   # Note: Deprecated flat balance sheet methods (balance_sheet_category_title,
   # balance_sheet_account_codes, find_balance_sheet_accounts) have been removed.
-  # The system now uses the nested structure loaded from bilanz-with-categories.json.
+  # The system now uses the nested structure loaded from bilanz-sections-mapping.json.
 end

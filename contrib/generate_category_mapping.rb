@@ -9,16 +9,16 @@
 # balance sheet and GuV categories to SKR03 categories from OCR results.
 #
 # The generated mapping can be manually edited before using build_category_json.rb
-# to generate the final bilanz-with-categories.json and guv-with-categories.json files.
+# to generate the final bilanz-sections-mapping.json and guv-sections-mapping.json files.
 #
 # Input Files:
-# - bilanz-aktiva.json: Balance sheet structure (Aktiva/Assets)
-# - bilanz-passiva.json: Balance sheet structure (Passiva/Liabilities & Equity)
-# - guv.json: Profit & Loss (GuV) structure according to § 275 Abs. 2 HGB
+# - hgb-bilanz-aktiva.json: Balance sheet structure (Aktiva/Assets)
+# - hgb-bilanz-passiva.json: Balance sheet structure (Passiva/Liabilities & Equity)
+# - hgb-guv.json: Profit & Loss (GuV) structure according to § 275 Abs. 2 HGB
 # - skr03-ocr-results.json: OCR results from SKR03 PDF (category → account codes)
 #
 # Output Files:
-# - category-mapping.yml: Intermediate mapping (human-editable)
+# - skr03-section-mapping.yml: Intermediate mapping (human-editable)
 # - Diagnostic report to STDOUT
 
 require 'json'
@@ -191,9 +191,9 @@ class CategoryMappingGenerator
   ].freeze
 
   def initialize
-    @bilanz_aktiva = JSON.parse(File.read("bilanz-aktiva.json"))
-    @bilanz_passiva = JSON.parse(File.read("bilanz-passiva.json"))
-    @guv = JSON.parse(File.read("guv.json"))
+    @bilanz_aktiva = JSON.parse(File.read("hgb-bilanz-aktiva.json"))
+    @bilanz_passiva = JSON.parse(File.read("hgb-bilanz-passiva.json"))
+    @guv = JSON.parse(File.read("hgb-guv.json"))
 
     # Parse SKR03 categories
     @skr03_categories = parse_skr03_categories
@@ -227,7 +227,7 @@ class CategoryMappingGenerator
     unmatched_skr03 = unmatched_skr03.sort
 
     # Write YAML file
-    File.open("category-mapping.yml", "w") do |f|
+    File.open("skr03-section-mapping.yml", "w") do |f|
       f.puts "# SKR03 to HGB Category Mapping"
       f.puts "# ================================"
       f.puts "#"
@@ -275,7 +275,7 @@ class CategoryMappingGenerator
 
     puts "\n"
     puts "=" * 80
-    puts "Category Mapping Generated: category-mapping.yml"
+    puts "Category Mapping Generated: skr03-section-mapping.yml"
     puts "=" * 80
     puts
     puts "HGB Categories Statistics:"
@@ -292,11 +292,11 @@ class CategoryMappingGenerator
     if unmatched_skr03.any?
       puts "⚠️  WARNING: #{unmatched_skr03.length} SKR03 categories were not matched!"
       puts "   These accounts will be missing from your balance sheet/GuV."
-      puts "   See the end of category-mapping.yml for the full list."
+      puts "   See the end of skr03-section-mapping.yml for the full list."
       puts
     end
     puts "Next steps:"
-    puts "  1. Review category-mapping.yml and fix any incorrect matches"
+    puts "  1. Review skr03-section-mapping.yml and fix any incorrect matches"
     puts "  2. Check unmatched SKR03 categories at the end of the file"
     puts "  3. Manually assign unmatched SKR03 categories to appropriate HGB categories"
     puts "  4. Run: ./dc ruby contrib/build_category_json.rb"

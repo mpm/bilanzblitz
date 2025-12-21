@@ -17,7 +17,7 @@
 # - skr03-ocr-results.json: OCR results from SKR03 PDF
 #
 # Output Files:
-# - presentation-rules-mapping.yml: Mapping of categories to presentation rules
+# - skr03-presentation-rules.yml: Mapping of categories to presentation rules
 #
 
 require 'json'
@@ -249,7 +249,7 @@ class PresentationRulesGenerator
     output = generate_yaml_output(by_rule)
 
     # Write file
-    File.open("presentation-rules-mapping.yml", "w") do |f|
+    File.open("skr03-presentation-rules.yml", "w") do |f|
       f.write output
     end
 
@@ -473,7 +473,7 @@ class PresentationRulesGenerator
   def print_statistics
     puts
     puts "=" * 80
-    puts "Presentation Rules Generated: presentation-rules-mapping.yml"
+    puts "Presentation Rules Generated: skr03-presentation-rules.yml"
     puts "=" * 80
     puts
     puts "Statistics:"
@@ -485,7 +485,7 @@ class PresentationRulesGenerator
     puts "  Unknown (needs manual assignment): #{@stats[:unknown]}"
     puts
     puts "Next steps:"
-    puts "  1. Review presentation-rules-mapping.yml"
+    puts "  1. Review skr03-presentation-rules.yml"
     puts "  2. Verify/fix detected rules, especially 'needs_review' entries"
     puts "  3. Assign rules to 'unknown' categories"
     puts "  4. Run: ruby build_category_json.rb"

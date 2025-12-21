@@ -45,7 +45,7 @@ in separate lines (separate items). Also, remove spaces in account
 ranges (2000 -99 should become 2000-99). Use regex search in vim for
 this (/-\d\d/) to find all number suffixes whether with space or not.
 
-### Generate Category Mapping (Recommended Workflow)
+### Map SKR03 account classification to semantic id and report sections
 
 The recommended workflow uses a three-stage process that allows manual review and correction of mappings:
 
@@ -54,11 +54,12 @@ The recommended workflow uses a three-stage process that allows manual review an
 Run `ruby generate_category_mapping.rb` to create the intermediate mapping file.
 
 This script:
-- Reads the official HGB structure from `bilanz-aktiva.json`, `bilanz-passiva.json`, and `guv.json`
-- Reads SKR03 categories from `skr03-ocr-results.json`
-- Performs fuzzy matching between HGB and SKR03 category names
-- Generates semantic category IDs (CIDs) (e.g., `aktiva.anlagevermoegen.immaterielle.geschaeftswert`)
-- Creates `category-mapping.yml` - a human-editable YAML file
+- Reads the official HGB structure from `hgb-bilanz-aktiva.json`, `hgb-bilanz-passiva.json`, and `hgb-guv.json`
+- Reads SKR03 account classifications from `skr03-ocr-results.json`
+- Performs fuzzy matching between HGB report sections and SKR03 account
+  classifications
+- Generates Report Section IDs (RSIDs) (e.g., `b.aktiva.anlagevermoegen.immaterielle.geschaeftswert`)
+- Creates `skr03-section-mapping.yml` - a human-editable YAML file
 
 **Important**: The script reports TWO types of unmatched categories:
 1. **HGB categories without SKR03 matches**: Categories in the official structure that couldn't be matched to any SKR03 category
@@ -81,12 +82,12 @@ SKR03 Categories Statistics:
 
 ⚠️  WARNING: 73 SKR03 categories were not matched!
    These accounts will be missing from your balance sheet/GuV.
-   See the end of category-mapping.yml for the full list.
+   See the end of skr03-section-mapping.yml for the full list.
 ```
 
 #### 2. Review and Edit Mapping
 
-Open `category-mapping.yml` and:
+Open `skr03-section-mapping.yml` and:
 1. Check the auto-matched categories (marked `match_status: auto`)
 2. Review unmatched HGB categories (marked `match_status: none`)
 3. **Important**: Check the end of the file for unmatched SKR03 categories
@@ -122,13 +123,13 @@ This script:
 - Analyzes SKR03 categories for saldo patterns ("H-Saldo", "S-Saldo", "oder")
 - Detects bidirectional accounts (e.g., "Forderungen aus L&L H-Saldo oder sonstige Verbindlichkeiten S-Saldo")
 - Infers default presentation rules from category names
-- Creates `presentation-rules-mapping.yml` - a human-editable YAML file
+- Creates `skr03-presentation-rules.yml` - a human-editable YAML file
 
 **Key Concept**: Some accounts can appear on either side of the balance sheet depending on their balance direction:
 - Debit balance (S-Saldo) → typically Aktiva
 - Credit balance (H-Saldo) → typically Passiva
 
-**Important**: Review the generated `presentation-rules-mapping.yml` file:
+**Important**: Review the generated `skr03-presentation-rules.yml` file:
 1. Check auto-detected bidirectional rules (marked `status: auto`)
 2. Verify inferred default rules (marked `status: inferred`)
 3. Manually assign rules to unknown categories (marked `status: unknown`)
@@ -139,17 +140,17 @@ This script:
 Run `ruby build_category_json.rb` to generate the final output files.
 
 This script:
-- Reads the validated `category-mapping.yml`
-- Reads the validated `presentation-rules-mapping.yml` (if available)
+- Reads the validated `skr03-section-mapping.yml`
+- Reads the validated `skr03-presentation-rules.yml` (if available)
 - Reads account codes from `skr03-ocr-results.json`
-- Generates `bilanz-with-categories.json` with all account codes properly mapped
-- Generates `guv-with-categories.json` with all account codes properly mapped
+- Generates `bilanz-sections-mapping.json` with all account codes properly mapped
+- Generates `guv-sections-mapping.json` with all account codes properly mapped
 - Generates `skr03-accounts.csv` with semantic category IDs (CIDs) and presentation rules
 
-The generated files use semantic category IDs (CIDs) (e.g., `b.aktiva.anlagevermoegen.sachanlagen`) for human-readable category identification.
-
+The generated files use Report Section IDs (RSIDs) (e.g., `b.aktiva.anlagevermoegen.sachanlagen`) for identification.
 
 ### Alternative: Legacy Single-Step Approach
+
 
 **Deprecated**: The script `parse_chart_of_accounts.rb` provides a legacy single-step approach but is **not recommended** because it performs fuzzy matching without manual review, provides no visibility into unmatched SKR03 categories, and offers no opportunity to correct matching errors.
 
@@ -163,29 +164,12 @@ The recommended three-stage workflow (`generate_category_mapping.rb` → `genera
 
 ### 0. Intermediate Files (Human-Editable)
 
-#### category-mapping.yml
+#### skr03-section-mapping.yml
 
 **Purpose**: Human-editable intermediate mapping that allows manual review and correction before generating final JSON files.
 
 **Generated by**: `generate_category_mapping.rb`
 **Used by**: `build_category_json.rb`
-
-**Structure**:
-```yaml
-aktiva:
-  anlagevermoegen:
-    _meta:
-      name: "Anlagevermögen"
-      match_status: calculated
-      skr03_category: null
-      notes: "Parent category - sum of children"
-    immaterielle_vermoegensgegenstaende:
-      geschaeftswert:
-        name: "Geschäfts- oder Firmenwert"
-        match_status: auto
-        skr03_category: "Geschäfts- oder Firmenwert"
-        notes: ""
-```
 
 **Important Section**: At the end of the file, you'll find a commented list of all SKR03 categories that were NOT matched to any HGB category:
 
@@ -201,29 +185,12 @@ aktiva:
 
 These unmatched SKR03 categories are critical to review - they contain accounts that won't appear in your reports unless manually assigned!
 
-#### presentation-rules-mapping.yml
+#### skr03-presentation-rules.yml
 
 **Purpose**: Human-editable mapping of SKR03 categories to presentation rules for saldo-dependent accounts.
 
 **Generated by**: `generate_presentation_rules.rb`
 **Used by**: `build_category_json.rb`
-
-**Structure**:
-```yaml
-rules:
-  fll_standard:
-    name: "Forderungen L&L Standard"
-    debit_cid: "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen"
-    credit_cid: "b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen"
-
-categories:
-  "Forderungen aus Lieferungen und Leistungen H-Saldo oder sonstige Verbindlichkeiten S-Saldo":
-    detected_rule: fll_standard
-    confidence: high
-    reason: "Pattern: 'X H-Saldo oder Y S-Saldo'"
-    accounts: ["1499"]
-    status: auto
-```
 
 **Important**: Review and verify all detected rules before running `build_category_json.rb`.
 
@@ -251,86 +218,28 @@ A CSV file containing all SKR03 account codes with their descriptions, category 
 - `presentation_rule`: Presentation rule identifier (e.g., "fll_standard", "asset_only")
 - `description`: Human-readable description of the account
 
-#### bilanz-with-categories.json
+#### bilanz-sections-mapping.json
 
 A structured JSON file mapping the German balance sheet (Bilanz) structure to SKR03 account codes.
 
 **Generated by**: `build_category_json.rb`
 
-**Structure**:
-```json
-{
-  "aktiva": {
-    "Anlagevermögen": {
-      "cid": null,
-      "matched_category": null,
-      "codes": [],
-      "items": [
-        {
-          "name": "Immaterielle Vermögensgegenstände",
-          "cid": null,
-          "matched_category": null,
-          "codes": [],
-          "children": [
-            {
-              "name": "Selbst geschaffene gewerbliche Schutzrechte...",
-              "cid": "9f184e6",
-              "matched_category": "Selbst geschaffene gewerbliche Schutzrechte...",
-              "codes": ["0043", "0044", "0045", "0046", "0047", "0048"]
-            }
-          ]
-        }
-      ]
-    }
-  },
-  "passiva": {
-    "Eigenkapital": { ... },
-    "Rückstellungen": { ... },
-    "Verbindlichkeiten": { ... }
-  }
-}
-```
-
 **Key Attributes**:
-- `cid`: Semantic category identifier (e.g., "b.aktiva.anlagevermoegen.sachanlagen"). Null if no match found.
+- `rsid`: Report Section identifier (e.g., "b.aktiva.anlagevermoegen.sachanlagen"). Null if no match found.
 - `matched_category`: The parsed SKR03 category name that was matched
 - `codes`: Array of account codes belonging to this category
 - `items`: Sub-categories within a section
 - `children`: Detailed positions within an item
 
-#### guv-with-categories.json
+#### guv-sections-mapping.json
 
 A structured JSON file mapping the German Profit & Loss (GuV) structure according to § 275 Abs. 2 HGB (Gesamtkostenverfahren) to SKR03 account codes.
 
 **Generated by**: `build_category_json.rb`
 
-**Structure**:
-```json
-{
-  "Umsatzerlöse": {
-    "cid": "guv.umsatzerloese",
-    "matched_category": "Umsatzerlöse",
-    "codes": ["2750", "2751", "8000", "8100", "8120", ...]
-  },
-  "Materialaufwand": {
-    "cid": "guv.materialaufwand",
-    "matched_category": null,
-    "codes": [],
-    "children": [
-      {
-        "name": "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe...",
-        "cid": "guv.materialaufwand.roh_hilfs_betriebsstoffe",
-        "matched_category": "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe...",
-        "codes": ["3000", "3010", "3020", "3029", ...]
-      }
-    ]
-  }
-}
-```
-
 **Key Attributes**:
-- `cid`: Semantic category identifier (e.g., "guv.umsatzerloese"). Null if no match found.
-- `matched_category`: The parsed SKR03 category name that was matched
+- `rsid`: Report Section identifier (e.g., "guv.umsatzerloese"). Null if no match found.
+- `matched_category`: The parsed SKR03 account classification (coming from skr03-ocr-results.json) that was matched
 - `codes`: Array of account codes belonging to this category
 - `children`: Sub-sections for composite GuV positions (e.g., Materialaufwand has subsections for materials and services)
 
@@ -342,12 +251,12 @@ These files are designed to be imported into the BilanzBlitz application to enab
 2. **Report Generation**: Generate balance sheets and GuV reports by aggregating accounts according to their categories
 3. **Validation**: Ensure posted journal entries use accounts appropriate for their intended purpose
 
-The semantic category identifier (`cid`) serves as a stable, human-readable identifier that links:
+The logical identity (CID) serves as a stable, human-readable identifier that links:
 - Account codes in `skr03-accounts.csv`
-- Categories in `bilanz-with-categories.json`
-- Categories in `guv-with-categories.json`
+- Categories in `bilanz-sections-mapping.json`
+- Categories in `guv-sections-mapping.json`
 
-**Example semantic IDs**:
+**Example semantic IDs (CID / default RSID)**:
 - `b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende.geschaefts_oder_firmenwert`
 - `b.passiva.verbindlichkeiten.verbindlichkeiten_aus_lieferungen_und_leistungen`
 - `guv.umsatzerloese`

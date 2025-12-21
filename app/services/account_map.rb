@@ -105,10 +105,10 @@ class AccountMap
 
   class << self
     # Load balance sheet structure from JSON file
-    # @return [Hash] Raw JSON structure from bilanz-with-categories.json
+    # @return [Hash] Raw JSON structure from bilanz-sections-mapping.json
     def load_balance_sheet_structure
       @balance_sheet_structure ||= begin
-        path = Rails.root.join("contrib", "bilanz-with-categories.json")
+        path = Rails.root.join("contrib", "bilanz-sections-mapping.json")
         JSON.parse(File.read(path), symbolize_names: true)
       end
     end
@@ -231,14 +231,15 @@ class AccountMap
       nil
     end
 
-    # Get the hierarchical category ID (cid) for an account code
+    # Get the hierarchical category ID (cid) for an account code.
+    # The cid acts as the logical identity and the default Report Section ID (RSID).
     # @param account_code [String] The account code (e.g., "0750", "1400")
     # @return [String, nil] The full cid path (e.g., "b.aktiva.anlagevermoegen.sachanlagen") or nil
     def cid_for_code(account_code)
       # Search balance sheet (aktiva and passiva)
       [ :aktiva, :passiva ].each do |side|
-        nested_balance_sheet_categories[side].each do |top_key, top_data|
-          result = find_cid_in_category(account_code, top_data, "b.#{side}.#{top_key}")
+        nested_balance_sheet_categories[side].each_value do |top_data|
+          result = find_cid_in_category(account_code, top_data)
           return result if result
         end
       end
@@ -252,20 +253,20 @@ class AccountMap
 
     private
 
-    # Recursively search for account code and return full cid path
+    # Recursively search for account code and return full cid path (using the rsid field)
     # @param account_code [String] The account code to search for
-    # @param category_data [Hash] Category data with :codes and :children
-    # @param cid_path [String] Current cid path being built
+    # @param category_data [Hash] Category data with :codes, :children and :rsid
+    # @param cid_path [String] (Not used anymore, kept for signature consistency if needed)
     # @return [String, nil] Full cid path if found, nil otherwise
-    def find_cid_in_category(account_code, category_data, cid_path)
+    def find_cid_in_category(account_code, category_data, cid_path = nil)
       # Check codes at this level
       codes = expand_account_ranges(category_data[:codes] || [])
-      return cid_path if codes.include?(account_code)
+      return category_data[:rsid] if codes.include?(account_code)
 
       # Recursively check children
       if category_data[:children]
-        category_data[:children].each do |child_key, child_data|
-          result = find_cid_in_category(account_code, child_data, "#{cid_path}.#{child_key}")
+        category_data[:children].each_value do |child_data|
+          result = find_cid_in_category(account_code, child_data)
           return result if result
         end
       end
@@ -310,7 +311,8 @@ class AccountMap
       category = {
         name: name_str,
         codes: codes,
-        children: {}
+        children: {},
+        rsid: data[:rsid] # Preserve the RSID from JSON
       }
 
       # Handle 'items' array (used for top-level categories like Anlagevermögen)
@@ -322,7 +324,8 @@ class AccountMap
             category[:children][item_key] = {
               name: item[:name],
               codes: ensure_codes_array(item[:codes]),
-              children: {}
+              children: {},
+              rsid: item[:rsid]
             }
 
             # Handle 'children' within items
@@ -332,7 +335,8 @@ class AccountMap
                 category[:children][item_key][:children][child_key] = {
                   name: child[:name],
                   codes: ensure_codes_array(child[:codes]),
-                  children: {}
+                  children: {},
+                  rsid: child[:rsid]
                 }
               end
             end
@@ -343,7 +347,8 @@ class AccountMap
               category[:children][child_key] = {
                 name: child[:name],
                 codes: ensure_codes_array(child[:codes]),
-                children: {}
+                children: {},
+                rsid: child[:rsid]
               }
             end
           end
@@ -358,7 +363,8 @@ class AccountMap
           category[:children][child_key] = {
             name: child[:name],
             codes: ensure_codes_array(child[:codes]),
-            children: {}
+            children: {},
+            rsid: child[:rsid]
           }
         end
       end

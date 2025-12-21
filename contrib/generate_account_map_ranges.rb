@@ -2,14 +2,14 @@
 # frozen_string_literal: true
 
 # Helper script to generate account ranges for AccountMap from JSON files
-# Reads bilanz-with-categories.json and guv-with-categories.json
+# Reads bilanz-sections-mapping.json and guv-sections-mapping.json
 # Outputs account ranges mapped to AccountMap symbol keys
 
 require 'json'
 
 # Load JSON files
-bilanz_data = JSON.parse(File.read('contrib/bilanz-with-categories.json'))
-guv_data = JSON.parse(File.read('contrib/guv-with-categories.json'))
+bilanz_data = JSON.parse(File.read('contrib/bilanz-sections-mapping.json'))
+guv_data = JSON.parse(File.read('contrib/guv-sections-mapping.json'))
 
 # Mapping from JSON section names to AccountMap symbol keys
 GUV_MAPPING = {

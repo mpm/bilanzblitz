@@ -65,8 +65,8 @@ AccountMap determines account types by looking up the account code in the nested
 This replaces the old range-based approach which was structurally incorrect for SKR03. For example, account 0750 is now correctly classified as `"liability"` (not `"asset"`), because it belongs to the "Verbindlichkeiten" category.
 
 **Data Source**:
-- `contrib/bilanz-with-categories.json` - Balance sheet mappings
-- `contrib/guv-with-categories.json` - GuV mappings
+- `contrib/bilanz-sections-mapping.json` - Balance sheet mappings (RSID and account codes)
+- `contrib/guv-sections-mapping.json` - GuV mappings (RSID and account codes)
 - `contrib/generate_account_map_ranges.rb` - Helper script
 
 ### PresentationRule

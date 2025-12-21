@@ -2,7 +2,7 @@
 
 ## Data Model & Terminology
 
-To handle the complexity of German accounting (SKR03/SKR04) and HGB reporting requirements, the application distinguishes between four key concepts:
+To handle the complexity of German accounting (SKR03) and HGB reporting requirements, the application distinguishes between four key concepts:
 
 1. **Account Classification (Kontenbeschriftung)**:
    The raw category description from the chart of accounts (e.g., DATEV SKR03). This is used as the source for initial mapping but is often ambiguous as it can mix semantic meaning with presentation rules.
@@ -22,11 +22,19 @@ To keep the data model simple, we use the same identifier format (e.g., `b.aktiv
 
 In the vast majority of cases, an account's CID is identical to its RSID. However, for accounts governed by a **Presentation Rule**, the CID represents the "logical identity" (and acts as a default RSID), while the rule determines the final **RSID** based on the actual account balance at reporting time.
 
+### Data Sources in `contrib/`
+
+The mapping logic is driven by several files in the `contrib/` directory:
+
+- **`hgb-bilanz-aktiva.json`, `hgb-bilanz-passiva.json`, `hgb-guv.json`**: Official HGB reporting structures.
+- **`skr03-section-mapping.yml`**: Maps raw SKR03 account classification to HGB Report Sections.
+- **`skr03-presentation-rules.yml`**: Defines Bilanzierungsregeln for saldo-dependent accounts.
+- **`bilanz-sections-mapping.json`, `guv-sections-mapping.json`**: The final generated mapping files used by `AccountMap` to resolve accounts to their CIDs and Report Sections.
+
 ## Chart of Accounts (Kontenrahmen)
 
 The application supports standard German charts of accounts:
 - **SKR03** - Process-oriented (most common)
-- **SKR04** - Balance sheet-oriented
 
 ### SKR03 Account Numbering
 

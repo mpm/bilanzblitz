@@ -5,19 +5,19 @@
 # Category JSON Builder
 # =====================
 #
-# Builds bilanz-with-categories.json and guv-with-categories.json
-# from validated category-mapping.yml and skr03-ocr-results.json
+# Builds bilanz-sections-mapping.json and guv-sections-mapping.json
+# from validated skr03-section-mapping.yml and skr03-ocr-results.json
 #
 # Input Files:
-# - category-mapping.yml: Validated intermediate mapping (manually edited)
+# - skr03-section-mapping.yml: Validated intermediate mapping (manually edited)
 # - skr03-ocr-results.json: SKR03 categories with account codes
-# - bilanz-aktiva.json: Balance sheet structure (for structure reference)
-# - bilanz-passiva.json: Balance sheet structure (for structure reference)
-# - guv.json: GuV structure (for structure reference)
+# - hgb-bilanz-aktiva.json: Balance sheet structure (for structure reference)
+# - hgb-bilanz-passiva.json: Balance sheet structure (for structure reference)
+# - hgb-guv.json: GuV structure (for structure reference)
 #
 # Output Files:
-# - bilanz-with-categories.json: Balance sheet with category IDs and codes
-# - guv-with-categories.json: GuV with category IDs and codes
+# - bilanz-sections-mapping.json: Balance sheet with section IDs and codes
+# - guv-sections-mapping.json: GuV with section IDs and codes
 
 require 'json'
 require 'yaml'
@@ -122,10 +122,10 @@ end
 # Main builder class
 class CategoryJsonBuilder
   def initialize
-    @mapping = YAML.load_file('category-mapping.yml')
-    @bilanz_aktiva = JSON.parse(File.read('bilanz-aktiva.json'))
-    @bilanz_passiva = JSON.parse(File.read('bilanz-passiva.json'))
-    @guv = JSON.parse(File.read('guv.json'))
+    @mapping = YAML.load_file('skr03-section-mapping.yml')
+    @bilanz_aktiva = JSON.parse(File.read('hgb-bilanz-aktiva.json'))
+    @bilanz_passiva = JSON.parse(File.read('hgb-bilanz-passiva.json'))
+    @guv = JSON.parse(File.read('hgb-guv.json'))
 
     # Load presentation rules mapping if available
     @presentation_rules = load_presentation_rules
@@ -142,7 +142,7 @@ class CategoryJsonBuilder
 
   # Load presentation rules from YAML file
   def load_presentation_rules
-    rules_path = 'presentation-rules-mapping.yml'
+    rules_path = 'skr03-presentation-rules.yml'
     return nil unless File.exist?(rules_path)
 
     YAML.load_file(rules_path)
@@ -157,25 +157,25 @@ class CategoryJsonBuilder
     puts "=" * 80
     puts
 
-    # Build bilanz-with-categories.json
+    # Build bilanz-sections-mapping.json
     bilanz_output = {
       aktiva: build_balance_sheet_side(@bilanz_aktiva, @mapping["aktiva"], "aktiva"),
       passiva: build_balance_sheet_side(@bilanz_passiva, @mapping["passiva"], "passiva")
     }
 
-    File.open("bilanz-with-categories.json", "w") do |f|
+    File.open("bilanz-sections-mapping.json", "w") do |f|
       f.write JSON.pretty_generate(bilanz_output)
     end
 
-    puts "✓ Generated bilanz-with-categories.json"
+    puts "✓ Generated bilanz-sections-mapping.json"
 
-    # Build guv-with-categories.json
+    # Build guv-sections-mapping.json
     guv_output = build_guv_structure
-    File.open("guv-with-categories.json", "w") do |f|
+    File.open("guv-sections-mapping.json", "w") do |f|
       f.write JSON.pretty_generate(guv_output)
     end
 
-    puts "✓ Generated guv-with-categories.json"
+    puts "✓ Generated guv-sections-mapping.json"
 
     # Generate skr03-accounts.csv
     generate_skr03_accounts_csv
@@ -254,7 +254,7 @@ class CategoryJsonBuilder
       else
         # No mapping found - create empty structure
         result[section_name] = {
-          cid: nil,
+          rsid: nil,
           matched_category: nil,
           codes: []
         }
@@ -268,7 +268,7 @@ class CategoryJsonBuilder
     meta = mapping["_meta"] if mapping.is_a?(Hash)
 
     section = {
-      cid: path_prefix,
+      rsid: path_prefix,
       matched_category: meta ? meta["skr03_category"] : mapping["skr03_category"],
       codes: get_codes_for_mapping(meta || mapping)
     }
@@ -302,7 +302,7 @@ class CategoryJsonBuilder
 
     item_obj = {
       name: item["name"],
-      cid: path_prefix,
+      rsid: path_prefix,
       matched_category: meta ? meta["skr03_category"] : mapping["skr03_category"],
       codes: get_codes_for_mapping(meta || mapping)
     }
@@ -317,14 +317,14 @@ class CategoryJsonBuilder
           child_id = find_id_for_mapping(mapping, child_mapping)
           {
             name: clean_child_name,
-            cid: "#{path_prefix}.#{child_id}",
+            rsid: "#{path_prefix}.#{child_id}",
             matched_category: child_mapping["skr03_category"],
             codes: get_codes_for_mapping(child_mapping)
           }
         else
           {
             name: clean_child_name,
-            cid: nil,
+            rsid: nil,
             matched_category: nil,
             codes: []
           }
@@ -347,14 +347,14 @@ class CategoryJsonBuilder
           child_id = find_id_for_mapping(mapping, child_mapping)
           {
             name: clean_child_name,
-            cid: "#{path_prefix}.#{child_id}",
+            rsid: "#{path_prefix}.#{child_id}",
             matched_category: child_mapping["skr03_category"],
             codes: get_codes_for_mapping(child_mapping)
           }
         else
           {
             name: clean_child_name,
-            cid: nil,
+            rsid: nil,
             matched_category: nil,
             codes: []
           }
@@ -366,7 +366,7 @@ class CategoryJsonBuilder
   def build_empty_item(item)
     {
       name: item["name"] || "",
-      cid: nil,
+      rsid: nil,
       matched_category: nil,
       codes: []
     }
@@ -383,7 +383,7 @@ class CategoryJsonBuilder
         section_id = find_id_for_mapping(@mapping["guv"], section_mapping)
 
         section = {
-          cid: "guv.#{section_id}",
+          rsid: "guv.#{section_id}",
           matched_category: section_mapping["skr03_category"],
           codes: get_codes_for_mapping(section_mapping)
         }
@@ -397,14 +397,14 @@ class CategoryJsonBuilder
               child_id = find_id_for_mapping(section_mapping, child_mapping)
               {
                 name: child_name,
-                cid: "guv.#{section_id}.#{child_id}",
+                rsid: "guv.#{section_id}.#{child_id}",
                 matched_category: child_mapping["skr03_category"],
                 codes: get_codes_for_mapping(child_mapping)
               }
             else
               {
                 name: child_name,
-                cid: nil,
+                rsid: nil,
                 matched_category: nil,
                 codes: []
               }
@@ -415,7 +415,7 @@ class CategoryJsonBuilder
         result[section_name] = section
       else
         result[section_name] = {
-          cid: nil,
+          rsid: nil,
           matched_category: nil,
           codes: []
         }
