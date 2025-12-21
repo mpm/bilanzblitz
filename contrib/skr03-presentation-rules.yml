@@ -1,7 +1,7 @@
 # Presentation Rules Mapping for SKR03 Accounts
 # ==============================================
 #
-# This file maps SKR03 categories to presentation rules (Bilanzierungsregeln).
+# This file maps SKR03 classifications to presentation rules (Bilanzierungsregeln).
 # Presentation rules determine where an account balance appears on the balance
 # sheet based on the saldo direction (debit or credit).
 #
@@ -23,7 +23,7 @@
 # Status Values:
 #   - auto: Automatically detected with high confidence
 #   - needs_review: Detected but needs manual verification
-#   - inferred: Inferred from category name (default rule)
+#   - inferred: Inferred from classification name (default rule)
 #   - manual: Manually specified/corrected
 #   - unknown: No pattern matched (needs manual assignment)
 #
@@ -84,7 +84,7 @@ rules:
     description: Aufwands- und Ertragskonten - nicht in der Bilanz
     debit_rsid:
     credit_rsid:
-categories:
+classifications:
   Forderungen aus Lieferungen und Leistungen H-Saldo:
     detected_rule: fll_standard
     confidence: medium
@@ -481,7 +481,7 @@ categories:
   Wertpapiere des Anlagevermögens:
     detected_rule: asset_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '0525'
     - '0530'
@@ -491,14 +491,14 @@ categories:
   Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks:
     detected_rule: asset_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '9962'
     status: inferred
   Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens:
     detected_rule: asset_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '2620'
     - '2621'
@@ -516,7 +516,7 @@ categories:
   Abschreibungen auf immaterielle Vermögensgegenstände des Anlagevermögens und Sachanlagen:
     detected_rule: asset_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '4862'
     - '4865'
@@ -524,34 +524,34 @@ categories:
   Forderungen aus Lieferungen und Leistungen:
     detected_rule: asset_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '9960'
     status: inferred
   'Sollsalden: Forderungen aus Lieferungen und Leistungen':
     detected_rule: asset_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts: []
     status: inferred
   Verbindlichkeiten gegenüber Kreditinstituten:
     detected_rule: liability_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '9963'
     status: inferred
   Sonstige Verbindlichkeiten:
     detected_rule: liability_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '9961'
     status: inferred
   Rückstellungen für Pensionen und ähnliche Verpflichtungen:
     detected_rule: liability_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '0952'
     - '0953'
@@ -560,14 +560,14 @@ categories:
   Steuerrückstellungen:
     detected_rule: liability_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '0969'
     status: inferred
   Sonstige Rückstellungen:
     detected_rule: liability_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '0970'
     - '0971'
@@ -581,7 +581,7 @@ categories:
   Verbindlichkeiten aus der Annahme gezogener Wechsel und aus der Ausstellung eigener Wechsel:
     detected_rule: liability_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '1660'
     - '1661'
@@ -599,33 +599,33 @@ categories:
   Verbindlichkeiten aus Lieferungen und Leistungen:
     detected_rule: liability_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '9964'
     status: inferred
   'Habensalden: Sonstige Verbindlichkeiten':
     detected_rule: liability_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts: []
     status: inferred
   'Habensalden: Verbindlichkeiten aus Lieferungen und Leistungen':
     detected_rule: liability_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts: []
     status: inferred
   Gezeichnetes Kapital:
     detected_rule: equity_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '0809'
     status: inferred
   Eingeforderte, noch ausstehende Kapitaleinlagen:
     detected_rule: equity_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '0820'
     - '0821'
@@ -643,7 +643,7 @@ categories:
   Kapitalrücklage:
     detected_rule: equity_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '0840'
     - '0841'
@@ -656,7 +656,7 @@ categories:
     in der Kapitalgesellschaft üblichen Abschreibungen überschreiten
   : detected_rule: equity_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '4892'
     - '4893'
@@ -664,35 +664,35 @@ categories:
   Einstellung in die Kapitalrücklage nach den Vorschriften über die vereinfachte Kapitalherabsetzung:
     detected_rule: equity_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '2495'
     status: inferred
   Ertrag aus Kapitalherabsetzung:
     detected_rule: equity_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '2745'
     status: inferred
   Entnahmen aus der Kapitalrücklage:
     detected_rule: equity_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '2795'
     status: inferred
   Gezeichnetes Kapital in DM:
     detected_rule: equity_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '9220'
     status: inferred
   Sonstige betriebliche Aufwendungen:
     detected_rule: pnl_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '8800'
     - '8801'
@@ -712,7 +712,7 @@ categories:
   Zinsen und ähnliche Aufwendungen:
     detected_rule: pnl_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '2148'
     - '2149'
@@ -720,21 +720,21 @@ categories:
   Steuern vom Einkommen und Ertrag:
     detected_rule: pnl_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '4320'
     status: inferred
   Aufwendungen aus Verlustübernahme:
     detected_rule: pnl_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '2490'
     status: inferred
   Umsatzerlöse:
     detected_rule: pnl_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '8950'
     - '8955'
@@ -743,7 +743,7 @@ categories:
   Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren:
     detected_rule: pnl_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '4000'
     - '4001'
@@ -849,7 +849,7 @@ categories:
   Aufwendungen für bezogene Leistungen:
     detected_rule: pnl_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '3152'
     - '3155'
@@ -867,7 +867,7 @@ categories:
   Soziale Abgaben und Aufwendungen für Altersversorgung und für Unterstützung:
     detected_rule: pnl_only
     confidence: inferred
-    reason: Inferred from category name
+    reason: Inferred from classification name
     accounts:
     - '4160'
     - '4165'

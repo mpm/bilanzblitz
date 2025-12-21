@@ -5,10 +5,10 @@
 # Presentation Rules Generator for SKR03 Accounts
 # ================================================
 #
-# This script analyzes SKR03 OCR results to detect saldo-dependent categories
+# This script analyzes SKR03 OCR results to detect saldo-dependent classifications
 # and generates a YAML mapping file for manual review.
 #
-# Saldo-dependent categories have patterns like:
+# Saldo-dependent classifications have patterns like:
 # - "Forderungen aus L&L H-Saldo oder sonstige Verbindlichkeiten S-Saldo"
 # - "Verbindlichkeiten aus L&L S-Saldo oder sonstige Vermögensgegenstände H-Saldo"
 # - "X oder Y" (without explicit saldo direction)
@@ -17,7 +17,7 @@
 # - skr03-ocr-results.json: OCR results from SKR03 PDF
 #
 # Output Files:
-# - skr03-presentation-rules.yml: Mapping of categories to presentation rules
+# - skr03-presentation-rules.yml: Mapping of classifications to presentation rules
 #
 
 require 'json'
@@ -75,13 +75,13 @@ class PresentationRuleDetector
   # Generic "oder" pattern (needs manual classification)
   GENERIC_ODER_PATTERN = /\s+oder\s+/i
 
-  def detect_rule(category_name)
-    return nil if category_name.nil? || category_name.empty?
+  def detect_rule(classification_name)
+    return nil if classification_name.nil? || classification_name.empty?
 
     # Check for specific rule patterns
     RULE_PATTERNS.each do |rule_id, patterns|
       patterns.each do |pattern|
-        if category_name.match?(pattern)
+        if classification_name.match?(pattern)
           return {
             rule: rule_id,
             confidence: :high,
@@ -93,14 +93,14 @@ class PresentationRuleDetector
 
     # Check for single-sided saldo patterns
     SINGLE_SALDO_PATTERNS.each do |saldo_type, pattern|
-      if category_name.match?(pattern)
+      if classification_name.match?(pattern)
         # H-Saldo at end typically means "Wertberichtigung" or credit-balance account
         # S-Saldo at end typically means debit-balance constraint
         inferred_rule = case saldo_type
         when :h_saldo_only
-                          category_name.include?("Forderung") ? :fll_standard : :liability_only
+                          classification_name.include?("Forderung") ? :fll_standard : :liability_only
         when :s_saldo_only
-                          category_name.include?("Verbindlichkeit") ? :vll_standard : :asset_only
+                          classification_name.include?("Verbindlichkeit") ? :vll_standard : :asset_only
         end
         return {
           rule: inferred_rule,
@@ -111,7 +111,7 @@ class PresentationRuleDetector
     end
 
     # Check for generic "oder" pattern (needs manual review)
-    if category_name.match?(GENERIC_ODER_PATTERN)
+    if classification_name.match?(GENERIC_ODER_PATTERN)
       return {
         rule: :needs_review,
         confidence: :low,
@@ -123,27 +123,27 @@ class PresentationRuleDetector
     nil
   end
 
-  def infer_default_rule(category_name)
-    category_lower = category_name.downcase
+  def infer_default_rule(classification_name)
+    classification_lower = classification_name.downcase
 
-    # Check for known category types to infer default rule
-    if category_lower.include?("forderung") && !category_lower.include?("oder")
+    # Check for known classification types to infer default rule
+    if classification_lower.include?("forderung") && !classification_lower.include?("oder")
       :asset_only
-    elsif category_lower.include?("verbindlichkeit") && !category_lower.include?("oder")
+    elsif classification_lower.include?("verbindlichkeit") && !classification_lower.include?("oder")
       :liability_only
-    elsif category_lower.include?("rückstellung")
+    elsif classification_lower.include?("rückstellung")
       :liability_only
-    elsif category_lower.include?("eigenkapital") || category_lower.include?("kapital")
+    elsif classification_lower.include?("eigenkapital") || classification_lower.include?("kapital")
       :equity_only
-    elsif category_lower.include?("aufwand") || category_lower.include?("aufwendung")
+    elsif classification_lower.include?("aufwand") || classification_lower.include?("aufwendung")
       :pnl_only
-    elsif category_lower.include?("ertrag") || category_lower.include?("erlös")
+    elsif classification_lower.include?("ertrag") || classification_lower.include?("erlös")
       :pnl_only
-    elsif category_lower.include?("anlagevermögen") || category_lower.include?("sachanlagen")
+    elsif classification_lower.include?("anlagevermögen") || classification_lower.include?("sachanlagen")
       :asset_only
-    elsif category_lower.include?("vorräte") || category_lower.include?("vorrat")
+    elsif classification_lower.include?("vorräte") || classification_lower.include?("vorrat")
       :asset_only
-    elsif category_lower.include?("kasse") || category_lower.include?("bank") || category_lower.include?("guthaben")
+    elsif classification_lower.include?("kasse") || classification_lower.include?("bank") || classification_lower.include?("guthaben")
       # Bank could be bidirectional, but default to asset_only unless pattern detected
       :asset_only
     else
@@ -224,7 +224,7 @@ class PresentationRulesGenerator
     @ocr_data = JSON.parse(File.read("skr03-ocr-results.json"))
     @detector = PresentationRuleDetector.new
     @stats = {
-      total_categories: 0,
+      total_classifications: 0,
       bidirectional_detected: 0,
       single_saldo_detected: 0,
       generic_oder_detected: 0,
@@ -239,11 +239,11 @@ class PresentationRulesGenerator
     puts "=" * 80
     puts
 
-    # Process all categories
-    categories = process_categories
+    # Process all classifications
+    classifications = process_classifications
 
     # Group by detected rule
-    by_rule = categories.group_by { |c| c[:detected_rule] }
+    by_rule = classifications.group_by { |c| c[:detected_rule] }
 
     # Generate YAML output
     output = generate_yaml_output(by_rule)
@@ -258,22 +258,22 @@ class PresentationRulesGenerator
 
   private
 
-  def process_categories
-    categories = []
+  def process_classifications
+    classifications = []
 
     @ocr_data.each do |row|
-      category_name = row[0]&.strip
+      classification_name = row[0]&.strip
       codes_string = row[1]&.strip
 
-      next if category_name.nil? || category_name.empty?
+      next if classification_name.nil? || classification_name.empty?
 
-      @stats[:total_categories] += 1
+      @stats[:total_classifications] += 1
 
       # Parse account codes
       account_codes = AccountCodeParser.parse(codes_string)
 
       # Detect saldo pattern
-      detection = @detector.detect_rule(category_name)
+      detection = @detector.detect_rule(classification_name)
 
       if detection
         case detection[:confidence]
@@ -285,8 +285,8 @@ class PresentationRulesGenerator
           @stats[:generic_oder_detected] += 1
         end
 
-        categories << {
-          category: category_name,
+        classifications << {
+          classification: classification_name,
           detected_rule: detection[:rule],
           confidence: detection[:confidence],
           reason: detection[:reason],
@@ -295,22 +295,22 @@ class PresentationRulesGenerator
         }
       else
         # Try to infer default rule
-        default_rule = @detector.infer_default_rule(category_name)
+        default_rule = @detector.infer_default_rule(classification_name)
 
         if default_rule
           @stats[:default_inferred] += 1
-          categories << {
-            category: category_name,
+          classifications << {
+            classification: classification_name,
             detected_rule: default_rule,
             confidence: :inferred,
-            reason: "Inferred from category name",
+            reason: "Inferred from classification name",
             accounts: account_codes,
             status: "inferred"
           }
         else
           @stats[:unknown] += 1
-          categories << {
-            category: category_name,
+          classifications << {
+            classification: classification_name,
             detected_rule: :unknown,
             confidence: :none,
             reason: "No pattern matched",
@@ -321,7 +321,7 @@ class PresentationRulesGenerator
       end
     end
 
-    categories
+    classifications
   end
 
   def generate_yaml_output(by_rule)
@@ -329,7 +329,7 @@ class PresentationRulesGenerator
       # Presentation Rules Mapping for SKR03 Accounts
       # ==============================================
       #
-      # This file maps SKR03 categories to presentation rules (Bilanzierungsregeln).
+      # This file maps SKR03 classifications to presentation rules (Bilanzierungsregeln).
       # Presentation rules determine where an account balance appears on the balance
       # sheet based on the saldo direction (debit or credit).
       #
@@ -351,7 +351,7 @@ class PresentationRulesGenerator
       # Status Values:
       #   - auto: Automatically detected with high confidence
       #   - needs_review: Detected but needs manual verification
-      #   - inferred: Inferred from category name (default rule)
+      #   - inferred: Inferred from classification name (default rule)
       #   - manual: Manually specified/corrected
       #   - unknown: No pattern matched (needs manual assignment)
       #
@@ -362,7 +362,7 @@ class PresentationRulesGenerator
 
     yaml_data = {
       "rules" => generate_rules_section,
-      "categories" => {}
+      "classifications" => {}
     }
 
     # Sort rules for predictable output
@@ -377,7 +377,7 @@ class PresentationRulesGenerator
       next unless by_rule[rule]
 
       by_rule[rule].each do |cat_data|
-        yaml_data["categories"][cat_data[:category]] = {
+        yaml_data["classifications"][cat_data[:classification]] = {
           "detected_rule" => cat_data[:detected_rule].to_s,
           "confidence" => cat_data[:confidence].to_s,
           "reason" => cat_data[:reason],
@@ -392,7 +392,7 @@ class PresentationRulesGenerator
       next if rule_order.include?(rule)
 
       cats.each do |cat_data|
-        yaml_data["categories"][cat_data[:category]] = {
+        yaml_data["classifications"][cat_data[:classification]] = {
           "detected_rule" => cat_data[:detected_rule].to_s,
           "confidence" => cat_data[:confidence].to_s,
           "reason" => cat_data[:reason],
@@ -477,7 +477,7 @@ class PresentationRulesGenerator
     puts "=" * 80
     puts
     puts "Statistics:"
-    puts "  Total categories analyzed: #{@stats[:total_categories]}"
+    puts "  Total classifications analyzed: #{@stats[:total_classifications]}"
     puts "  Bidirectional rules detected (high confidence): #{@stats[:bidirectional_detected]}"
     puts "  Single-saldo patterns detected: #{@stats[:single_saldo_detected]}"
     puts "  Generic 'oder' patterns (needs review): #{@stats[:generic_oder_detected]}"
@@ -487,7 +487,7 @@ class PresentationRulesGenerator
     puts "Next steps:"
     puts "  1. Review skr03-presentation-rules.yml"
     puts "  2. Verify/fix detected rules, especially 'needs_review' entries"
-    puts "  3. Assign rules to 'unknown' categories"
+    puts "  3. Assign rules to 'unknown' classifications"
     puts "  4. Run: ruby build_category_json.rb"
     puts
   end

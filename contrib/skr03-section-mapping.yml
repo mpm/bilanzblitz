@@ -1,7 +1,7 @@
-# SKR03 to HGB Category Mapping
-# ================================
+# SKR03 to HGB Classification Mapping
+# ====================================
 #
-# This file maps official HGB balance sheet and GuV categories to SKR03 categories.
+# This file maps official HGB balance sheet and GuV categories to SKR03 account classifications.
 # It can be manually edited to fix incorrect matches before generating final JSON files.
 #
 # Field Definitions:
@@ -11,7 +11,7 @@
 #     - manual: Manually specified/corrected
 #     - calculated: Calculated value, no direct account mapping
 #     - none: No match found (needs review)
-#   skr03_category: Name of SKR03 category to map (or null)
+#   skr03_classification: Name of SKR03 account classification to map (or null)
 #   notes: Human-readable notes for documentation
 #
 # _meta sections are for parent/intermediate categories without direct account mappings.
@@ -23,320 +23,320 @@ aktiva:
     _meta:
       name: Anlagevermögen
       match_status: calculated
-      skr03_category:
+      skr03_classification:
       notes: Parent category - sum of children
     immaterielle_vermoegensgegenstaende:
       _meta:
         name: Immaterielle Vermögensgegenstände
         match_status: calculated
-        skr03_category:
+        skr03_classification:
         notes: Parent category - sum of children
       selbst_geschaffene_gewerbliche_schutzrechte_und_aehnliche_re:
         name: Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und
           Werte
         match_status: auto
-        skr03_category: Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte
+        skr03_classification: Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte
           und Werte
         notes: ''
       entgeltlich_erworbene_konzessionen_gewerbliche_schutzrechte_:
         name: entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche
           Rechte und Werte sowie Lizenzen an solchen Rechten und Werten
         match_status: auto
-        skr03_category: Entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte
+        skr03_classification: Entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte
           und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten
         notes: ''
       geschaefts_oder_firmenwert:
         name: Geschäfts- oder Firmenwert
         match_status: auto
-        skr03_category: Geschäfts- oder Firmenwert
+        skr03_classification: Geschäfts- oder Firmenwert
         notes: ''
       geleistete_anzahlungen:
         name: geleistete Anzahlungen
         match_status: auto
-        skr03_category: Geleistete Anzahlungen
+        skr03_classification: Geleistete Anzahlungen
         notes: ''
     sachanlagen:
       _meta:
         name: Sachanlagen
         match_status: calculated
-        skr03_category:
+        skr03_classification:
         notes: Parent category - sum of children
       grundstuecke_grundstuecksgleiche_rechte_und_bauten_einschlie:
         name: Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der
           Bauten auf fremden Grundstücken
         match_status: auto
-        skr03_category: Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich
+        skr03_classification: Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich
           der Bauten auf fremden Grundstücken
         notes: ''
       technische_anlagen_und_maschinen:
         name: technische Anlagen und Maschinen
         match_status: auto
-        skr03_category: Technische Anlagen und Maschinen
+        skr03_classification: Technische Anlagen und Maschinen
         notes: ''
       andere_anlagen_betriebs_und_geschaeftsausstattung:
         name: andere Anlagen, Betriebs- und Geschäftsausstattung
         match_status: auto
-        skr03_category: Andere Anlagen, Betriebs- und Geschäftsausstattung
+        skr03_classification: Andere Anlagen, Betriebs- und Geschäftsausstattung
         notes: ''
       geleistete_anzahlungen_und_anlagen_im_bau:
         name: geleistete Anzahlungen und Anlagen im Bau
         match_status: auto
-        skr03_category: Geleistete Anzahlungen und Anlagen im Bau
+        skr03_classification: Geleistete Anzahlungen und Anlagen im Bau
         notes: ''
     finanzanlagen:
       _meta:
         name: Finanzanlagen
         match_status: calculated
-        skr03_category:
+        skr03_classification:
         notes: Parent category - sum of children
       anteile_an_verbundenen_unternehmen:
         name: Anteile an verbundenen Unternehmen
         match_status: auto
-        skr03_category: Anteile an verbundenen Unternehmen
+        skr03_classification: Anteile an verbundenen Unternehmen
         notes: ''
       ausleihungen_an_verbundene_unternehmen:
         name: Ausleihungen an verbundene Unternehmen
         match_status: auto
-        skr03_category: Ausleihungen an verbundene Unternehmen
+        skr03_classification: Ausleihungen an verbundene Unternehmen
         notes: ''
       beteiligungen:
         name: Beteiligungen
         match_status: auto
-        skr03_category: Beteiligungen
+        skr03_classification: Beteiligungen
         notes: ''
       ausleihungen_an_unternehmen_mit_denen_ein_beteiligungsverhae:
         name: Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht
         match_status: auto
-        skr03_category: Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis
+        skr03_classification: Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis
           besteht
         notes: ''
       wertpapiere_des_anlagevermoegens:
         name: Wertpapiere des Anlagevermögens
         match_status: auto
-        skr03_category: Wertpapiere des Anlagevermögens
+        skr03_classification: Wertpapiere des Anlagevermögens
         notes: ''
       sonstige_ausleihungen:
         name: sonstige Ausleihungen
         match_status: auto
-        skr03_category: Sonstige Ausleihungen
+        skr03_classification: Sonstige Ausleihungen
         notes: ''
   umlaufvermoegen:
     _meta:
       name: Umlaufvermögen
       match_status: calculated
-      skr03_category:
+      skr03_classification:
       notes: Parent category - sum of children
     vorraete:
       _meta:
         name: Vorräte
         match_status: calculated
-        skr03_category:
+        skr03_classification:
         notes: Parent category - sum of children
       roh_hilfs_und_betriebsstoffe:
         name: Roh-, Hilfs- und Betriebsstoffe
         match_status: auto
-        skr03_category: Roh-, Hilfs- und Betriebsstoffe
+        skr03_classification: Roh-, Hilfs- und Betriebsstoffe
         notes: ''
       unfertige_erzeugnisse_unfertige_leistungen:
         name: unfertige Erzeugnisse, unfertige Leistungen
         match_status: auto
-        skr03_category: Unfertige Erzeugnisse, unfertige Leistungen
+        skr03_classification: Unfertige Erzeugnisse, unfertige Leistungen
         notes: ''
       fertige_erzeugnisse_und_waren:
         name: fertige Erzeugnisse und Waren
         match_status: auto
-        skr03_category: Fertige Erzeugnisse und Waren
+        skr03_classification: Fertige Erzeugnisse und Waren
         notes: ''
       geleistete_anzahlungen_2:
         name: geleistete Anzahlungen
         match_status: auto
-        skr03_category: Geleistete Anzahlungen
+        skr03_classification: Geleistete Anzahlungen
         notes: ''
     forderungen_und_sonstige_vermoegensgegenstaende:
       _meta:
         name: Forderungen und sonstige Vermögensgegenstände
         match_status: calculated
-        skr03_category:
+        skr03_classification:
         notes: Parent category - sum of children
       forderungen_aus_lieferungen_und_leistungen:
         name: Forderungen aus Lieferungen und Leistungen
         match_status: auto
-        skr03_category: Forderungen aus Lieferungen und Leistungen
+        skr03_classification: Forderungen aus Lieferungen und Leistungen
         notes: ''
       forderungen_gegen_verbundene_unternehmen:
         name: Forderungen gegen verbundene Unternehmen
         match_status: auto
-        skr03_category: Forderungen gegen verbundene Unternehmen oder Verbindlichkeiten
+        skr03_classification: Forderungen gegen verbundene Unternehmen oder Verbindlichkeiten
           gegenüber verbundenen Unternehmen
         notes: Partial match (case difference or similar)
       forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh:
         name: Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis
           besteht
         match_status: auto
-        skr03_category: Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis
+        skr03_classification: Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis
           besteht oder Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
           besteht
         notes: Partial match (case difference or similar)
       sonstige_vermoegensgegenstaende:
         name: sonstige Vermögensgegenstände
         match_status: auto
-        skr03_category: Sonstige Vermögensgegenstände
+        skr03_classification: Sonstige Vermögensgegenstände
         notes: ''
     wertpapiere:
       _meta:
         name: Wertpapiere
         match_status: calculated
-        skr03_category:
+        skr03_classification:
         notes: Parent category - sum of children
       anteile_an_verbundenen_unternehmen_2:
         name: Anteile an verbundenen Unternehmen
         match_status: auto
-        skr03_category: Anteile an verbundenen Unternehmen
+        skr03_classification: Anteile an verbundenen Unternehmen
         notes: ''
       sonstige_wertpapiere:
         name: sonstige Wertpapiere
         match_status: auto
-        skr03_category: Sonstige Wertpapiere
+        skr03_classification: Sonstige Wertpapiere
         notes: ''
     kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut:
       name: Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks
       match_status: calculated
-      skr03_category:
+      skr03_classification:
       notes: Calculated field, no direct account mapping
   rechnungsabgrenzungsposten:
     name: Rechnungsabgrenzungsposten
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
   aktive_latente_steuern:
     name: Aktive latente Steuern
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
   aktiver_unterschiedsbetrag_aus_der_vermoegensverrechnung:
     name: Aktiver Unterschiedsbetrag aus der Vermögensverrechnung
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
 passiva:
   eigenkapital:
     _meta:
       name: Eigenkapital
       match_status: calculated
-      skr03_category:
+      skr03_classification:
       notes: Parent category - sum of children
     gezeichnetes_kapital:
       name: Gezeichnetes Kapital
       match_status: calculated
-      skr03_category:
+      skr03_classification:
       notes: Calculated field, no direct account mapping
     kapitalruecklage:
       name: Kapitalrücklage
       match_status: calculated
-      skr03_category:
+      skr03_classification:
       notes: Calculated field, no direct account mapping
     gewinnruecklagen:
       _meta:
         name: Gewinnrücklagen
         match_status: calculated
-        skr03_category:
+        skr03_classification:
         notes: Parent category - sum of children
       gesetzliche_ruecklage:
         name: gesetzliche Rücklage
         match_status: auto
-        skr03_category: Gesetzliche Rücklage
+        skr03_classification: Gesetzliche Rücklage
         notes: ''
       ruecklage_fuer_anteile_an_einem_herrschenden_oder_mehrheitli:
         name: Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten
           Unternehmen
         match_status: auto
-        skr03_category: Rücklage für Anteile an einem herrschenden oder mehrheitlich
+        skr03_classification: Rücklage für Anteile an einem herrschenden oder mehrheitlich
           beteiligten Unternehmen
         notes: ''
       satzungsmaessige_ruecklagen:
         name: satzungsmäßige Rücklagen
         match_status: auto
-        skr03_category: Satzungsmäßige Rücklagen
+        skr03_classification: Satzungsmäßige Rücklagen
         notes: ''
       andere_gewinnruecklagen:
         name: andere Gewinnrücklagen
         match_status: auto
-        skr03_category: Andere Gewinnrücklagen
+        skr03_classification: Andere Gewinnrücklagen
         notes: ''
     gewinnvortragverlustvortrag:
       name: Gewinnvortrag/Verlustvortrag
       match_status: calculated
-      skr03_category:
+      skr03_classification:
       notes: Calculated field, no direct account mapping
     jahresueberschussjahresfehlbetrag:
       name: Jahresüberschuß/Jahresfehlbetrag
       match_status: calculated
-      skr03_category:
+      skr03_classification:
       notes: Calculated field, no direct account mapping
   rueckstellungen:
     _meta:
       name: Rückstellungen
       match_status: calculated
-      skr03_category:
+      skr03_classification:
       notes: Parent category - sum of children
     rueckstellungen_fuer_pensionen_und_aehnliche_verpflichtungen:
       name: Rückstellungen für Pensionen und ähnliche Verpflichtungen
       match_status: auto
-      skr03_category: Rückstellungen für Pensionen und ähnliche Verpflichtungen
+      skr03_classification: Rückstellungen für Pensionen und ähnliche Verpflichtungen
       notes: ''
     steuerrueckstellungen:
       name: Steuerrückstellungen
       match_status: auto
-      skr03_category: Steuerrückstellungen
+      skr03_classification: Steuerrückstellungen
       notes: ''
     sonstige_rueckstellungen:
       name: sonstige Rückstellungen
       match_status: auto
-      skr03_category: Sonstige Rückstellungen
+      skr03_classification: Sonstige Rückstellungen
       notes: ''
   verbindlichkeiten:
     _meta:
       name: Verbindlichkeiten
       match_status: calculated
-      skr03_category:
+      skr03_classification:
       notes: Parent category - sum of children
     anleihen_davon_konvertibel:
       name: Anleihen, davon konvertibel
       match_status: auto
-      skr03_category: Anleihen
+      skr03_classification: Anleihen
       notes: Partial match (case difference or similar)
     verbindlichkeiten_gegenueber_kreditinstituten:
       name: Verbindlichkeiten gegenüber Kreditinstituten
       match_status: auto
-      skr03_category: Verbindlichkeiten gegenüber Kreditinstituten
+      skr03_classification: Verbindlichkeiten gegenüber Kreditinstituten
       notes: ''
     erhaltene_anzahlungen_auf_bestellungen:
       name: erhaltene Anzahlungen auf Bestellungen
       match_status: auto
-      skr03_category: Erhaltene Anzahlungen auf Bestellungen (Passiva)
+      skr03_classification: Erhaltene Anzahlungen auf Bestellungen (Passiva)
       notes: Partial match (case difference or similar)
     verbindlichkeiten_aus_lieferungen_und_leistungen:
       name: Verbindlichkeiten aus Lieferungen und Leistungen
       match_status: auto
-      skr03_category: Verbindlichkeiten aus Lieferungen und Leistungen
+      skr03_classification: Verbindlichkeiten aus Lieferungen und Leistungen
       notes: ''
     verbindlichkeiten_aus_der_annahme_gezogener_wechsel_und_der_:
       name: Verbindlichkeiten aus der Annahme gezogener Wechsel und der Ausstellung
         eigener Wechsel
       match_status: none
-      skr03_category:
+      skr03_classification:
       notes: No match found - needs manual review
     verbindlichkeiten_gegenueber_verbundenen_unternehmen:
       name: Verbindlichkeiten gegenüber verbundenen Unternehmen
       match_status: auto
-      skr03_category: Verbindlichkeiten gegenüber verbundenen Unternehmen oder Forderungen
+      skr03_classification: Verbindlichkeiten gegenüber verbundenen Unternehmen oder Forderungen
         gegen verbundene Unternehmen
       notes: Partial match (case difference or similar)
     verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_betei:
       name: Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
         besteht
       match_status: auto
-      skr03_category: Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
+      skr03_classification: Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
         besteht oder Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis
         besteht
       notes: Partial match (case difference or similar)
@@ -344,150 +344,150 @@ passiva:
       name: sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen
         Sicherheit
       match_status: auto
-      skr03_category: Sonstige Verbindlichkeiten
+      skr03_classification: Sonstige Verbindlichkeiten
       notes: Partial match (case difference or similar)
   rechnungsabgrenzungsposten:
     name: Rechnungsabgrenzungsposten
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
   passive_latente_steuern:
     name: Passive latente Steuern
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
 guv:
   umsatzerloese:
     name: Umsatzerlöse
     match_status: auto
-    skr03_category: Umsatzerlöse
+    skr03_classification: Umsatzerlöse
     notes: ''
   erhoehung_oder_verminderung_des_bestands_an_fertigen_und_unf:
     name: Erhöhung oder Verminderung des Bestands an fertigen und unfertigen Erzeugnissen
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
   andere_aktivierte_eigenleistungen:
     name: andere aktivierte Eigenleistungen
     match_status: auto
-    skr03_category: Andere aktivierte Eigenleistungen
+    skr03_classification: Andere aktivierte Eigenleistungen
     notes: ''
   sonstige_betriebliche_ertraege:
     name: sonstige betriebliche Erträge
     match_status: auto
-    skr03_category: Sonstige betriebliche Erträge
+    skr03_classification: Sonstige betriebliche Erträge
     notes: ''
   materialaufwand:
     name: Materialaufwand
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
     aufwendungen_fuer_roh_hilfs_und_betriebsstoffe_und_fuer_bezo:
       name: Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren
       match_status: auto
-      skr03_category: Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene
+      skr03_classification: Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene
         Waren
       notes: ''
     aufwendungen_fuer_bezogene_leistungen:
       name: Aufwendungen für bezogene Leistungen
       match_status: auto
-      skr03_category: Aufwendungen für bezogene Leistungen
+      skr03_classification: Aufwendungen für bezogene Leistungen
       notes: ''
   personalaufwand:
     name: Personalaufwand
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
     loehne_und_gehaelter:
       name: Löhne und Gehälter
       match_status: auto
-      skr03_category: Löhne und Gehälter
+      skr03_classification: Löhne und Gehälter
       notes: ''
     soziale_abgaben_und_aufwendungen_fuer_altersversorgung_und_f:
       name: soziale Abgaben und Aufwendungen für Altersversorgung und für Unterstützung,
         davon für Altersversorgung
       match_status: auto
-      skr03_category: Soziale Abgaben und Aufwendungen für Altersversorgung und für
+      skr03_classification: Soziale Abgaben und Aufwendungen für Altersversorgung und für
         Unterstützung
       notes: Partial match (case difference or similar)
   abschreibungen:
     name: Abschreibungen
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
     auf_immaterielle_vermoegensgegenstaende_des_anlagevermoegens:
       name: auf immaterielle Vermögensgegenstände des Anlagevermögens und Sachanlagen
       match_status: none
-      skr03_category:
+      skr03_classification:
       notes: No match found - needs manual review
     auf_vermoegensgegenstaende_des_umlaufvermoegens_soweit_diese:
       name: auf Vermögensgegenstände des Umlaufvermögens, soweit diese die in der
         Kapitalgesellschaft üblichen Abschreibungen überschreiten
       match_status: none
-      skr03_category:
+      skr03_classification:
       notes: No match found - needs manual review
   sonstige_betriebliche_aufwendungen:
     name: sonstige betriebliche Aufwendungen
     match_status: auto
-    skr03_category: Sonstige betriebliche Aufwendungen
+    skr03_classification: Sonstige betriebliche Aufwendungen
     notes: ''
   ertraege_aus_beteiligungen_davon_aus_verbundenen_unternehmen:
     name: Erträge aus Beteiligungen, davon aus verbundenen Unternehmen
     match_status: auto
-    skr03_category: Erträge aus Beteiligungen
+    skr03_classification: Erträge aus Beteiligungen
     notes: Partial match (case difference or similar)
   ertraege_aus_anderen_wertpapieren_und_ausleihungen_des_finan:
     name: Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens,
       davon aus verbundenen Unternehmen
     match_status: auto
-    skr03_category: Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens
+    skr03_classification: Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens
     notes: Partial match (case difference or similar)
   sonstige_zinsen_und_aehnliche_ertraege_davon_aus_verbundenen:
     name: sonstige Zinsen und ähnliche Erträge, davon aus verbundenen Unternehmen
     match_status: auto
-    skr03_category: Sonstige Zinsen und ähnliche Erträge
+    skr03_classification: Sonstige Zinsen und ähnliche Erträge
     notes: Partial match (case difference or similar)
   abschreibungen_auf_finanzanlagen_und_auf_wertpapiere_des_uml:
     name: Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens
     match_status: auto
-    skr03_category: Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens
+    skr03_classification: Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens
     notes: ''
   zinsen_und_aehnliche_aufwendungen_davon_an_verbundene_untern:
     name: Zinsen und ähnliche Aufwendungen, davon an verbundene Unternehmen
     match_status: auto
-    skr03_category: Zinsen und ähnliche Aufwendungen
+    skr03_classification: Zinsen und ähnliche Aufwendungen
     notes: Partial match (case difference or similar)
   steuern_vom_einkommen_und_vom_ertrag:
     name: Steuern vom Einkommen und vom Ertrag
     match_status: none
-    skr03_category:
+    skr03_classification:
     notes: No match found - needs manual review
   ergebnis_nach_steuern:
     name: Ergebnis nach Steuern
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
   sonstige_steuern:
     name: sonstige Steuern
     match_status: auto
-    skr03_category: Sonstige Steuern
+    skr03_classification: Sonstige Steuern
     notes: ''
   jahresueberschussjahresfehlbetrag:
     name: Jahresüberschuss/Jahresfehlbetrag
     match_status: calculated
-    skr03_category:
+    skr03_classification:
     notes: Calculated field, no direct account mapping
 
 # ==============================================================================
-# UNMATCHED SKR03 CATEGORIES
+# UNMATCHED SKR03 CLASSIFICATIONS
 # ==============================================================================
 #
-# The following SKR03 categories were NOT matched to any HGB category.
-# This means the accounts in these categories will not appear in the balance
+# The following SKR03 account classifications were NOT matched to any HGB category.
+# This means the accounts in these classifications will not appear in the balance
 # sheet or GuV reports unless you manually add them to the mapping above.
 #
-# To fix: For each category below, find the appropriate HGB category in the
-# mapping above and manually set its skr03_category field.
+# To fix: For each classification below, find the appropriate HGB category in the
+# mapping above and manually set its skr03_classification field.
 #
 # Total unmatched: 73
 #

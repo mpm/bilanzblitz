@@ -61,11 +61,11 @@ This script:
 - Generates Report Section IDs (RSIDs) (e.g., `b.aktiva.anlagevermoegen.immaterielle.geschaeftswert`)
 - Creates `skr03-section-mapping.yml` - a human-editable YAML file
 
-**Important**: The script reports TWO types of unmatched categories:
-1. **HGB categories without SKR03 matches**: Categories in the official structure that couldn't be matched to any SKR03 category
-2. **SKR03 categories not used**: SKR03 categories that weren't assigned to any HGB position (listed at the end of the YAML file)
+**Important**: The script reports TWO types of unmatched classifications:
+1. **HGB categories without SKR03 matches**: Categories in the official structure that couldn't be matched to any SKR03 classification
+2. **SKR03 classifications not used**: SKR03 classifications that weren't assigned to any HGB position (listed at the end of the YAML file)
 
-The second type is critical - these SKR03 categories contain accounts that won't appear in your balance sheet or GuV unless manually assigned!
+The second type is critical - these SKR03 classifications contain accounts that won't appear in your balance sheet or GuV unless manually assigned!
 
 **Example output**:
 ```
@@ -75,12 +75,12 @@ HGB Categories Statistics:
   Calculated: 28
   Unmatched HGB categories (needs review): 4
 
-SKR03 Categories Statistics:
-  Total SKR03 categories: 123
+SKR03 Classifications Statistics:
+  Total SKR03 classifications: 123
   Used in mapping: 50
-  Unmatched SKR03 categories: 73
+  Unmatched SKR03 classifications: 73
 
-⚠️  WARNING: 73 SKR03 categories were not matched!
+⚠️  WARNING: 73 SKR03 classifications were not matched!
    These accounts will be missing from your balance sheet/GuV.
    See the end of skr03-section-mapping.yml for the full list.
 ```
@@ -88,10 +88,10 @@ SKR03 Categories Statistics:
 #### 2. Review and Edit Mapping
 
 Open `skr03-section-mapping.yml` and:
-1. Check the auto-matched categories (marked `match_status: auto`)
+1. Check the auto-matched classifications (marked `match_status: auto`)
 2. Review unmatched HGB categories (marked `match_status: none`)
-3. **Important**: Check the end of the file for unmatched SKR03 categories
-4. Manually assign SKR03 categories to appropriate HGB positions
+3. **Important**: Check the end of the file for unmatched SKR03 classifications
+4. Manually assign SKR03 classifications to appropriate HGB positions
 5. Change `match_status: auto` to `match_status: manual` for manual corrections
 
 **Example mapping entry**:
@@ -102,11 +102,11 @@ aktiva:
       geschaeftswert:
         name: "Geschäfts- oder Firmenwert"
         match_status: auto
-        skr03_category: "Geschäfts- oder Firmenwert"
+        skr03_classification: "Geschäfts- oder Firmenwert"
         notes: ""
 ```
 
-To fix an unmatched SKR03 category, find the appropriate HGB category and update its `skr03_category` field.
+To fix an unmatched SKR03 classification, find the appropriate HGB category and update its `skr03_classification` field.
 
 #### 3. Conceptual Decoupling: CID vs. Presentation Rule
 
@@ -120,9 +120,9 @@ BilanzBlitz distinguishes between what an account *is* (Semantic Category) and w
 Run `ruby generate_presentation_rules.rb` to detect saldo-dependent accounts.
 
 This script:
-- Analyzes SKR03 categories for saldo patterns ("H-Saldo", "S-Saldo", "oder")
+- Analyzes SKR03 classifications for saldo patterns ("H-Saldo", "S-Saldo", "oder")
 - Detects bidirectional accounts (e.g., "Forderungen aus L&L H-Saldo oder sonstige Verbindlichkeiten S-Saldo")
-- Infers default presentation rules from category names
+- Infers default presentation rules from classification names
 - Creates `skr03-presentation-rules.yml` - a human-editable YAML file
 
 **Key Concept**: Some accounts can appear on either side of the balance sheet depending on their balance direction:
@@ -132,7 +132,7 @@ This script:
 **Important**: Review the generated `skr03-presentation-rules.yml` file:
 1. Check auto-detected bidirectional rules (marked `status: auto`)
 2. Verify inferred default rules (marked `status: inferred`)
-3. Manually assign rules to unknown categories (marked `status: unknown`)
+3. Manually assign rules to unknown classifications (marked `status: unknown`)
 4. Fix any incorrect detections (marked `status: needs_review`)
 
 #### 5. Build Final JSON Files
@@ -152,7 +152,7 @@ The generated files use Report Section IDs (RSIDs) (e.g., `b.aktiva.anlagevermoe
 ### Alternative: Legacy Single-Step Approach
 
 
-**Deprecated**: The script `parse_chart_of_accounts.rb` provides a legacy single-step approach but is **not recommended** because it performs fuzzy matching without manual review, provides no visibility into unmatched SKR03 categories, and offers no opportunity to correct matching errors.
+**Deprecated**: The script `parse_chart_of_accounts.rb` provides a legacy single-step approach but is **not recommended** because it performs fuzzy matching without manual review, provides no visibility into unmatched SKR03 classifications, and offers no opportunity to correct matching errors.
 
 Use the three-stage workflow (generate category mapping → generate presentation rules → review → build) instead.
 
@@ -171,11 +171,11 @@ The recommended three-stage workflow (`generate_category_mapping.rb` → `genera
 **Generated by**: `generate_category_mapping.rb`
 **Used by**: `build_category_json.rb`
 
-**Important Section**: At the end of the file, you'll find a commented list of all SKR03 categories that were NOT matched to any HGB category:
+**Important Section**: At the end of the file, you'll find a commented list of all SKR03 classifications that were NOT matched to any HGB category:
 
 ```yaml
 # ==============================================================================
-# UNMATCHED SKR03 CATEGORIES
+# UNMATCHED SKR03 CLASSIFICATIONS
 # ==============================================================================
 #
 # - Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten...
@@ -183,11 +183,11 @@ The recommended three-stage workflow (`generate_category_mapping.rb` → `genera
 # - ... (and many more)
 ```
 
-These unmatched SKR03 categories are critical to review - they contain accounts that won't appear in your reports unless manually assigned!
+These unmatched SKR03 classifications are critical to review - they contain accounts that won't appear in your reports unless manually assigned!
 
 #### skr03-presentation-rules.yml
 
-**Purpose**: Human-editable mapping of SKR03 categories to presentation rules for saldo-dependent accounts.
+**Purpose**: Human-editable mapping of SKR03 classifications to presentation rules for saldo-dependent accounts.
 
 **Generated by**: `generate_presentation_rules.rb`
 **Used by**: `build_category_json.rb`
@@ -198,7 +198,7 @@ These unmatched SKR03 categories are critical to review - they contain accounts 
 
 #### skr03-accounts.csv
 
-A CSV file containing all SKR03 account codes with their descriptions, category associations, and presentation rules.
+A CSV file containing all SKR03 account codes with their descriptions, classification associations, and presentation rules.
 
 **Generated by**: `build_category_json.rb`
 
@@ -226,8 +226,8 @@ A structured JSON file mapping the German balance sheet (Bilanz) structure to SK
 
 **Key Attributes**:
 - `rsid`: Report Section identifier (e.g., "b.aktiva.anlagevermoegen.sachanlagen"). Null if no match found.
-- `matched_category`: The parsed SKR03 category name that was matched
-- `codes`: Array of account codes belonging to this category
+- `skr03_classification`: The parsed SKR03 classification name that was matched
+- `codes`: Array of account codes belonging to this classification
 - `items`: Sub-categories within a section
 - `children`: Detailed positions within an item
 
@@ -239,8 +239,8 @@ A structured JSON file mapping the German Profit & Loss (GuV) structure accordin
 
 **Key Attributes**:
 - `rsid`: Report Section identifier (e.g., "guv.umsatzerloese"). Null if no match found.
-- `matched_category`: The parsed SKR03 account classification (coming from skr03-ocr-results.json) that was matched
-- `codes`: Array of account codes belonging to this category
+- `skr03_classification`: The parsed SKR03 account classification (coming from skr03-ocr-results.json) that was matched
+- `codes`: Array of account codes belonging to this classification
 - `children`: Sub-sections for composite GuV positions (e.g., Materialaufwand has subsections for materials and services)
 
 ## Using the Output Files

@@ -2,11 +2,11 @@
 # frozen_string_literal: true
 
 #
-# Category Mapping Generator for SKR03 to HGB
-# ============================================
+# Classification Mapping Generator for SKR03 to HGB
+# ==================================================
 #
 # This script generates an intermediate YAML mapping file that maps official HGB
-# balance sheet and GuV categories to SKR03 categories from OCR results.
+# balance sheet and GuV categories to SKR03 account classifications from OCR results.
 #
 # The generated mapping can be manually edited before using build_category_json.rb
 # to generate the final bilanz-sections-mapping.json and guv-sections-mapping.json files.
@@ -15,7 +15,7 @@
 # - hgb-bilanz-aktiva.json: Balance sheet structure (Aktiva/Assets)
 # - hgb-bilanz-passiva.json: Balance sheet structure (Passiva/Liabilities & Equity)
 # - hgb-guv.json: Profit & Loss (GuV) structure according to § 275 Abs. 2 HGB
-# - skr03-ocr-results.json: OCR results from SKR03 PDF (category → account codes)
+# - skr03-ocr-results.json: OCR results from SKR03 PDF (classification → account codes)
 #
 # Output Files:
 # - skr03-section-mapping.yml: Intermediate mapping (human-editable)
@@ -71,32 +71,32 @@ end
 
 # Reuse fuzzy matching logic from parse_chart_of_accounts.rb
 class FuzzyMatcher
-  # Performs fuzzy matching between official category names and parsed category names.
+  # Performs fuzzy matching between official HGB category names and parsed SKR03 account classification names.
   # Uses case-insensitive prefix matching, prioritizing longer overlaps and exact matches.
   #
   # @param official_names [Array<String>] Official category names from GuV/Bilanz structures
-  # @param category_names [Array<String>] Parsed category names from OCR results
-  # @return [Array<Hash, Array>] Tuple of [matched_hash, unmatched_categories]
-  #   - matched_hash: Maps official names to match results (:original_category, :partial, :no_match)
-  #   - unmatched_categories: Array of category names that weren't matched
-  def self.fuzzy_match(official_names, category_names)
+  # @param classification_names [Array<String>] Parsed classification names from OCR results
+  # @return [Array<Hash, Array>] Tuple of [matched_hash, unmatched_classifications]
+  #   - matched_hash: Maps official names to match results (:original_classification, :partial, :no_match)
+  #   - unmatched_classifications: Array of classification names that weren't matched
+  def self.fuzzy_match(official_names, classification_names)
     matches = []
 
     official_names.each_with_index do |official, oi|
       official_down = official.downcase
 
-      category_names.each_with_index do |category, ci|
-        category_down = category.downcase
+      classification_names.each_with_index do |classification, ci|
+        classification_down = classification.downcase
 
         # Determine shorter / longer string (case-insensitive)
-        if official_down.length <= category_down.length
+        if official_down.length <= classification_down.length
           shorter_down = official_down
-          longer_down  = category_down
+          longer_down  = classification_down
           shorter_orig = official
         else
-          shorter_down = category_down
+          shorter_down = classification_down
           longer_down  = official_down
-          shorter_orig = category
+          shorter_orig = classification
         end
 
         # Case-insensitive prefix match
@@ -104,11 +104,11 @@ class FuzzyMatcher
 
         matches << {
           official_index: oi,
-          category_index: ci,
+          classification_index: ci,
           official: official,
-          category: category,
+          classification: classification,
           overlap: shorter_down.length,
-          exact: official_down == category_down,
+          exact: official_down == classification_down,
           matched_part: shorter_orig[0, shorter_down.length]
         }
       end
@@ -123,21 +123,21 @@ class FuzzyMatcher
     end
 
     used_officials  = {}
-    used_categories = {}
+    used_classifications = {}
     result = {}
 
     matches.each do |m|
       oi = m[:official_index]
-      ci = m[:category_index]
+      ci = m[:classification_index]
 
-      next if used_officials[oi] || used_categories[ci]
+      next if used_officials[oi] || used_classifications[ci]
 
       used_officials[oi]  = true
-      used_categories[ci] = true
+      used_classifications[ci] = true
 
       result[m[:official]] = {
         match: m[:matched_part],
-        original_category: m[:category],
+        original_classification: m[:classification],
         partial: !m[:exact]
       }
     end
@@ -147,18 +147,18 @@ class FuzzyMatcher
       result[official] ||= { no_match: true }
     end
 
-    # Unmatched categories
-    unmatched_categories =
-      category_names.each_with_index
-                    .reject { |_, i| used_categories[i] }
+    # Unmatched classifications
+    unmatched_classifications =
+      classification_names.each_with_index
+                    .reject { |_, i| used_classifications[i] }
                     .map(&:first)
 
-    [ result, unmatched_categories ]
+    [ result, unmatched_classifications ]
   end
 end
 
 # Main generator class
-class CategoryMappingGenerator
+class ClassificationMappingGenerator
   # Categories that should be marked as "calculated" (no direct account mapping)
   CALCULATED_CATEGORIES = [
     "Anlagevermögen",
@@ -195,11 +195,11 @@ class CategoryMappingGenerator
     @bilanz_passiva = JSON.parse(File.read("hgb-bilanz-passiva.json"))
     @guv = JSON.parse(File.read("hgb-guv.json"))
 
-    # Parse SKR03 categories
-    @skr03_categories = parse_skr03_categories
+    # Parse SKR03 classifications
+    @skr03_classifications = parse_skr03_classifications
 
-    # Track which SKR03 categories are used in matching
-    @used_skr03_categories = Set.new
+    # Track which SKR03 classifications are used in matching
+    @used_skr03_classifications = Set.new
 
     # Statistics
     @stats = {
@@ -212,7 +212,7 @@ class CategoryMappingGenerator
 
   def generate
     puts "=" * 80
-    puts "Category Mapping Generator - SKR03 to HGB"
+    puts "Classification Mapping Generator - SKR03 to HGB"
     puts "=" * 80
     puts
 
@@ -222,16 +222,16 @@ class CategoryMappingGenerator
       "guv" => generate_guv_mapping
     }
 
-    # Calculate unmatched SKR03 categories
-    unmatched_skr03 = @skr03_categories.reject { |cat| @used_skr03_categories.include?(cat) }
+    # Calculate unmatched SKR03 classifications
+    unmatched_skr03 = @skr03_classifications.reject { |cat| @used_skr03_classifications.include?(cat) }
     unmatched_skr03 = unmatched_skr03.sort
 
     # Write YAML file
     File.open("skr03-section-mapping.yml", "w") do |f|
-      f.puts "# SKR03 to HGB Category Mapping"
+      f.puts "# SKR03 to HGB Classification Mapping"
       f.puts "# ================================"
       f.puts "#"
-      f.puts "# This file maps official HGB balance sheet and GuV categories to SKR03 categories."
+      f.puts "# This file maps official HGB balance sheet and GuV categories to SKR03 account classifications."
       f.puts "# It can be manually edited to fix incorrect matches before generating final JSON files."
       f.puts "#"
       f.puts "# Field Definitions:"
@@ -241,7 +241,7 @@ class CategoryMappingGenerator
       f.puts "#     - manual: Manually specified/corrected"
       f.puts "#     - calculated: Calculated value, no direct account mapping"
       f.puts "#     - none: No match found (needs review)"
-      f.puts "#   skr03_category: Name of SKR03 category to map (or null)"
+      f.puts "#   skr03_classification: Name of SKR03 account classification to map (or null)"
       f.puts "#   notes: Human-readable notes for documentation"
       f.puts "#"
       f.puts "# _meta sections are for parent/intermediate categories without direct account mappings."
@@ -249,24 +249,24 @@ class CategoryMappingGenerator
       f.puts
       f.write YAML.dump(mapping)
 
-      # Add unmatched SKR03 categories as comments
+      # Add unmatched SKR03 classifications as comments
       if unmatched_skr03.any?
         f.puts
         f.puts "# =============================================================================="
-        f.puts "# UNMATCHED SKR03 CATEGORIES"
+        f.puts "# UNMATCHED SKR03 CLASSIFICATIONS"
         f.puts "# =============================================================================="
         f.puts "#"
-        f.puts "# The following SKR03 categories were NOT matched to any HGB category."
-        f.puts "# This means the accounts in these categories will not appear in the balance"
+        f.puts "# The following SKR03 classifications were NOT matched to any HGB category."
+        f.puts "# This means the accounts in these classifications will not appear in the balance"
         f.puts "# sheet or GuV reports unless you manually add them to the mapping above."
         f.puts "#"
-        f.puts "# To fix: For each category below, find the appropriate HGB category in the"
-        f.puts "# mapping above and manually set its skr03_category field."
+        f.puts "# To fix: For each classification below, find the appropriate HGB category in the"
+        f.puts "# mapping above and manually set its skr03_classification field."
         f.puts "#"
         f.puts "# Total unmatched: #{unmatched_skr03.length}"
         f.puts "#"
-        unmatched_skr03.each do |category|
-          f.puts "# - #{category}"
+        unmatched_skr03.each do |classification|
+          f.puts "# - #{classification}"
         end
         f.puts "#"
         f.puts "# =============================================================================="
@@ -275,7 +275,7 @@ class CategoryMappingGenerator
 
     puts "\n"
     puts "=" * 80
-    puts "Category Mapping Generated: skr03-section-mapping.yml"
+    puts "Classification Mapping Generated: skr03-section-mapping.yml"
     puts "=" * 80
     puts
     puts "HGB Categories Statistics:"
@@ -284,39 +284,39 @@ class CategoryMappingGenerator
     puts "  Calculated: #{@stats[:calculated]}"
     puts "  Unmatched HGB categories (needs review): #{@stats[:unmatched]}"
     puts
-    puts "SKR03 Categories Statistics:"
-    puts "  Total SKR03 categories: #{@skr03_categories.length}"
-    puts "  Used in mapping: #{@used_skr03_categories.size}"
-    puts "  Unmatched SKR03 categories: #{unmatched_skr03.length}"
+    puts "SKR03 Classifications Statistics:"
+    puts "  Total SKR03 classifications: #{@skr03_classifications.length}"
+    puts "  Used in mapping: #{@used_skr03_classifications.size}"
+    puts "  Unmatched SKR03 classifications: #{unmatched_skr03.length}"
     puts
     if unmatched_skr03.any?
-      puts "⚠️  WARNING: #{unmatched_skr03.length} SKR03 categories were not matched!"
+      puts "⚠️  WARNING: #{unmatched_skr03.length} SKR03 classifications were not matched!"
       puts "   These accounts will be missing from your balance sheet/GuV."
       puts "   See the end of skr03-section-mapping.yml for the full list."
       puts
     end
     puts "Next steps:"
     puts "  1. Review skr03-section-mapping.yml and fix any incorrect matches"
-    puts "  2. Check unmatched SKR03 categories at the end of the file"
-    puts "  3. Manually assign unmatched SKR03 categories to appropriate HGB categories"
+    puts "  2. Check unmatched SKR03 classifications at the end of the file"
+    puts "  3. Manually assign unmatched SKR03 classifications to appropriate HGB categories"
     puts "  4. Run: ./dc ruby contrib/build_category_json.rb"
     puts
   end
 
   private
 
-  def parse_skr03_categories
+  def parse_skr03_classifications
     ocr_data = JSON.parse(File.read("skr03-ocr-results.json"))
-    categories = {}
+    classifications = {}
 
     ocr_data.each do |row|
-      category_name = row[0]&.strip
-      next if category_name.nil? || category_name.empty?
+      classification_name = row[0]&.strip
+      next if classification_name.nil? || classification_name.empty?
 
-      categories[category_name] = true
+      classifications[classification_name] = true
     end
 
-    categories.keys
+    classifications.keys
   end
 
   def generate_balance_sheet_mapping(data, side)
@@ -341,7 +341,7 @@ class CategoryMappingGenerator
 
     unless is_calculated
       # Try to match this category
-      (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ name ], @skr03_categories)
+      (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ name ], @skr03_classifications)
       match_result = matched[name]
     end
 
@@ -386,7 +386,7 @@ class CategoryMappingGenerator
     match_result = nil
 
     unless is_calculated
-      (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ name ], @skr03_categories)
+      (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ name ], @skr03_classifications)
       match_result = matched[name]
     end
 
@@ -421,13 +421,13 @@ class CategoryMappingGenerator
       return {
         "name" => name,
         "match_status" => "calculated",
-        "skr03_category" => nil,
+        "skr03_classification" => nil,
         "notes" => "Calculated field, no direct account mapping"
       }
     end
 
     # Try to match
-    (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ name ], @skr03_categories)
+    (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ name ], @skr03_classifications)
     match_result = matched[name]
 
     if match_result[:no_match]
@@ -435,17 +435,17 @@ class CategoryMappingGenerator
       {
         "name" => name,
         "match_status" => "none",
-        "skr03_category" => nil,
+        "skr03_classification" => nil,
         "notes" => "No match found - needs manual review"
       }
     else
       @stats[:auto_matched] += 1
-      # Track that this SKR03 category was used
-      @used_skr03_categories.add(match_result[:original_category])
+      # Track that this SKR03 classification was used
+      @used_skr03_classifications.add(match_result[:original_classification])
       {
         "name" => name,
         "match_status" => "auto",
-        "skr03_category" => match_result[:original_category],
+        "skr03_classification" => match_result[:original_classification],
         "notes" => match_result[:partial] ? "Partial match (case difference or similar)" : ""
       }
     end
@@ -457,7 +457,7 @@ class CategoryMappingGenerator
       {
         "name" => name,
         "match_status" => "calculated",
-        "skr03_category" => nil,
+        "skr03_classification" => nil,
         "notes" => "Parent category - sum of children"
       }
     elsif match_result && match_result[:no_match]
@@ -465,17 +465,17 @@ class CategoryMappingGenerator
       {
         "name" => name,
         "match_status" => "none",
-        "skr03_category" => nil,
+        "skr03_classification" => nil,
         "notes" => "No match found - needs manual review"
       }
     elsif match_result
       @stats[:auto_matched] += 1
-      # Track that this SKR03 category was used
-      @used_skr03_categories.add(match_result[:original_category])
+      # Track that this SKR03 classification was used
+      @used_skr03_classifications.add(match_result[:original_classification])
       {
         "name" => name,
         "match_status" => "auto",
-        "skr03_category" => match_result[:original_category],
+        "skr03_classification" => match_result[:original_classification],
         "notes" => match_result[:partial] ? "Partial match (case difference or similar)" : ""
       }
     else
@@ -484,7 +484,7 @@ class CategoryMappingGenerator
       {
         "name" => name,
         "match_status" => "none",
-        "skr03_category" => nil,
+        "skr03_classification" => nil,
         "notes" => "No match found"
       }
     end
@@ -507,12 +507,12 @@ class CategoryMappingGenerator
         result[section_id] = {
           "name" => section_name,
           "match_status" => "calculated",
-          "skr03_category" => nil,
+          "skr03_classification" => nil,
           "notes" => "Calculated field, no direct account mapping"
         }
       else
         # Try to match
-        (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ section_name ], @skr03_categories)
+        (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ section_name ], @skr03_classifications)
         match_result = matched[section_name]
 
         if match_result[:no_match]
@@ -520,17 +520,17 @@ class CategoryMappingGenerator
           result[section_id] = {
             "name" => section_name,
             "match_status" => "none",
-            "skr03_category" => nil,
+            "skr03_classification" => nil,
             "notes" => "No match found - needs manual review"
           }
         else
           @stats[:auto_matched] += 1
-          # Track that this SKR03 category was used
-          @used_skr03_categories.add(match_result[:original_category])
+          # Track that this SKR03 classification was used
+          @used_skr03_classifications.add(match_result[:original_classification])
           result[section_id] = {
             "name" => section_name,
             "match_status" => "auto",
-            "skr03_category" => match_result[:original_category],
+            "skr03_classification" => match_result[:original_classification],
             "notes" => match_result[:partial] ? "Partial match (case difference or similar)" : ""
           }
         end
@@ -551,11 +551,11 @@ class CategoryMappingGenerator
             result[section_id][child_id] = {
               "name" => child_name,
               "match_status" => "calculated",
-              "skr03_category" => nil,
+              "skr03_classification" => nil,
               "notes" => "Calculated field, no direct account mapping"
             }
           else
-            (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ child_name ], @skr03_categories)
+            (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ child_name ], @skr03_classifications)
             child_match = matched[child_name]
 
             if child_match[:no_match]
@@ -563,17 +563,17 @@ class CategoryMappingGenerator
               result[section_id][child_id] = {
                 "name" => child_name,
                 "match_status" => "none",
-                "skr03_category" => nil,
+                "skr03_classification" => nil,
                 "notes" => "No match found - needs manual review"
               }
             else
               @stats[:auto_matched] += 1
-              # Track that this SKR03 category was used
-              @used_skr03_categories.add(child_match[:original_category])
+              # Track that this SKR03 classification was used
+              @used_skr03_classifications.add(child_match[:original_classification])
               result[section_id][child_id] = {
                 "name" => child_name,
                 "match_status" => "auto",
-                "skr03_category" => child_match[:original_category],
+                "skr03_classification" => child_match[:original_classification],
                 "notes" => child_match[:partial] ? "Partial match (case difference or similar)" : ""
               }
             end
@@ -589,6 +589,6 @@ end
 # Run the generator
 if __FILE__ == $PROGRAM_NAME
   Dir.chdir(File.dirname(__FILE__))
-  generator = CategoryMappingGenerator.new
+  generator = ClassificationMappingGenerator.new
   generator.generate
 end

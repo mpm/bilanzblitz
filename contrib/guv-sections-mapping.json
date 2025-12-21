@@ -1,7 +1,7 @@
 {
   "Umsatzerlöse": {
     "rsid": "guv.umsatzerloese",
-    "matched_category": "Umsatzerlöse",
+    "skr03_classification": "Umsatzerlöse",
     "codes": [
       "2750",
       "2751",
@@ -123,12 +123,12 @@
   },
   "Erhöhung oder Verminderung des Bestands an fertigen und unfertigen Erzeugnissen": {
     "rsid": "guv.erhoehung_oder_verminderung_des_bestands_an_fertigen_und_unf",
-    "matched_category": null,
+    "skr03_classification": null,
     "codes": []
   },
   "andere aktivierte Eigenleistungen": {
     "rsid": "guv.andere_aktivierte_eigenleistungen",
-    "matched_category": "Andere aktivierte Eigenleistungen",
+    "skr03_classification": "Andere aktivierte Eigenleistungen",
     "codes": [
       "8990",
       "8994",
@@ -137,7 +137,7 @@
   },
   "sonstige betriebliche Erträge": {
     "rsid": "guv.sonstige_betriebliche_ertraege",
-    "matched_category": "Sonstige betriebliche Erträge",
+    "skr03_classification": "Sonstige betriebliche Erträge",
     "codes": [
       "2315",
       "2316",
@@ -251,13 +251,13 @@
   },
   "Materialaufwand": {
     "rsid": "guv.materialaufwand",
-    "matched_category": null,
+    "skr03_classification": null,
     "codes": [],
     "children": [
       {
         "name": "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
         "rsid": "guv.materialaufwand.aufwendungen_fuer_roh_hilfs_und_betriebsstoffe_und_fuer_bezo",
-        "matched_category": "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
+        "skr03_classification": "Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren",
         "codes": [
           "3000",
           "3010",
@@ -392,7 +392,7 @@
       {
         "name": "Aufwendungen für bezogene Leistungen",
         "rsid": "guv.materialaufwand.aufwendungen_fuer_bezogene_leistungen",
-        "matched_category": "Aufwendungen für bezogene Leistungen",
+        "skr03_classification": "Aufwendungen für bezogene Leistungen",
         "codes": [
           "3106",
           "3107",
@@ -440,13 +440,13 @@
   },
   "Personalaufwand": {
     "rsid": "guv.personalaufwand",
-    "matched_category": null,
+    "skr03_classification": null,
     "codes": [],
     "children": [
       {
         "name": "Löhne und Gehälter",
         "rsid": "guv.personalaufwand.loehne_und_gehaelter",
-        "matched_category": "Löhne und Gehälter",
+        "skr03_classification": "Löhne und Gehälter",
         "codes": [
           "4100",
           "4110",
@@ -487,7 +487,7 @@
       {
         "name": "soziale Abgaben und Aufwendungen für Altersversorgung und für Unterstützung, davon für Altersversorgung",
         "rsid": "guv.personalaufwand.soziale_abgaben_und_aufwendungen_fuer_altersversorgung_und_f",
-        "matched_category": "Soziale Abgaben und Aufwendungen für Altersversorgung und für Unterstützung",
+        "skr03_classification": "Soziale Abgaben und Aufwendungen für Altersversorgung und für Unterstützung",
         "codes": [
           "4130",
           "4137",
@@ -507,26 +507,26 @@
   },
   "Abschreibungen": {
     "rsid": "guv.abschreibungen",
-    "matched_category": null,
+    "skr03_classification": null,
     "codes": [],
     "children": [
       {
         "name": "auf immaterielle Vermögensgegenstände des Anlagevermögens und Sachanlagen",
         "rsid": "guv.abschreibungen.auf_immaterielle_vermoegensgegenstaende_des_anlagevermoegens",
-        "matched_category": null,
+        "skr03_classification": null,
         "codes": []
       },
       {
         "name": "auf Vermögensgegenstände des Umlaufvermögens, soweit diese die in der Kapitalgesellschaft üblichen Abschreibungen überschreiten",
         "rsid": "guv.abschreibungen.auf_vermoegensgegenstaende_des_umlaufvermoegens_soweit_diese",
-        "matched_category": null,
+        "skr03_classification": null,
         "codes": []
       }
     ]
   },
   "sonstige betriebliche Aufwendungen": {
     "rsid": "guv.sonstige_betriebliche_aufwendungen",
-    "matched_category": "Sonstige betriebliche Aufwendungen",
+    "skr03_classification": "Sonstige betriebliche Aufwendungen",
     "codes": [
       "2004",
       "2007",
@@ -730,7 +730,7 @@
   },
   "Erträge aus Beteiligungen, davon aus verbundenen Unternehmen": {
     "rsid": "guv.ertraege_aus_beteiligungen_davon_aus_verbundenen_unternehmen",
-    "matched_category": "Erträge aus Beteiligungen",
+    "skr03_classification": "Erträge aus Beteiligungen",
     "codes": [
       "2600",
       "2603",
@@ -744,7 +744,7 @@
   },
   "Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens, davon aus verbundenen Unternehmen": {
     "rsid": "guv.ertraege_aus_anderen_wertpapieren_und_ausleihungen_des_finan",
-    "matched_category": "Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens",
+    "skr03_classification": "Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens",
     "codes": [
       "2620",
       "2621",
@@ -762,7 +762,7 @@
   },
   "sonstige Zinsen und ähnliche Erträge, davon aus verbundenen Unternehmen": {
     "rsid": "guv.sonstige_zinsen_und_aehnliche_ertraege_davon_aus_verbundenen",
-    "matched_category": "Sonstige Zinsen und ähnliche Erträge",
+    "skr03_classification": "Sonstige Zinsen und ähnliche Erträge",
     "codes": [
       "2650",
       "2654",
@@ -783,7 +783,7 @@
   },
   "Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens": {
     "rsid": "guv.abschreibungen_auf_finanzanlagen_und_auf_wertpapiere_des_uml",
-    "matched_category": "Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens",
+    "skr03_classification": "Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens",
     "codes": [
       "4866",
       "4870",
@@ -799,7 +799,7 @@
   },
   "Zinsen und ähnliche Aufwendungen, davon an verbundene Unternehmen": {
     "rsid": "guv.zinsen_und_aehnliche_aufwendungen_davon_an_verbundene_untern",
-    "matched_category": "Zinsen und ähnliche Aufwendungen",
+    "skr03_classification": "Zinsen und ähnliche Aufwendungen",
     "codes": [
       "2100",
       "2102",
@@ -838,17 +838,17 @@
   },
   "Steuern vom Einkommen und vom Ertrag": {
     "rsid": "guv.steuern_vom_einkommen_und_vom_ertrag",
-    "matched_category": null,
+    "skr03_classification": null,
     "codes": []
   },
   "Ergebnis nach Steuern": {
     "rsid": "guv.ergebnis_nach_steuern",
-    "matched_category": null,
+    "skr03_classification": null,
     "codes": []
   },
   "sonstige Steuern": {
     "rsid": "guv.sonstige_steuern",
-    "matched_category": "Sonstige Steuern",
+    "skr03_classification": "Sonstige Steuern",
     "codes": [
       "2285",
       "2287",
@@ -862,7 +862,7 @@
   },
   "Jahresüberschuss/Jahresfehlbetrag": {
     "rsid": "guv.jahresueberschussjahresfehlbetrag",
-    "matched_category": null,
+    "skr03_classification": null,
     "codes": []
   }
 }

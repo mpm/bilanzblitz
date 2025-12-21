@@ -2,19 +2,19 @@
   "aktiva": {
     "Anlagevermögen": {
       "rsid": "b.aktiva.anlagevermoegen",
-      "matched_category": null,
+      "skr03_classification": null,
       "codes": [],
       "items": [
         {
           "name": "Immaterielle Vermögensgegenstände",
           "rsid": "b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": [],
           "children": [
             {
               "name": "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte",
               "rsid": "b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende.selbst_geschaffene_gewerbliche_schutzrechte_und_aehnliche_re",
-              "matched_category": "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte",
+              "skr03_classification": "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte",
               "codes": [
                 "0043",
                 "0044",
@@ -27,7 +27,7 @@
             {
               "name": "entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten",
               "rsid": "b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende.entgeltlich_erworbene_konzessionen_gewerbliche_schutzrechte_",
-              "matched_category": "Entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten",
+              "skr03_classification": "Entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten",
               "codes": [
                 "0010",
                 "0015",
@@ -40,7 +40,7 @@
             {
               "name": "Geschäfts- oder Firmenwert",
               "rsid": "b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende.geschaefts_oder_firmenwert",
-              "matched_category": "Geschäfts- oder Firmenwert",
+              "skr03_classification": "Geschäfts- oder Firmenwert",
               "codes": [
                 "0035"
               ]
@@ -48,7 +48,7 @@
             {
               "name": "geleistete Anzahlungen",
               "rsid": "b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende.geleistete_anzahlungen",
-              "matched_category": "Geleistete Anzahlungen",
+              "skr03_classification": "Geleistete Anzahlungen",
               "codes": [
                 "0038",
                 "0039",
@@ -65,13 +65,13 @@
         {
           "name": "Sachanlagen",
           "rsid": "b.aktiva.anlagevermoegen.sachanlagen",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": [],
           "children": [
             {
               "name": "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken",
               "rsid": "b.aktiva.anlagevermoegen.sachanlagen.grundstuecke_grundstuecksgleiche_rechte_und_bauten_einschlie",
-              "matched_category": "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken",
+              "skr03_classification": "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken",
               "codes": [
                 "0050",
                 "0059",
@@ -112,7 +112,7 @@
             {
               "name": "technische Anlagen und Maschinen",
               "rsid": "b.aktiva.anlagevermoegen.sachanlagen.technische_anlagen_und_maschinen",
-              "matched_category": "Technische Anlagen und Maschinen",
+              "skr03_classification": "Technische Anlagen und Maschinen",
               "codes": [
                 "0210",
                 "0220",
@@ -124,7 +124,7 @@
             {
               "name": "andere Anlagen, Betriebs- und Geschäftsausstattung",
               "rsid": "b.aktiva.anlagevermoegen.sachanlagen.andere_anlagen_betriebs_und_geschaeftsausstattung",
-              "matched_category": "Andere Anlagen, Betriebs- und Geschäftsausstattung",
+              "skr03_classification": "Andere Anlagen, Betriebs- und Geschäftsausstattung",
               "codes": [
                 "0300",
                 "0310",
@@ -146,7 +146,7 @@
             {
               "name": "geleistete Anzahlungen und Anlagen im Bau",
               "rsid": "b.aktiva.anlagevermoegen.sachanlagen.geleistete_anzahlungen_und_anlagen_im_bau",
-              "matched_category": "Geleistete Anzahlungen und Anlagen im Bau",
+              "skr03_classification": "Geleistete Anzahlungen und Anlagen im Bau",
               "codes": [
                 "0079",
                 "0120",
@@ -168,13 +168,13 @@
         {
           "name": "Finanzanlagen",
           "rsid": "b.aktiva.anlagevermoegen.finanzanlagen",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": [],
           "children": [
             {
               "name": "Anteile an verbundenen Unternehmen",
               "rsid": "b.aktiva.anlagevermoegen.finanzanlagen.anteile_an_verbundenen_unternehmen",
-              "matched_category": "Anteile an verbundenen Unternehmen",
+              "skr03_classification": "Anteile an verbundenen Unternehmen",
               "codes": [
                 "0500",
                 "0501",
@@ -189,7 +189,7 @@
             {
               "name": "Ausleihungen an verbundene Unternehmen",
               "rsid": "b.aktiva.anlagevermoegen.finanzanlagen.ausleihungen_an_verbundene_unternehmen",
-              "matched_category": "Ausleihungen an verbundene Unternehmen",
+              "skr03_classification": "Ausleihungen an verbundene Unternehmen",
               "codes": [
                 "0505",
                 "0506",
@@ -200,7 +200,7 @@
             {
               "name": "Beteiligungen",
               "rsid": "b.aktiva.anlagevermoegen.finanzanlagen.beteiligungen",
-              "matched_category": "Beteiligungen",
+              "skr03_classification": "Beteiligungen",
               "codes": [
                 "0510",
                 "0513",
@@ -213,7 +213,7 @@
             {
               "name": "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "rsid": "b.aktiva.anlagevermoegen.finanzanlagen.ausleihungen_an_unternehmen_mit_denen_ein_beteiligungsverhae",
-              "matched_category": "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+              "skr03_classification": "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "codes": [
                 "0520",
                 "0523",
@@ -223,7 +223,7 @@
             {
               "name": "Wertpapiere des Anlagevermögens",
               "rsid": "b.aktiva.anlagevermoegen.finanzanlagen.wertpapiere_des_anlagevermoegens",
-              "matched_category": "Wertpapiere des Anlagevermögens",
+              "skr03_classification": "Wertpapiere des Anlagevermögens",
               "codes": [
                 "0525",
                 "0530",
@@ -234,7 +234,7 @@
             {
               "name": "sonstige Ausleihungen",
               "rsid": "b.aktiva.anlagevermoegen.finanzanlagen.sonstige_ausleihungen",
-              "matched_category": "Sonstige Ausleihungen",
+              "skr03_classification": "Sonstige Ausleihungen",
               "codes": [
                 "0540",
                 "0550",
@@ -251,19 +251,19 @@
     },
     "Umlaufvermögen": {
       "rsid": "b.aktiva.umlaufvermoegen",
-      "matched_category": null,
+      "skr03_classification": null,
       "codes": [],
       "items": [
         {
           "name": "Vorräte",
           "rsid": "b.aktiva.umlaufvermoegen.vorraete",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": [],
           "children": [
             {
               "name": "Roh-, Hilfs- und Betriebsstoffe",
               "rsid": "b.aktiva.umlaufvermoegen.vorraete.roh_hilfs_und_betriebsstoffe",
-              "matched_category": "Roh-, Hilfs- und Betriebsstoffe",
+              "skr03_classification": "Roh-, Hilfs- und Betriebsstoffe",
               "codes": [
                 "3970"
               ]
@@ -271,7 +271,7 @@
             {
               "name": "unfertige Erzeugnisse, unfertige Leistungen",
               "rsid": "b.aktiva.umlaufvermoegen.vorraete.unfertige_erzeugnisse_unfertige_leistungen",
-              "matched_category": "Unfertige Erzeugnisse, unfertige Leistungen",
+              "skr03_classification": "Unfertige Erzeugnisse, unfertige Leistungen",
               "codes": [
                 "7000",
                 "7050",
@@ -281,7 +281,7 @@
             {
               "name": "fertige Erzeugnisse und Waren",
               "rsid": "b.aktiva.umlaufvermoegen.vorraete.fertige_erzeugnisse_und_waren",
-              "matched_category": "Fertige Erzeugnisse und Waren",
+              "skr03_classification": "Fertige Erzeugnisse und Waren",
               "codes": [
                 "3980",
                 "7100",
@@ -292,7 +292,7 @@
             {
               "name": "geleistete Anzahlungen",
               "rsid": "b.aktiva.umlaufvermoegen.vorraete.geleistete_anzahlungen_2",
-              "matched_category": "Geleistete Anzahlungen",
+              "skr03_classification": "Geleistete Anzahlungen",
               "codes": [
                 "0038",
                 "0039",
@@ -309,13 +309,13 @@
         {
           "name": "Forderungen und sonstige Vermögensgegenstände",
           "rsid": "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": [],
           "children": [
             {
               "name": "Forderungen aus Lieferungen und Leistungen",
               "rsid": "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen",
-              "matched_category": "Forderungen aus Lieferungen und Leistungen",
+              "skr03_classification": "Forderungen aus Lieferungen und Leistungen",
               "codes": [
                 "9960"
               ]
@@ -323,7 +323,7 @@
             {
               "name": "Forderungen gegen verbundene Unternehmen",
               "rsid": "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen",
-              "matched_category": "Forderungen gegen verbundene Unternehmen oder Verbindlichkeiten gegenüber verbundenen Unternehmen",
+              "skr03_classification": "Forderungen gegen verbundene Unternehmen oder Verbindlichkeiten gegenüber verbundenen Unternehmen",
               "codes": [
                 "1310",
                 "1470",
@@ -337,7 +337,7 @@
             {
               "name": "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "rsid": "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh",
-              "matched_category": "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht oder Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+              "skr03_classification": "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht oder Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "codes": [
                 "1480",
                 "1481",
@@ -350,7 +350,7 @@
             {
               "name": "sonstige Vermögensgegenstände",
               "rsid": "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende",
-              "matched_category": "Sonstige Vermögensgegenstände",
+              "skr03_classification": "Sonstige Vermögensgegenstände",
               "codes": [
                 "1350",
                 "1352",
@@ -411,13 +411,13 @@
         {
           "name": "Wertpapiere",
           "rsid": "b.aktiva.umlaufvermoegen.wertpapiere",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": [],
           "children": [
             {
               "name": "Anteile an verbundenen Unternehmen",
               "rsid": "b.aktiva.umlaufvermoegen.wertpapiere.anteile_an_verbundenen_unternehmen_2",
-              "matched_category": "Anteile an verbundenen Unternehmen",
+              "skr03_classification": "Anteile an verbundenen Unternehmen",
               "codes": [
                 "0500",
                 "0501",
@@ -432,7 +432,7 @@
             {
               "name": "sonstige Wertpapiere",
               "rsid": "b.aktiva.umlaufvermoegen.wertpapiere.sonstige_wertpapiere",
-              "matched_category": "Sonstige Wertpapiere",
+              "skr03_classification": "Sonstige Wertpapiere",
               "codes": [
                 "1329",
                 "1348",
@@ -444,55 +444,55 @@
         {
           "name": "Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks",
           "rsid": "b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": []
         }
       ]
     },
     "Rechnungsabgrenzungsposten": {
       "rsid": "b.aktiva.rechnungsabgrenzungsposten",
-      "matched_category": null,
+      "skr03_classification": null,
       "codes": []
     },
     "Aktive latente Steuern": {
       "rsid": "b.aktiva.aktive_latente_steuern",
-      "matched_category": null,
+      "skr03_classification": null,
       "codes": []
     },
     "Aktiver Unterschiedsbetrag aus der Vermögensverrechnung": {
       "rsid": "b.aktiva.aktiver_unterschiedsbetrag_aus_der_vermoegensverrechnung",
-      "matched_category": null,
+      "skr03_classification": null,
       "codes": []
     }
   },
   "passiva": {
     "Eigenkapital": {
       "rsid": "b.passiva.eigenkapital",
-      "matched_category": null,
+      "skr03_classification": null,
       "codes": [],
       "items": [
         {
           "name": "Gezeichnetes Kapital",
           "rsid": "b.passiva.eigenkapital.gezeichnetes_kapital",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": []
         },
         {
           "name": "Kapitalrücklage",
           "rsid": "b.passiva.eigenkapital.kapitalruecklage",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": []
         },
         {
           "name": "Gewinnrücklagen",
           "rsid": "b.passiva.eigenkapital.gewinnruecklagen",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": [],
           "children": [
             {
               "name": "gesetzliche Rücklage",
               "rsid": "b.passiva.eigenkapital.gewinnruecklagen.gesetzliche_ruecklage",
-              "matched_category": "Gesetzliche Rücklage",
+              "skr03_classification": "Gesetzliche Rücklage",
               "codes": [
                 "0846"
               ]
@@ -500,7 +500,7 @@
             {
               "name": "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
               "rsid": "b.passiva.eigenkapital.gewinnruecklagen.ruecklage_fuer_anteile_an_einem_herrschenden_oder_mehrheitli",
-              "matched_category": "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
+              "skr03_classification": "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
               "codes": [
                 "0849"
               ]
@@ -508,7 +508,7 @@
             {
               "name": "satzungsmäßige Rücklagen",
               "rsid": "b.passiva.eigenkapital.gewinnruecklagen.satzungsmaessige_ruecklagen",
-              "matched_category": "Satzungsmäßige Rücklagen",
+              "skr03_classification": "Satzungsmäßige Rücklagen",
               "codes": [
                 "0851"
               ]
@@ -516,7 +516,7 @@
             {
               "name": "andere Gewinnrücklagen",
               "rsid": "b.passiva.eigenkapital.gewinnruecklagen.andere_gewinnruecklagen",
-              "matched_category": "Andere Gewinnrücklagen",
+              "skr03_classification": "Andere Gewinnrücklagen",
               "codes": [
                 "0848",
                 "0853",
@@ -535,20 +535,20 @@
         {
           "name": "Gewinnvortrag/Verlustvortrag",
           "rsid": "b.passiva.eigenkapital.gewinnvortragverlustvortrag",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": []
         },
         {
           "name": "Jahresüberschuß/Jahresfehlbetrag",
           "rsid": "b.passiva.eigenkapital.jahresueberschussjahresfehlbetrag",
-          "matched_category": null,
+          "skr03_classification": null,
           "codes": []
         }
       ]
     },
     "Rückstellungen": {
       "rsid": "b.passiva.rueckstellungen",
-      "matched_category": null,
+      "skr03_classification": null,
       "codes": [],
       "items": [
         {
@@ -558,7 +558,7 @@
             {
               "name": "Rückstellungen für Pensionen und ähnliche Verpflichtungen",
               "rsid": "b.passiva.rueckstellungen.rueckstellungen_fuer_pensionen_und_aehnliche_verpflichtungen",
-              "matched_category": "Rückstellungen für Pensionen und ähnliche Verpflichtungen",
+              "skr03_classification": "Rückstellungen für Pensionen und ähnliche Verpflichtungen",
               "codes": [
                 "0950",
                 "0952",
@@ -569,7 +569,7 @@
             {
               "name": "Steuerrückstellungen",
               "rsid": "b.passiva.rueckstellungen.steuerrueckstellungen",
-              "matched_category": "Steuerrückstellungen",
+              "skr03_classification": "Steuerrückstellungen",
               "codes": [
                 "0955",
                 "0956",
@@ -581,7 +581,7 @@
             {
               "name": "sonstige Rückstellungen",
               "rsid": "b.passiva.rueckstellungen.sonstige_rueckstellungen",
-              "matched_category": "Sonstige Rückstellungen",
+              "skr03_classification": "Sonstige Rückstellungen",
               "codes": [
                 "0961",
                 "0964",
@@ -603,7 +603,7 @@
     },
     "Verbindlichkeiten": {
       "rsid": "b.passiva.verbindlichkeiten",
-      "matched_category": null,
+      "skr03_classification": null,
       "codes": [],
       "items": [
         {
@@ -613,7 +613,7 @@
             {
               "name": "Anleihen, davon konvertibel",
               "rsid": "b.passiva.verbindlichkeiten.anleihen_davon_konvertibel",
-              "matched_category": "Anleihen",
+              "skr03_classification": "Anleihen",
               "codes": [
                 "0600",
                 "0601",
@@ -628,7 +628,7 @@
             {
               "name": "Verbindlichkeiten gegenüber Kreditinstituten",
               "rsid": "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_kreditinstituten",
-              "matched_category": "Verbindlichkeiten gegenüber Kreditinstituten",
+              "skr03_classification": "Verbindlichkeiten gegenüber Kreditinstituten",
               "codes": [
                 "0699",
                 "9963"
@@ -637,7 +637,7 @@
             {
               "name": "erhaltene Anzahlungen auf Bestellungen",
               "rsid": "b.passiva.verbindlichkeiten.erhaltene_anzahlungen_auf_bestellungen",
-              "matched_category": "Erhaltene Anzahlungen auf Bestellungen (Passiva)",
+              "skr03_classification": "Erhaltene Anzahlungen auf Bestellungen (Passiva)",
               "codes": [
                 "1710",
                 "1711",
@@ -654,7 +654,7 @@
             {
               "name": "Verbindlichkeiten aus Lieferungen und Leistungen",
               "rsid": "b.passiva.verbindlichkeiten.verbindlichkeiten_aus_lieferungen_und_leistungen",
-              "matched_category": "Verbindlichkeiten aus Lieferungen und Leistungen",
+              "skr03_classification": "Verbindlichkeiten aus Lieferungen und Leistungen",
               "codes": [
                 "9964"
               ]
@@ -662,13 +662,13 @@
             {
               "name": "Verbindlichkeiten aus der Annahme gezogener Wechsel und der Ausstellung eigener Wechsel",
               "rsid": "b.passiva.verbindlichkeiten.verbindlichkeiten_aus_der_annahme_gezogener_wechsel_und_der_",
-              "matched_category": null,
+              "skr03_classification": null,
               "codes": []
             },
             {
               "name": "Verbindlichkeiten gegenüber verbundenen Unternehmen",
               "rsid": "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen",
-              "matched_category": "Verbindlichkeiten gegenüber verbundenen Unternehmen oder Forderungen gegen verbundene Unternehmen",
+              "skr03_classification": "Verbindlichkeiten gegenüber verbundenen Unternehmen oder Forderungen gegen verbundene Unternehmen",
               "codes": [
                 "0700",
                 "0701",
@@ -683,7 +683,7 @@
             {
               "name": "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "rsid": "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_betei",
-              "matched_category": "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht oder Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+              "skr03_classification": "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht oder Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
               "codes": [
                 "0715",
                 "0716",
@@ -698,7 +698,7 @@
             {
               "name": "sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen Sicherheit",
               "rsid": "b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen",
-              "matched_category": "Sonstige Verbindlichkeiten",
+              "skr03_classification": "Sonstige Verbindlichkeiten",
               "codes": [
                 "0730",
                 "0740",
@@ -779,12 +779,12 @@
     },
     "Rechnungsabgrenzungsposten": {
       "rsid": "b.passiva.rechnungsabgrenzungsposten",
-      "matched_category": null,
+      "skr03_classification": null,
       "codes": []
     },
     "Passive latente Steuern": {
       "rsid": "b.passiva.passive_latente_steuern",
-      "matched_category": null,
+      "skr03_classification": null,
       "codes": []
     }
   }

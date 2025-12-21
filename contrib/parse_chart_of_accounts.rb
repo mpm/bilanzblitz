@@ -6,21 +6,21 @@
 # ===================================
 #
 # This script parses OCR-extracted SKR03 chart of accounts data and generates
-# structured JSON files that map German accounting standard categories (GuV and Bilanz)
-# to their corresponding account codes.
+# structured JSON files that map German accounting standard report sections (GuV and Bilanz)
+# to their corresponding account codes based on SKR03 account classifications.
 #
 # Input Files:
-# - skr03-ocr-results.json: OCR results from SKR03 PDF (category → account codes)
+# - skr03-ocr-results.json: OCR results from SKR03 PDF (classification → account codes)
 # - hgb-bilanz-aktiva.json: Balance sheet structure (Aktiva/Assets)
 # - hgb-bilanz-passiva.json: Balance sheet structure (Passiva/Liabilities & Equity)
 # - hgb-guv.json: Profit & Loss (GuV) structure according to § 275 Abs. 2 HGB
 #
 # Output Files:
-# - skr03-accounts.csv: All account codes with descriptions and category hashes
-# - bilanz-sections-mapping.json: Balance sheet with category IDs and account codes
-# - guv-sections-mapping.json: GuV with category IDs and account codes
+# - skr03-accounts.csv: All account codes with descriptions and semantic category IDs (CIDs)
+# - bilanz-sections-mapping.json: Balance sheet with RSIDs and account codes
+# - guv-sections-mapping.json: GuV with RSIDs and account codes
 #
-# The script uses fuzzy matching to associate parsed category names with official
+# The script uses fuzzy matching to associate parsed classification names with official
 # German accounting category names, then maps them to account codes.
 
 require 'json'

@@ -2,15 +2,15 @@
 # frozen_string_literal: true
 
 #
-# Category JSON Builder
-# =====================
+# Classification JSON Builder
+# ==========================
 #
 # Builds bilanz-sections-mapping.json and guv-sections-mapping.json
 # from validated skr03-section-mapping.yml and skr03-ocr-results.json
 #
 # Input Files:
 # - skr03-section-mapping.yml: Validated intermediate mapping (manually edited)
-# - skr03-ocr-results.json: SKR03 categories with account codes
+# - skr03-ocr-results.json: SKR03 classifications with account codes
 # - hgb-bilanz-aktiva.json: Balance sheet structure (for structure reference)
 # - hgb-bilanz-passiva.json: Balance sheet structure (for structure reference)
 # - hgb-guv.json: GuV structure (for structure reference)
@@ -120,7 +120,7 @@ class ParserTools
 end
 
 # Main builder class
-class CategoryJsonBuilder
+class ClassificationJsonBuilder
   def initialize
     @mapping = YAML.load_file('skr03-section-mapping.yml')
     @bilanz_aktiva = JSON.parse(File.read('hgb-bilanz-aktiva.json'))
@@ -130,14 +130,14 @@ class CategoryJsonBuilder
     # Load presentation rules mapping if available
     @presentation_rules = load_presentation_rules
 
-    # Build SKR03 category → account codes mapping
-    @skr03_by_category = build_skr03_index
+    # Build SKR03 classification → account codes mapping
+    @skr03_by_classification = build_skr03_index
 
-    # Build SKR03 category name → hierarchical cid mapping
-    @skr03_category_to_cid = build_category_to_cid_mapping
+    # Build SKR03 classification name → hierarchical cid mapping
+    @skr03_classification_to_cid = build_classification_to_cid_mapping
 
-    # Build SKR03 category name → presentation rule mapping
-    @skr03_category_to_rule = build_category_to_rule_mapping
+    # Build SKR03 classification name → presentation rule mapping
+    @skr03_classification_to_rule = build_classification_to_rule_mapping
   end
 
   # Load presentation rules from YAML file
@@ -153,7 +153,7 @@ class CategoryJsonBuilder
 
   def build
     puts "=" * 80
-    puts "Building Category JSON Files from Mapping"
+    puts "Building Classification JSON Files from Mapping"
     puts "=" * 80
     puts
 
@@ -188,33 +188,33 @@ class CategoryJsonBuilder
 
   private
 
-  # Build index: SKR03 category name → account codes
+  # Build index: SKR03 classification name → account codes
   def build_skr03_index
     ocr_data = JSON.parse(File.read('skr03-ocr-results.json'))
 
     # Parse all account codes
     all_codes = []
     ocr_data.each do |row|
-      category_name = row[0]&.strip || ""
+      classification_name = row[0]&.strip || ""
       right_column = row[1]
 
-      next if category_name.empty? && right_column.nil?
+      next if classification_name.empty? && right_column.nil?
 
       items = right_column&.split(";")&.map(&:strip)
       next unless items
 
       account_codes = items.select { |item| item =~ /\d{4,5}/ }
       account_codes.each do |ac|
-        all_codes << [ category_name, ac ]
+        all_codes << [ classification_name, ac ]
       end
     end
 
     # Parse and deduplicate
     parsed_codes = ParserTools.deduplicate_by_code(
       all_codes.map do |code_tuple|
-        (category, code_info) = code_tuple
+        (classification, code_info) = code_tuple
         result = ParserTools.parse_code_string(code_info)
-        result[:category] = category
+        result[:classification] = classification
         if result[:code] == ""
           raise "ERROR! parse_code_string failed for #{code_info.inspect}"
         end
@@ -225,9 +225,9 @@ class CategoryJsonBuilder
     # Build index
     index = Hash.new { |h, k| h[k] = [] }
     parsed_codes.each do |pc|
-      category = pc[:category]
+      classification = pc[:classification]
       code = pc[:code]
-      index[category] << code if category && code
+      index[classification] << code if classification && code
     end
 
     # Sort codes
@@ -255,7 +255,7 @@ class CategoryJsonBuilder
         # No mapping found - create empty structure
         result[section_name] = {
           rsid: nil,
-          matched_category: nil,
+          skr03_classification: nil,
           codes: []
         }
       end
@@ -267,9 +267,11 @@ class CategoryJsonBuilder
   def build_balance_section(name, data, mapping, path_prefix, side)
     meta = mapping["_meta"] if mapping.is_a?(Hash)
 
+    classification_field = meta ? (meta["skr03_classification"] || meta["skr03_category"]) : (mapping["skr03_classification"] || mapping["skr03_category"])
+
     section = {
       rsid: path_prefix,
-      matched_category: meta ? meta["skr03_category"] : mapping["skr03_category"],
+      skr03_classification: classification_field,
       codes: get_codes_for_mapping(meta || mapping)
     }
 
@@ -300,10 +302,12 @@ class CategoryJsonBuilder
   def build_balance_item(item, mapping, path_prefix)
     meta = mapping["_meta"] if mapping.is_a?(Hash)
 
+    classification_field = meta ? (meta["skr03_classification"] || meta["skr03_category"]) : (mapping["skr03_classification"] || mapping["skr03_category"])
+
     item_obj = {
       name: item["name"],
       rsid: path_prefix,
-      matched_category: meta ? meta["skr03_category"] : mapping["skr03_category"],
+      skr03_classification: classification_field,
       codes: get_codes_for_mapping(meta || mapping)
     }
 
@@ -318,14 +322,14 @@ class CategoryJsonBuilder
           {
             name: clean_child_name,
             rsid: "#{path_prefix}.#{child_id}",
-            matched_category: child_mapping["skr03_category"],
+            skr03_classification: child_mapping["skr03_classification"] || child_mapping["skr03_category"],
             codes: get_codes_for_mapping(child_mapping)
           }
         else
           {
             name: clean_child_name,
             rsid: nil,
-            matched_category: nil,
+            skr03_classification: nil,
             codes: []
           }
         end
@@ -348,14 +352,14 @@ class CategoryJsonBuilder
           {
             name: clean_child_name,
             rsid: "#{path_prefix}.#{child_id}",
-            matched_category: child_mapping["skr03_category"],
+            skr03_classification: child_mapping["skr03_classification"] || child_mapping["skr03_category"],
             codes: get_codes_for_mapping(child_mapping)
           }
         else
           {
             name: clean_child_name,
             rsid: nil,
-            matched_category: nil,
+            skr03_classification: nil,
             codes: []
           }
         end
@@ -367,7 +371,7 @@ class CategoryJsonBuilder
     {
       name: item["name"] || "",
       rsid: nil,
-      matched_category: nil,
+      skr03_classification: nil,
       codes: []
     }
   end
@@ -384,7 +388,7 @@ class CategoryJsonBuilder
 
         section = {
           rsid: "guv.#{section_id}",
-          matched_category: section_mapping["skr03_category"],
+          skr03_classification: section_mapping["skr03_classification"] || section_mapping["skr03_category"],
           codes: get_codes_for_mapping(section_mapping)
         }
 
@@ -398,14 +402,14 @@ class CategoryJsonBuilder
               {
                 name: child_name,
                 rsid: "guv.#{section_id}.#{child_id}",
-                matched_category: child_mapping["skr03_category"],
+                skr03_classification: child_mapping["skr03_classification"] || child_mapping["skr03_category"],
                 codes: get_codes_for_mapping(child_mapping)
               }
             else
               {
                 name: child_name,
                 rsid: nil,
-                matched_category: nil,
+                skr03_classification: nil,
                 codes: []
               }
             end
@@ -416,7 +420,7 @@ class CategoryJsonBuilder
       else
         result[section_name] = {
           rsid: nil,
-          matched_category: nil,
+          skr03_classification: nil,
           codes: []
         }
       end
@@ -476,29 +480,29 @@ class CategoryJsonBuilder
   def get_codes_for_mapping(mapping)
     return [] unless mapping.is_a?(Hash)
 
-    skr03_category = mapping["skr03_category"]
-    return [] if skr03_category.nil?
+    skr03_classification = mapping["skr03_classification"] || mapping["skr03_category"]
+    return [] if skr03_classification.nil?
 
-    @skr03_by_category[skr03_category] || []
+    @skr03_by_classification[skr03_classification] || []
   end
 
-  # Build mapping from SKR03 category name to hierarchical cid
-  def build_category_to_cid_mapping
+  # Build mapping from SKR03 classification name to hierarchical cid
+  def build_classification_to_cid_mapping
     mapping = {}
 
-    # Map aktiva categories
+    # Map aktiva classifications
     walk_mapping(@mapping["aktiva"], "b.aktiva", mapping)
 
-    # Map passiva categories
+    # Map passiva classifications
     walk_mapping(@mapping["passiva"], "b.passiva", mapping)
 
-    # Map GuV categories
+    # Map GuV classifications
     walk_mapping(@mapping["guv"], "guv", mapping)
 
     mapping
   end
 
-  # Recursively walk mapping structure to build SKR03 category → cid mapping
+  # Recursively walk mapping structure to build SKR03 classification → cid mapping
   def walk_mapping(node, path, mapping)
     return unless node.is_a?(Hash)
 
@@ -506,18 +510,20 @@ class CategoryJsonBuilder
       next if key == "_meta"
 
       if value.is_a?(Hash)
-        # Get the SKR03 category name for this node
-        skr03_category = nil
+        # Get the SKR03 classification name for this node
+        skr03_classification = nil
         if value["_meta"]
-          skr03_category = value["_meta"]["skr03_category"]
+          skr03_classification = value["_meta"]["skr03_classification"] || value["_meta"]["skr03_category"]
+        elsif value["skr03_classification"]
+          skr03_classification = value["skr03_classification"]
         elsif value["skr03_category"]
-          skr03_category = value["skr03_category"]
+          skr03_classification = value["skr03_category"]
         end
 
         # Map it to the hierarchical cid
-        if skr03_category
+        if skr03_classification
           full_path = "#{path}.#{key}"
-          mapping[skr03_category] = full_path
+          mapping[skr03_classification] = full_path
         end
 
         # Recurse into children
@@ -526,42 +532,45 @@ class CategoryJsonBuilder
     end
   end
 
-  # Build mapping from SKR03 category name to presentation rule
-  def build_category_to_rule_mapping
+  # Build mapping from SKR03 classification name to presentation rule
+  def build_classification_to_rule_mapping
     mapping = {}
-    return mapping unless @presentation_rules && @presentation_rules["categories"]
+    return mapping unless @presentation_rules && (@presentation_rules["classifications"] || @presentation_rules["categories"])
 
-    @presentation_rules["categories"].each do |category_name, category_data|
-      rule = category_data["detected_rule"]
-      accounts = category_data["accounts"] || []
+    source = @presentation_rules["classifications"] || @presentation_rules["categories"]
 
-      # Map each account code to its rule (via category)
+    source.each do |classification_name, classification_data|
+      rule = classification_data["detected_rule"]
+      accounts = classification_data["accounts"] || []
+
+      # Map each account code to its rule (via classification)
       accounts.each do |account_code|
         mapping[account_code] = rule
       end
 
-      # Also map the category name directly
-      mapping["category:#{category_name}"] = rule
+      # Also map the classification name directly
+      mapping["classification:#{classification_name}"] = rule
     end
 
     mapping
   end
 
-  # Get presentation rule for an account code or category
-  def get_presentation_rule(account_code, category_name)
+  # Get presentation rule for an account code or classification
+  def get_presentation_rule(account_code, classification_name)
     return nil unless @presentation_rules
 
     # First check if we have a direct account mapping
-    rule = @skr03_category_to_rule[account_code]
+    rule = @skr03_classification_to_rule[account_code]
     return rule if rule
 
-    # Then check if we have a category mapping
-    rule = @skr03_category_to_rule["category:#{category_name}"]
+    # Then check if we have a classification mapping
+    rule = @skr03_classification_to_rule["classification:#{classification_name}"]
     return rule if rule
 
-    # Try to find the category in the presentation rules
-    if @presentation_rules["categories"] && @presentation_rules["categories"][category_name]
-      return @presentation_rules["categories"][category_name]["detected_rule"]
+    # Try to find the classification in the presentation rules
+    source = @presentation_rules["classifications"] || @presentation_rules["categories"]
+    if source && source[classification_name]
+      return source[classification_name]["detected_rule"]
     end
 
     nil
@@ -574,26 +583,26 @@ class CategoryJsonBuilder
     # Parse all account codes
     all_codes = []
     ocr_data.each do |row|
-      category_name = row[0]&.strip || ""
+      classification_name = row[0]&.strip || ""
       right_column = row[1]
 
-      next if category_name.empty? && right_column.nil?
+      next if classification_name.empty? && right_column.nil?
 
       items = right_column&.split(";")&.map(&:strip)
       next unless items
 
       account_codes = items.select { |item| item =~ /\d{4,5}/ }
       account_codes.each do |ac|
-        all_codes << [ category_name, ac ]
+        all_codes << [ classification_name, ac ]
       end
     end
 
     # Parse and deduplicate
     parsed_codes = ParserTools.deduplicate_by_code(
       all_codes.map do |code_tuple|
-        (category, code_info) = code_tuple
+        (classification, code_info) = code_tuple
         result = ParserTools.parse_code_string(code_info)
-        result[:category] = category
+        result[:classification] = classification
         if result[:code] == ""
           raise "ERROR! parse_code_string failed for #{code_info.inspect}"
         end
@@ -606,13 +615,13 @@ class CategoryJsonBuilder
       f.puts "# This file was automatically generated by contrib/build_category_json.rb"
       f.puts "# Columns: code; flags; range; cid; presentation_rule; description"
       parsed_codes.each do |pc|
-        # Get hierarchical category ID from SKR03 category name
-        category_id = @skr03_category_to_cid[pc[:category]] || ""
+        # Get hierarchical classification ID from SKR03 classification name
+        classification_id = @skr03_classification_to_cid[pc[:classification]] || ""
 
-        # Get presentation rule for this account/category
-        presentation_rule = get_presentation_rule(pc[:code], pc[:category]) || ""
+        # Get presentation rule for this account/classification
+        presentation_rule = get_presentation_rule(pc[:code], pc[:classification]) || ""
 
-        f.puts "#{pc[:code]};#{pc[:flags]};#{pc[:range]};#{category_id};#{presentation_rule};#{pc[:description]}"
+        f.puts "#{pc[:code]};#{pc[:flags]};#{pc[:range]};#{classification_id};#{presentation_rule};#{pc[:description]}"
       end
     end
   end
@@ -621,6 +630,6 @@ end
 # Run the builder
 if __FILE__ == $PROGRAM_NAME
   Dir.chdir(File.dirname(__FILE__))
-  builder = CategoryJsonBuilder.new
+  builder = ClassificationJsonBuilder.new
   builder.build
 end
