@@ -7,6 +7,7 @@ class GuVService
     @company = company
     @fiscal_year = fiscal_year
     @only_posted = only_posted
+    @only_posted = false if !Rails.env.test? && !FeatureFlag.only_posted_enabled?
   end
 
   def call
