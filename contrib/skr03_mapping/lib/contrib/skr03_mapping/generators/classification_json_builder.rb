@@ -412,7 +412,11 @@ module Contrib
           skr03_classification = mapping["skr03_classification"] || mapping["skr03_category"]
           return [] if skr03_classification.nil?
 
-          @skr03_by_classification[skr03_classification] || []
+          if skr03_classification.is_a?(Array)
+            skr03_classification.flat_map { |c| @skr03_by_classification[c] || [] }.sort.uniq
+          else
+            @skr03_by_classification[skr03_classification] || []
+          end
         end
 
         # Build mapping from SKR03 classification name to hierarchical cid
@@ -439,24 +443,25 @@ module Contrib
             next if key == "_meta"
 
             if value.is_a?(Hash)
-              # Get the SKR03 classification name for this node
-              skr03_classification = nil
+              # Get the SKR03 classification name(s) for this node
+              skr03_classifications = []
               if value["_meta"]
-                skr03_classification = value["_meta"]["skr03_classification"] || value["_meta"]["skr03_category"]
+                val = value["_meta"]["skr03_classification"] || value["_meta"]["skr03_category"]
+                skr03_classifications = Array(val) if val
               elsif value["skr03_classification"]
-                skr03_classification = value["skr03_classification"]
+                skr03_classifications = Array(value["skr03_classification"])
               elsif value["skr03_category"]
-                skr03_classification = value["skr03_category"]
+                skr03_classifications = Array(value["skr03_category"])
               end
 
               # Map it to the hierarchical cid
-              if skr03_classification
-                full_path = "#{path}.#{key}"
-                mapping[skr03_classification] = full_path
+              full_path = "#{path}.#{key}"
+              skr03_classifications.each do |c|
+                mapping[c] = full_path
               end
 
               # Recurse into children
-              walk_mapping(value, "#{path}.#{key}", mapping)
+              walk_mapping(value, full_path, mapping)
             end
           end
         end

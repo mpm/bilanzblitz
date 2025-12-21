@@ -162,27 +162,46 @@ aktiva:
       forderungen_aus_lieferungen_und_leistungen:
         name: Forderungen aus Lieferungen und Leistungen
         match_status: auto
-        skr03_classification: Forderungen aus Lieferungen und Leistungen
-        notes: ''
+        skr03_classification:
+        - Forderungen aus Lieferungen und Leistungen
+        - Forderungen aus Lieferungen und Leistungen oder sonstige Verbindlichkeiten
+        - Forderungen aus Lieferungen und Leistungen H-Saldo oder sonstige Verbindlichkeiten
+          S-Saldo
+        notes: Auto-mapped via presentation rule
       forderungen_gegen_verbundene_unternehmen:
         name: Forderungen gegen verbundene Unternehmen
         match_status: auto
-        skr03_classification: Forderungen gegen verbundene Unternehmen oder Verbindlichkeiten
-          gegenüber verbundenen Unternehmen
-        notes: Partial match (case difference or similar)
+        skr03_classification:
+        - Forderungen gegen verbundene Unternehmen oder Verbindlichkeiten gegenüber
+          verbundenen Unternehmen
+        - Verbindlichkeiten gegenüber verbundenen Unternehmen oder Forderungen gegen
+          verbundene Unternehmen
+        notes: Partial match, Auto-mapped via presentation rule
       forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh:
         name: Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis
           besteht
         match_status: auto
-        skr03_classification: Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis
+        skr03_classification:
+        - Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht
+          oder Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
+          besteht
+        - Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
+          besteht oder Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis
+          besteht
+        - Forderungen gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
           besteht oder Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
           besteht
-        notes: Partial match (case difference or similar)
+        notes: Partial match, Auto-mapped via presentation rule
       sonstige_vermoegensgegenstaende:
         name: sonstige Vermögensgegenstände
         match_status: auto
-        skr03_classification: Sonstige Vermögensgegenstände
-        notes: ''
+        skr03_classification:
+        - Sonstige Vermögensgegenstände
+        - Sonstige Vermögensgegenstände oder sonstige Verbindlichkeiten
+        - Verbindlichkeiten aus Lieferungen und Leistungen oder sonstige Vermögensgegenstände
+        - Verbindlichkeiten aus Lieferungen und Leistungen S-Saldo oder sonstige Vermögensgegenstände
+          H-Saldo
+        notes: Auto-mapped via presentation rule
     wertpapiere:
       _meta:
         name: Wertpapiere
@@ -201,24 +220,28 @@ aktiva:
         notes: ''
     kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut:
       name: Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks
-      match_status: calculated
+      match_status: auto
       skr03_classification:
-      notes: Calculated field, no direct account mapping
+      - Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks
+      - Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks
+        oder Verbindlichkeiten gegenüber Kreditinstituten
+      notes: Auto-mapped via presentation rule
   rechnungsabgrenzungsposten:
     name: Rechnungsabgrenzungsposten
-    match_status: calculated
-    skr03_classification:
-    notes: Calculated field, no direct account mapping
+    match_status: auto
+    skr03_classification: Rechnungsabgrenzungsposten (Aktiva)
+    notes: Partial match
   aktive_latente_steuern:
     name: Aktive latente Steuern
-    match_status: calculated
-    skr03_classification:
-    notes: Calculated field, no direct account mapping
+    match_status: auto
+    skr03_classification: Aktive latente Steuern
+    notes: ''
   aktiver_unterschiedsbetrag_aus_der_vermoegensverrechnung:
     name: Aktiver Unterschiedsbetrag aus der Vermögensverrechnung
-    match_status: calculated
-    skr03_classification:
-    notes: Calculated field, no direct account mapping
+    match_status: auto
+    skr03_classification: Aktiver Unterschiedsbetrag aus der Vermögensverrechnung
+      oder sonstige Rückstellungen
+    notes: Partial match
 passiva:
   eigenkapital:
     _meta:
@@ -228,14 +251,14 @@ passiva:
       notes: Parent category - sum of children
     gezeichnetes_kapital:
       name: Gezeichnetes Kapital
-      match_status: calculated
-      skr03_classification:
-      notes: Calculated field, no direct account mapping
+      match_status: auto
+      skr03_classification: Gezeichnetes Kapital
+      notes: ''
     kapitalruecklage:
       name: Kapitalrücklage
-      match_status: calculated
-      skr03_classification:
-      notes: Calculated field, no direct account mapping
+      match_status: auto
+      skr03_classification: Kapitalrücklage
+      notes: ''
     gewinnruecklagen:
       _meta:
         name: Gewinnrücklagen
@@ -305,7 +328,7 @@ passiva:
       name: Anleihen, davon konvertibel
       match_status: auto
       skr03_classification: Anleihen
-      notes: Partial match (case difference or similar)
+      notes: Partial match
     verbindlichkeiten_gegenueber_kreditinstituten:
       name: Verbindlichkeiten gegenüber Kreditinstituten
       match_status: auto
@@ -315,7 +338,7 @@ passiva:
       name: erhaltene Anzahlungen auf Bestellungen
       match_status: auto
       skr03_classification: Erhaltene Anzahlungen auf Bestellungen (Passiva)
-      notes: Partial match (case difference or similar)
+      notes: Partial match
     verbindlichkeiten_aus_lieferungen_und_leistungen:
       name: Verbindlichkeiten aus Lieferungen und Leistungen
       match_status: auto
@@ -332,7 +355,7 @@ passiva:
       match_status: auto
       skr03_classification: Verbindlichkeiten gegenüber verbundenen Unternehmen oder
         Forderungen gegen verbundene Unternehmen
-      notes: Partial match (case difference or similar)
+      notes: Partial match
     verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_betei:
       name: Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
         besteht
@@ -340,23 +363,23 @@ passiva:
       skr03_classification: Verbindlichkeiten gegenüber Unternehmen, mit denen ein
         Beteiligungsverhältnis besteht oder Forderungen gegen Unternehmen, mit denen
         ein Beteiligungsverhältnis besteht
-      notes: Partial match (case difference or similar)
+      notes: Partial match
     sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen:
       name: sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen
         Sicherheit
       match_status: auto
       skr03_classification: Sonstige Verbindlichkeiten
-      notes: Partial match (case difference or similar)
+      notes: Partial match
   rechnungsabgrenzungsposten:
     name: Rechnungsabgrenzungsposten
-    match_status: calculated
-    skr03_classification:
-    notes: Calculated field, no direct account mapping
+    match_status: auto
+    skr03_classification: Rechnungsabgrenzungsposten (Aktiva)
+    notes: Partial match
   passive_latente_steuern:
     name: Passive latente Steuern
-    match_status: calculated
-    skr03_classification:
-    notes: Calculated field, no direct account mapping
+    match_status: auto
+    skr03_classification: Passive latente Steuern
+    notes: ''
 guv:
   umsatzerloese:
     name: Umsatzerlöse
@@ -410,7 +433,7 @@ guv:
       match_status: auto
       skr03_classification: Soziale Abgaben und Aufwendungen für Altersversorgung
         und für Unterstützung
-      notes: Partial match (case difference or similar)
+      notes: Partial match
   abschreibungen:
     name: Abschreibungen
     match_status: calculated
@@ -436,18 +459,18 @@ guv:
     name: Erträge aus Beteiligungen, davon aus verbundenen Unternehmen
     match_status: auto
     skr03_classification: Erträge aus Beteiligungen
-    notes: Partial match (case difference or similar)
+    notes: Partial match
   ertraege_aus_anderen_wertpapieren_und_ausleihungen_des_finan:
     name: Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens,
       davon aus verbundenen Unternehmen
     match_status: auto
     skr03_classification: Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens
-    notes: Partial match (case difference or similar)
+    notes: Partial match
   sonstige_zinsen_und_aehnliche_ertraege_davon_aus_verbundenen:
     name: sonstige Zinsen und ähnliche Erträge, davon aus verbundenen Unternehmen
     match_status: auto
     skr03_classification: Sonstige Zinsen und ähnliche Erträge
-    notes: Partial match (case difference or similar)
+    notes: Partial match
   abschreibungen_auf_finanzanlagen_und_auf_wertpapiere_des_uml:
     name: Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens
     match_status: auto
@@ -458,7 +481,7 @@ guv:
     name: Zinsen und ähnliche Aufwendungen, davon an verbundene Unternehmen
     match_status: auto
     skr03_classification: Zinsen und ähnliche Aufwendungen
-    notes: Partial match (case difference or similar)
+    notes: Partial match
   steuern_vom_einkommen_und_vom_ertrag:
     name: Steuern vom Einkommen und vom Ertrag
     match_status: none
@@ -491,13 +514,11 @@ guv:
 # To fix: For each classification below, find the appropriate HGB category in the
 # mapping above and manually set its skr03_classification field.
 #
-# Total unmatched: 73
+# Total unmatched: 59
 #
 # - Abschreibungen auf Vermögensgegenstände des Umlaufvermögens, soweit diese die in der Kapitalgesellschaft üblichen Abschreibungen überschreiten
 # - Abschreibungen auf immaterielle Vermögensgegenstände des Anlagevermögens und Sachanlagen
-# - Aktive latente Steuern
 # - Aktiver Unterschiedsbetrag aus der Vermögensverrechnung oder Rückstellungen für Pensionen und ähnliche Verpflichtungen
-# - Aktiver Unterschiedsbetrag aus der Vermögensverrechnung oder sonstige Rückstellungen
 # - Auf Grund einer Gewinngemeinschaft, eines Gewinn- oder Teilgewinnabführungsvertrags abgeführte Gewinne
 # - Auf Grund einer Gewinngemeinschaft, eines Gewinn- oder Teilgewinnabführungsvertrags abgeführte Gewinne oder Erträge aus Verlustübernahme
 # - Auf Grund einer Gewinngemeinschaft, eines Gewinn- oder Teilgewinnabführungsvertrags erhaltene Gewinne
@@ -524,27 +545,18 @@ guv:
 # - Ertrag aus Kapitalherabsetzung
 # - Erträge aus Verlustübernahme
 # - Forderungen aus Lieferungen und Leistungen H-Saldo
-# - Forderungen aus Lieferungen und Leistungen H-Saldo oder sonstige Verbindlichkeiten S-Saldo
-# - Forderungen aus Lieferungen und Leistungen oder sonstige Verbindlichkeiten
 # - Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht H-Saldo
 # - Forderungen gegen verbundene Unternehmen H-Saldo
-# - Forderungen gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht oder Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht
 # - Genossenschaftsanteile
 # - Gewinnvortrag oder Verlustvortrag
-# - Gezeichnetes Kapital
 # - Gezeichnetes Kapital in DM
 # - GuV-Posten
 # - Habensalden: Sonstige Verbindlichkeiten
 # - Habensalden: Verbindlichkeiten aus Lieferungen und Leistungen
 # - In Arbeit befindliche Aufträge
 # - In Ausführung befindliche Bauaufträge
-# - Kapitalrücklage
-# - Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks
-# - Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks oder Verbindlichkeiten gegenüber Kreditinstituten
 # - Nachschüsse
 # - Nicht eingeforderte ausstehende Einlagen
-# - Passive latente Steuern
-# - Rechnungsabgrenzungsposten (Aktiva)
 # - Rechnungsabgrenzungsposten (Passiva)
 # - Rückdeckungsansprüche aus Lebensversicherungen
 # - Rückstellungen für Pensionen und ähnliche Verpflichtungen oder aktiver Unterschiedsbetrag aus der Vermögensverrechnung
@@ -557,12 +569,9 @@ guv:
 # - Sonstige Verbindlichkeiten S-Saldo
 # - Sonstige Verbindlichkeiten oder sonstige Vermögensgegenstände
 # - Sonstige Vermögensgegenstände H-Saldo
-# - Sonstige Vermögensgegenstände oder sonstige Verbindlichkeiten
 # - Sonstige Zinsen und ähnliche Erträge oder Zinsen und ähnliche Aufwendungen
 # - Steuern vom Einkommen und Ertrag
 # - Steuerrückstellungen oder sonstige Vermögensgegenstände
-# - Verbindlichkeiten aus Lieferungen und Leistungen S-Saldo oder sonstige Vermögensgegenstände H-Saldo
-# - Verbindlichkeiten aus Lieferungen und Leistungen oder sonstige Vermögensgegenstände
 # - Verbindlichkeiten aus der Annahme gezogener Wechsel und aus der Ausstellung eigener Wechsel
 # - Verbindlichkeiten gegenüber Kreditinstituten oder Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks
 # - Zinsen und ähnliche Aufwendungen oder sonstige Zinsen und ähnliche Erträge

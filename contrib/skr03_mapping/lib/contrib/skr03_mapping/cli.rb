@@ -12,7 +12,9 @@ module Contrib
         'generate-rules' => Commands::GenerateRules,
         'detect-rules' => Commands::GenerateRules, # Alias
         'build-json' => Commands::BuildJson,
-        'build' => Commands::BuildJson # Alias
+        'build' => Commands::BuildJson, # Alias
+        'sanity-check' => Commands::SanityCheck,
+        'check' => Commands::SanityCheck # Alias
       }.freeze
 
       # Start the CLI with given arguments.
@@ -108,6 +110,7 @@ module Contrib
             generate-mapping    Generate classification mapping YAML (alias: map-categories)
             generate-rules      Generate presentation rules YAML (alias: detect-rules)
             build-json          Build final JSON and CSV files (alias: build)
+            sanity-check        Perform mapping sanity check (alias: check)
             help [COMMAND]      Show help for a specific command
 
           Options:
@@ -225,6 +228,29 @@ module Contrib
 
             Example:
               bin/skr03_mapper build-json --output-dir output/
+          HELP
+
+        when 'sanity-check', 'check'
+          puts <<~HELP
+            Perform Mapping Sanity Check
+
+            Usage:
+              bin/skr03_mapper sanity-check [OPTIONS]
+
+            Options:
+              --ocr-file FILE     OCR results JSON (default: skr03-ocr-results.json)
+              --mapping FILE      Section mapping YAML (default: skr03-section-mapping.yml)
+              --rules FILE        Presentation rules YAML (default: skr03-presentation-rules.yml)
+              --data-dir DIR      Input data directory (default: current directory)
+              --help, -h          Show this help message
+
+            Description:
+              Verifies that all SKR03 classifications from the OCR results are
+              properly accounted for, either through direct mapping in the
+              section mapping file or through the presentation rules file.
+
+            Example:
+              bin/skr03_mapper sanity-check
           HELP
         end
       end

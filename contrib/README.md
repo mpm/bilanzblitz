@@ -72,6 +72,9 @@ bin/skr03_mapper generate-rules
 # Build final JSON files
 bin/skr03_mapper build-json
 
+# Perform mapping sanity check
+bin/skr03_mapper sanity-check
+
 # Show help
 bin/skr03_mapper help
 ```
@@ -162,7 +165,13 @@ This script:
 3. Manually assign rules to unknown classifications (marked `status: unknown`)
 4. Fix any incorrect detections (marked `status: needs_review`)
 
-#### 5. Build Final JSON Files
+#### 5. Perform Sanity Check
+
+Run `bin/skr03_mapper sanity-check` to verify that all SKR03 classifications are accounted for.
+
+This command provides a final "truth" about mapping coverage by checking both `skr03-section-mapping.yml` and `skr03-presentation-rules.yml`. It lists any classifications that are truly missing from your reports.
+
+#### 6. Build Final JSON Files
 
 Run `bin/skr03_mapper build-json` to generate the final output files.
 

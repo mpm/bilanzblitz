@@ -13,47 +13,6 @@ module Contrib
       # - "S-Saldo" (Soll-Saldo): Debit balance, typically appears on Aktiva side
       # - "oder" (or): Indicates bidirectional accounts that can switch sides based on balance
       class PresentationRuleDetector
-        # Known rule patterns for bidirectional accounts
-        RULE_PATTERNS = {
-          # Explicit saldo patterns with "oder" (bidirectional)
-          fll_standard: [
-            /Forderungen.*L.*L.*H-Saldo.*oder.*Verbindlichkeit/i,
-            /Forderungen.*Lieferung.*Leistung.*oder.*Verbindlichkeit/i
-          ],
-          vll_standard: [
-            /Verbindlichkeit.*L.*L.*S-Saldo.*oder.*Vermögensgegenst/i,
-            /Verbindlichkeit.*Lieferung.*Leistung.*oder.*Vermögensgegenst/i,
-            /Verbindlichkeit.*Lieferung.*Leistung.*oder.*Forderung/i
-          ],
-          bank_bidirectional: [
-            /Kassenbestand.*oder.*Verbindlichkeit.*Kreditinstitut/i,
-            /Guthaben.*Kreditinstitut.*oder.*Verbindlichkeit/i,
-            /Bank.*oder.*Verbindlichkeit.*Kreditinstitut/i
-          ],
-          tax_standard: [
-            /Steuer.*oder.*Steuer/i,
-            /Steuerforderung.*oder.*Steuerverbindlichkeit/i
-          ],
-          receivable_affiliated: [
-            /Forderung.*verbunden.*Unternehmen.*oder.*Verbindlichkeit.*verbunden/i,
-            /Forderung.*verbund.*oder.*Verbindlichkeit.*verbund/i
-          ],
-          payable_affiliated: [
-            /Verbindlichkeit.*verbunden.*Unternehmen.*oder.*Forderung.*verbunden/i,
-            /Verbindlichkeit.*verbund.*oder.*Forderung.*verbund/i
-          ],
-          receivable_beteiligung: [
-            /Forderung.*Beteiligung.*oder.*Verbindlichkeit.*Beteiligung/i
-          ],
-          payable_beteiligung: [
-            /Verbindlichkeit.*Beteiligung.*oder.*Forderung.*Beteiligung/i
-          ],
-          sonstige_bidirectional: [
-            /Sonstige Vermögensgegenstände.*oder.*sonstige Verbindlichkeit/i,
-            /Sonstige Vermögensgegenst.*oder.*Verbindlichkeit/i
-          ]
-        }.freeze
-
         # Single-sided saldo patterns (not bidirectional, but indicate special handling)
         SINGLE_SALDO_PATTERNS = {
           h_saldo_only: /H-Saldo$/,
@@ -79,8 +38,10 @@ module Contrib
           return nil if classification_name.nil? || classification_name.empty?
 
           # Check for specific rule patterns
-          RULE_PATTERNS.each do |rule_id, patterns|
-            patterns.each do |pattern|
+          Rules::PresentationRuleDefinitions::RULES.each do |rule_id, config|
+            next unless config[:patterns]
+
+            config[:patterns].each do |pattern|
               if classification_name.match?(pattern)
                 return {
                   rule: rule_id,

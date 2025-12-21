@@ -67,8 +67,14 @@ module Contrib
           # Parse SKR03 classifications
           @skr03_classifications = parse_skr03_classifications
 
+          # Presentation rule detector for auto-mapping
+          @detector = Detectors::PresentationRuleDetector.new
+
           # Track which SKR03 classifications are used in matching
           @used_skr03_classifications = Set.new
+
+          # Pre-map classifications that match presentation rules
+          @rule_based_mappings = build_rule_based_mappings
 
           # Statistics
           @stats = {
@@ -96,7 +102,14 @@ module Contrib
         #
         # @return [Array<String>] Sorted array of SKR03 classifications not used in mapping
         def unmatched_skr03_classifications
-          unmatched = @skr03_classifications.reject { |cat| @used_skr03_classifications.include?(cat) }
+          unmatched = @skr03_classifications.reject do |cat|
+            # Used if explicitly matched in mapping
+            next true if @used_skr03_classifications.include?(cat)
+
+            # Also consider it "handled" if it has a high-confidence presentation rule
+            detection = @detector.detect_rule(cat)
+            detection && detection[:confidence] == :high
+          end
           unmatched.sort
         end
 
@@ -186,6 +199,27 @@ module Contrib
 
         private
 
+        def build_rule_based_mappings
+          mappings = Hash.new { |h, k| h[k] = [] }
+
+          @skr03_classifications.each do |classification|
+            detection = @detector.detect_rule(classification)
+            next unless detection && detection[:confidence] == :high
+
+            rule_config = Rules::PresentationRuleDefinitions::RULES[detection[:rule]]
+            next unless rule_config && rule_config[:debit_rsid]
+
+
+            target_rsid = rule_config[:debit_rsid].sub(/^b\./, "")
+                                                  .split('.')
+                                                  .map { |part| Utils::CategoryIdGenerator.generate_id(part) }
+                                                  .join('.')
+            mappings[target_rsid] << classification
+          end
+
+          mappings
+        end
+
         def parse_skr03_classifications
           ocr_data = JSON.parse(File.read(File.join(@data_dir, "skr03-ocr-results.json")))
           classifications = {}
@@ -208,13 +242,13 @@ module Contrib
             section_id = Utils::CategoryIdGenerator.generate_id(section_name, used_ids)
             used_ids << section_id
 
-            result[section_id] = process_balance_section(section_name, section_data, used_ids)
+            result[section_id] = process_balance_section(section_name, section_data, used_ids, "#{side}.#{section_id}")
           end
 
           result
         end
 
-        def process_balance_section(name, data, used_ids)
+        def process_balance_section(name, data, used_ids, current_path)
           @stats[:total_hgb_categories] += 1
 
           is_calculated = CALCULATED_CATEGORIES.include?(name)
@@ -233,33 +267,33 @@ module Contrib
 
           if has_items
             # This is a parent category with items
-            section["_meta"] = build_meta(name, is_calculated, match_result)
+            section["_meta"] = build_meta(name, is_calculated, match_result, current_path)
 
             data.each do |item|
               if item["name"] && !item["name"].empty?
                 # Item with a name
                 item_id = Utils::CategoryIdGenerator.generate_id(item["name"], used_ids)
                 used_ids << item_id
-                section[item_id] = process_balance_item(item, used_ids)
+                section[item_id] = process_balance_item(item, used_ids, "#{current_path}.#{item_id}")
               elsif item["children"]
                 # Item without name, process children directly
                 item["children"].each do |child_name|
                   clean_child_name = child_name.gsub(/;$/, '')
                   child_id = Utils::CategoryIdGenerator.generate_id(clean_child_name, used_ids)
                   used_ids << child_id
-                  section[child_id] = process_balance_leaf(clean_child_name)
+                  section[child_id] = process_balance_leaf(clean_child_name, "#{current_path}.#{child_id}")
                 end
               end
             end
           else
             # This is a leaf category
-            return process_balance_leaf(name)
+            return process_balance_leaf(name, current_path)
           end
 
           section
         end
 
-        def process_balance_item(item, used_ids)
+        def process_balance_item(item, used_ids, current_path)
           name = item["name"]
           @stats[:total_hgb_categories] += 1
 
@@ -276,97 +310,126 @@ module Contrib
           if has_children
             # Item with children
             section = {}
-            section["_meta"] = build_meta(name, is_calculated, match_result)
+            section["_meta"] = build_meta(name, is_calculated, match_result, current_path)
 
             item["children"].each do |child_name|
               clean_child_name = child_name.gsub(/;$/, '')
               child_id = Utils::CategoryIdGenerator.generate_id(clean_child_name, used_ids)
               used_ids << child_id
-              section[child_id] = process_balance_leaf(clean_child_name)
+              section[child_id] = process_balance_leaf(clean_child_name, "#{current_path}.#{child_id}")
             end
 
             section
           else
             # Item without children (leaf)
-            process_balance_leaf(name)
+            process_balance_leaf(name, current_path)
           end
         end
 
-        def process_balance_leaf(name)
+        def process_balance_leaf(name, current_path)
           @stats[:total_hgb_categories] += 1
 
           is_calculated = CALCULATED_CATEGORIES.include?(name)
 
-          if is_calculated
-            @stats[:calculated] += 1
-            return {
-              "name" => name,
-              "match_status" => "calculated",
-              "skr03_classification" => nil,
-              "notes" => "Calculated field, no direct account mapping"
-            }
-          end
-
-          # Try to match
+          # Try fuzzy match
           (matched, _unmatched) = Utils::FuzzyMatcher.fuzzy_match([ name ], @skr03_classifications)
           match_result = matched[name]
 
-          if match_result[:no_match]
-            @stats[:unmatched] += 1
-            {
-              "name" => name,
-              "match_status" => "none",
-              "skr03_classification" => nil,
-              "notes" => "No match found - needs manual review"
-            }
+          # Collect all classifications for this node
+          classifications = []
+          notes = []
+
+          unless match_result[:no_match]
+            classifications << match_result[:original_classification]
+            @used_skr03_classifications.add(match_result[:original_classification])
+            notes << "Partial match" if match_result[:partial]
+          end
+
+          # Add rule-based classifications
+          rule_matches = @rule_based_mappings[current_path] || []
+          rule_matches.each do |classification|
+            unless classifications.include?(classification)
+              classifications << classification
+              @used_skr03_classifications.add(classification)
+              notes << "Auto-mapped via presentation rule"
+            end
+          end
+
+          if classifications.empty?
+            if is_calculated
+              @stats[:calculated] += 1
+              {
+                "name" => name,
+                "match_status" => "calculated",
+                "skr03_classification" => nil,
+                "notes" => "Calculated field, no direct account mapping"
+              }
+            else
+              @stats[:unmatched] += 1
+              {
+                "name" => name,
+                "match_status" => "none",
+                "skr03_classification" => nil,
+                "notes" => "No match found - needs manual review"
+              }
+            end
           else
             @stats[:auto_matched] += 1
-            # Track that this SKR03 classification was used
-            @used_skr03_classifications.add(match_result[:original_classification])
             {
               "name" => name,
               "match_status" => "auto",
-              "skr03_classification" => match_result[:original_classification],
-              "notes" => match_result[:partial] ? "Partial match (case difference or similar)" : ""
+              "skr03_classification" => classifications.size == 1 ? classifications.first : classifications,
+              "notes" => notes.uniq.join(", ")
             }
           end
         end
 
-        def build_meta(name, is_calculated, match_result)
-          if is_calculated
-            @stats[:calculated] += 1
-            {
-              "name" => name,
-              "match_status" => "calculated",
-              "skr03_classification" => nil,
-              "notes" => "Parent category - sum of children"
-            }
-          elsif match_result && match_result[:no_match]
-            @stats[:unmatched] += 1
-            {
-              "name" => name,
-              "match_status" => "none",
-              "skr03_classification" => nil,
-              "notes" => "No match found - needs manual review"
-            }
-          elsif match_result
-            @stats[:auto_matched] += 1
-            # Track that this SKR03 classification was used
+        def build_meta(name, is_calculated, match_result, current_path)
+          # Collect all classifications for this node
+          classifications = []
+          notes = []
+
+          if match_result && !match_result[:no_match]
+            classifications << match_result[:original_classification]
             @used_skr03_classifications.add(match_result[:original_classification])
+            notes << "Partial match" if match_result[:partial]
+          end
+
+          # Add rule-based classifications
+          rule_matches = @rule_based_mappings[current_path] || []
+          rule_matches.each do |classification|
+            unless classifications.include?(classification)
+              classifications << classification
+              @used_skr03_classifications.add(classification)
+              notes << "Auto-mapped via presentation rule"
+            end
+          end
+
+          if classifications.empty?
+            if is_calculated
+              @stats[:calculated] += 1
+              {
+                "name" => name,
+                "match_status" => "calculated",
+                "skr03_classification" => nil,
+                "notes" => "Parent category - sum of children"
+              }
+            else
+              @stats[:unmatched] += 1
+              {
+                "name" => name,
+                "match_status" => "none",
+                "skr03_classification" => nil,
+                "notes" => "No match found - needs manual review"
+              }
+            end
+          else
+            @stats[:auto_matched] += 1
             {
               "name" => name,
               "match_status" => "auto",
-              "skr03_classification" => match_result[:original_classification],
-              "notes" => match_result[:partial] ? "Partial match (case difference or similar)" : ""
-            }
-          else
-            # No match attempted (shouldn't happen but handle it)
-            @stats[:unmatched] += 1
-            {
-              "name" => name,
-              "match_status" => "none",
-              "skr03_classification" => nil,
-              "notes" => "No match found"
+              "skr03_classification" => classifications.size == 1 ? classifications.first : classifications,
+              "notes" => notes.uniq.join(", ")
             }
           end
         end
@@ -380,6 +443,7 @@ module Contrib
 
             section_id = Utils::CategoryIdGenerator.generate_id(section_name, used_ids)
             used_ids << section_id
+            current_path = "guv.#{section_id}"
 
             is_calculated = CALCULATED_CATEGORIES.include?(section_name)
 
@@ -392,11 +456,31 @@ module Contrib
                 "notes" => "Calculated field, no direct account mapping"
               }
             else
-              # Try to match
+              # Try fuzzy match
               (matched, _unmatched) = Utils::FuzzyMatcher.fuzzy_match([ section_name ], @skr03_classifications)
               match_result = matched[section_name]
 
-              if match_result[:no_match]
+              # Collect all classifications for this node
+              classifications = []
+              notes = []
+
+              unless match_result[:no_match]
+                classifications << match_result[:original_classification]
+                @used_skr03_classifications.add(match_result[:original_classification])
+                notes << "Partial match" if match_result[:partial]
+              end
+
+          # Add rule-based classifications
+          rule_matches = @rule_based_mappings[current_path] || []
+          rule_matches.each do |classification|
+                unless classifications.include?(classification)
+                  classifications << classification
+                  @used_skr03_classifications.add(classification)
+                  notes << "Auto-mapped via presentation rule"
+                end
+              end
+
+              if classifications.empty?
                 @stats[:unmatched] += 1
                 result[section_id] = {
                   "name" => section_name,
@@ -406,13 +490,11 @@ module Contrib
                 }
               else
                 @stats[:auto_matched] += 1
-                # Track that this SKR03 classification was used
-                @used_skr03_classifications.add(match_result[:original_classification])
                 result[section_id] = {
                   "name" => section_name,
                   "match_status" => "auto",
-                  "skr03_classification" => match_result[:original_classification],
-                  "notes" => match_result[:partial] ? "Partial match (case difference or similar)" : ""
+                  "skr03_classification" => classifications.size == 1 ? classifications.first : classifications,
+                  "notes" => notes.uniq.join(", ")
                 }
               end
             end
@@ -424,6 +506,7 @@ module Contrib
 
                 child_id = Utils::CategoryIdGenerator.generate_id(child_name, used_ids)
                 used_ids << child_id
+                child_path = "#{current_path}.#{child_id}"
 
                 is_calculated_child = CALCULATED_CATEGORIES.include?(child_name)
 
@@ -436,10 +519,31 @@ module Contrib
                     "notes" => "Calculated field, no direct account mapping"
                   }
                 else
+                  # Try fuzzy match
                   (matched, _unmatched) = Utils::FuzzyMatcher.fuzzy_match([ child_name ], @skr03_classifications)
                   child_match = matched[child_name]
 
-                  if child_match[:no_match]
+                  # Collect all classifications for this node
+                  classifications = []
+                  notes = []
+
+                  unless child_match[:no_match]
+                    classifications << child_match[:original_classification]
+                    @used_skr03_classifications.add(child_match[:original_classification])
+                    notes << "Partial match" if child_match[:partial]
+                  end
+
+                  # Add rule-based classifications
+                  rule_matches = @rule_based_mappings[child_path] || []
+                  rule_matches.each do |classification|
+                    unless classifications.include?(classification)
+                      classifications << classification
+                      @used_skr03_classifications.add(classification)
+                      notes << "Auto-mapped via presentation rule"
+                    end
+                  end
+
+                  if classifications.empty?
                     @stats[:unmatched] += 1
                     result[section_id][child_id] = {
                       "name" => child_name,
@@ -449,13 +553,11 @@ module Contrib
                     }
                   else
                     @stats[:auto_matched] += 1
-                    # Track that this SKR03 classification was used
-                    @used_skr03_classifications.add(child_match[:original_classification])
                     result[section_id][child_id] = {
                       "name" => child_name,
                       "match_status" => "auto",
-                      "skr03_classification" => child_match[:original_classification],
-                      "notes" => child_match[:partial] ? "Partial match (case difference or similar)" : ""
+                      "skr03_classification" => classifications.size == 1 ? classifications.first : classifications,
+                      "notes" => notes.uniq.join(", ")
                     }
                   end
                 end

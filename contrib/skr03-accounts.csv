@@ -155,8 +155,8 @@
 0787;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;- Restlaufzeit größer 5 Jahre
 0790;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Sonstige Verbindlichkeiten, vor Restlaufzeitdifferenzierung (nur Bilanzierer)
 0799;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Gegenkonto 0730-0789 und 1665-1678 und 1695-1698 bei Aufteilung der Konten 0790-0798
-0800;;;;equity_only;Gezeichnetes Kapital
-0809;;;;equity_only;Kapitalerhöhung aus Gesellschaftsmitteln
+0800;;;b.passiva.eigenkapital.gezeichnetes_kapital;equity_only;Gezeichnetes Kapital
+0809;;;b.passiva.eigenkapital.gezeichnetes_kapital;equity_only;Kapitalerhöhung aus Gesellschaftsmitteln
 0810;;;;;Geschäftsguthaben der verbleibenden Mitglieder
 0811;;;;;Geschäftsguthaben der ausscheidenden Mitglieder
 0812;;;;;Geschäftsguthaben aus gekündigten Geschäftsanteilen
@@ -167,12 +167,12 @@
 0830;;;;unknown;Ausstehende Einlagen auf das gezeichnete Kapital, eingefordert (Forderungen, nicht eingeforderte ausstehende Einlagen s. Konten 0820-0829)
 0838;;;;unknown;
 0839;;;;unknown;Nachschüsse (Forderungen, Gegenkonto 0845)
-0840;;;;equity_only;Kapitalrücklage
-0841;;;;equity_only;Kapitalrücklage durch Ausgabe von Anteilen über Nennbetrag
-0842;;;;equity_only;Kapitalrücklage durch Ausgabe von Schuldverschreibungen für Wandlungsrechte und Optionsrechte zum Erwerb von Anteilen
-0843;;;;equity_only;Kapitalrücklage durch Zuzahlungen gegen Gewährung eines Vorzugs für Anteile
-0844;;;;equity_only;Kapitalrücklage durch andere Zuzahlungen in das Eigenkapital
-0845;;;;equity_only;Nachschusskapital (Gegenkonto 0839)
+0840;;;b.passiva.eigenkapital.kapitalruecklage;equity_only;Kapitalrücklage
+0841;;;b.passiva.eigenkapital.kapitalruecklage;equity_only;Kapitalrücklage durch Ausgabe von Anteilen über Nennbetrag
+0842;;;b.passiva.eigenkapital.kapitalruecklage;equity_only;Kapitalrücklage durch Ausgabe von Schuldverschreibungen für Wandlungsrechte und Optionsrechte zum Erwerb von Anteilen
+0843;;;b.passiva.eigenkapital.kapitalruecklage;equity_only;Kapitalrücklage durch Zuzahlungen gegen Gewährung eines Vorzugs für Anteile
+0844;;;b.passiva.eigenkapital.kapitalruecklage;equity_only;Kapitalrücklage durch andere Zuzahlungen in das Eigenkapital
+0845;;;b.passiva.eigenkapital.kapitalruecklage;equity_only;Nachschusskapital (Gegenkonto 0839)
 0846;;;b.passiva.eigenkapital.gewinnruecklagen.gesetzliche_ruecklage;unknown;Gesetzliche Rücklage
 0848;;;b.passiva.eigenkapital.gewinnruecklagen.andere_gewinnruecklagen;unknown;Andere Gewinnrücklagen aus dem Erwerb eigener Anteile
 0849;;;b.passiva.eigenkapital.gewinnruecklagen.ruecklage_fuer_anteile_an_einem_herrschenden_oder_mehrheitli;needs_review;Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen
@@ -224,7 +224,7 @@
 0965;;;b.passiva.rueckstellungen.sonstige_rueckstellungen;liability_only;Rückstellungen für Personalkosten
 0966;;;b.passiva.rueckstellungen.sonstige_rueckstellungen;liability_only;Rückstellungen zur Erfüllung der Aufbewahrungspflichten
 0967;;;;needs_review;Rückstellungen für mit der Altersversorgung vergleichbare langfristige Verpflichtungen zur Saldierung mit Vermögensgegenständen zum langfristigen Verbleib nach § 246 Abs. 2 HGB
-0968;;;;unknown;Passive latente Steuern
+0968;;;b.passiva.passive_latente_steuern;unknown;Passive latente Steuern
 0969;;;b.passiva.rueckstellungen.steuerrueckstellungen;liability_only;Rückstellung für latente Steuern
 0970;;;b.passiva.rueckstellungen.sonstige_rueckstellungen;liability_only;Sonstige Rückstellungen
 0971;;;b.passiva.rueckstellungen.sonstige_rueckstellungen;liability_only;Rückstellungen für unterlassene Aufwendungen für Instandhaltung, Nachholung in den ersten drei Monaten
@@ -234,11 +234,11 @@
 0977;;;b.passiva.rueckstellungen.sonstige_rueckstellungen;liability_only;Rückstellungen für Abschluss- und Prüfungskosten
 0978;;;b.passiva.rueckstellungen.sonstige_rueckstellungen;liability_only;Aufwandsrückstellungen nach § 249 Abs. 2 HGB a. F.
 0979;;;b.passiva.rueckstellungen.sonstige_rueckstellungen;liability_only;Rückstellungen für Umweltschutz
-0980;;;;unknown;Aktive Rechnungsabgrenzung
-0983;;;;unknown;Aktive latente Steuern
-0984;;;;unknown;Als Aufwand berücksichtigte Zölle und Verbrauchsteuern auf Vorräte
-0985;;;;unknown;Als Aufwand berücksichtigte Umsatzsteuer auf Anzahlungen
-0986;;;;unknown;Damnum/Disagio
+0980;;;b.passiva.rechnungsabgrenzungsposten;unknown;Aktive Rechnungsabgrenzung
+0983;;;b.aktiva.aktive_latente_steuern;unknown;Aktive latente Steuern
+0984;;;b.passiva.rechnungsabgrenzungsposten;unknown;Als Aufwand berücksichtigte Zölle und Verbrauchsteuern auf Vorräte
+0985;;;b.passiva.rechnungsabgrenzungsposten;unknown;Als Aufwand berücksichtigte Umsatzsteuer auf Anzahlungen
+0986;;;b.passiva.rechnungsabgrenzungsposten;unknown;Damnum/Disagio
 0987;;;b.passiva.eigenkapital.gewinnruecklagen.andere_gewinnruecklagen;unknown;Rechnungsabgrenzungsposten (Gewinnrücklage Soll) aus erfolgsneutralen Verrechnungen
 0988;;;b.passiva.eigenkapital.gewinnruecklagen.andere_gewinnruecklagen;unknown;Latente Steuern (Gewinnrücklage Soll) aus erfolgsneutralen Verrechnungen
 0989;F;;;;Gesamthänderisch gebundene Rücklagen (mit Aufteilung für Kapitalkontenentwicklung)
@@ -248,27 +248,27 @@
 0997;;;;fll_standard;- Restlaufzeit größer 1 Jahr
 0998;;;;fll_standard;Einzelwertberichtigungen auf Forderungen - Restlaufzeit bis zu 1 Jahr
 0999;;;;fll_standard;- Restlaufzeit größer 1 Jahr
-1000;F;;;asset_only;Kasse
-1010;F;;;asset_only;Nebenkasse 1
-1020;F;;;asset_only;Nebenkasse 2
-1100;F;;;bank_bidirectional;Bank (Postbank)
-1110;F;;;bank_bidirectional;Bank (Postbank 1)
-1120;F;;;bank_bidirectional;Bank (Postbank 2)
-1130;F;;;bank_bidirectional;Bank (Postbank 3)
-1190;F;;;bank_bidirectional;LZB-Guthaben
-1195;F;;;bank_bidirectional;Bundesbankguthaben
-1200;F;;;bank_bidirectional;Bank
-1210;F;;;bank_bidirectional;Bank 1
-1220;F;;;bank_bidirectional;Bank 2
-1230;F;;;bank_bidirectional;Bank 3
-1240;F;;;bank_bidirectional;Bank 4
-1250;F;;;bank_bidirectional;Bank 5
-1289;R;;;bank_bidirectional;1290 Finanzmittelanlagen im Rahmen der kurzfristigen Finanzdisposition (nicht im Finanzmittelfonds enthalten)
-1295;;;;bank_bidirectional;Verbindlichkeiten gegenüber Kreditinstituten (nicht im Finanzmittelfonds enthalten)
+1000;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;asset_only;Kasse
+1010;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;asset_only;Nebenkasse 1
+1020;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;asset_only;Nebenkasse 2
+1100;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bank (Postbank)
+1110;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bank (Postbank 1)
+1120;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bank (Postbank 2)
+1130;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bank (Postbank 3)
+1190;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;LZB-Guthaben
+1195;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bundesbankguthaben
+1200;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bank
+1210;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bank 1
+1220;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bank 2
+1230;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bank 3
+1240;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bank 4
+1250;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Bank 5
+1289;R;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;1290 Finanzmittelanlagen im Rahmen der kurzfristigen Finanzdisposition (nicht im Finanzmittelfonds enthalten)
+1295;;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;bank_bidirectional;Verbindlichkeiten gegenüber Kreditinstituten (nicht im Finanzmittelfonds enthalten)
 1310;R;1310-1319;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen;receivable_affiliated;
-1320;R;1320-1326;;receivable_beteiligung;
+1320;R;1320-1326;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh;receivable_beteiligung;
 1329;;;b.aktiva.umlaufvermoegen.wertpapiere.sonstige_wertpapiere;unknown;Andere Wertpapiere mit unwesentlichen Wertschwankungen
-1330;F;;;asset_only;Schecks
+1330;F;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;asset_only;Schecks
 1340;;;b.aktiva.umlaufvermoegen.wertpapiere.anteile_an_verbundenen_unternehmen_2;unknown;Anteile an verbundenen Unternehmen (Umlaufvermögen)
 1344;;;b.aktiva.umlaufvermoegen.wertpapiere.anteile_an_verbundenen_unternehmen_2;unknown;Anteile an herrschender oder mit Mehrheit beteiligter Gesellschaft
 1348;;;b.aktiva.umlaufvermoegen.wertpapiere.sonstige_wertpapiere;unknown;Sonstige Wertpapiere
@@ -276,19 +276,19 @@
 1350;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;GmbH-Anteile zum kurzfristigen Verbleib
 1352;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;Genossenschaftsanteile zum kurzfristigen Verbleib
 1353;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;Vermögensgegenstände zur Erfüllung von mit der Altersversorgung vergleichbaren langfristigen Verpflichtungen
-1354;;;;needs_review;Vermögensgegenstände zur Saldierung mit der Altersversorgung vergleichbaren langfristigen Verpflichtungen nach § 246 Abs. 2 HGB
+1354;;;b.aktiva.aktiver_unterschiedsbetrag_aus_der_vermoegensverrechnung;needs_review;Vermögensgegenstände zur Saldierung mit der Altersversorgung vergleichbaren langfristigen Verpflichtungen nach § 246 Abs. 2 HGB
 1355;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;Ansprüche aus Rückdeckungsversicherungen
 1356;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;Vermögensgegenstände zur Erfüllung von Pensionsrückstellungen und ähnlichen Verpflichtungen zum langfristigen Verbleib
 1357;;;;needs_review;Vermögensgegenstände zur Saldierung mit Pensionsrückstellungen und ähnlichen Verpflichtungen zum langfristigen Verbleib nach § 246 Abs. 2 HGB
-1360;F;;;sonstige_bidirectional;Geldtransit
-1371;F;;;sonstige_bidirectional;Verrechnungskonto Gewinnermittlung § 4 Abs. 3 EStG, nicht ergebniswirksam
-1372;;;;sonstige_bidirectional;Wirtschaftsgüter des Umlaufvermögens nach § 4 Abs. 3 Satz 4 EStG
+1360;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Geldtransit
+1371;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Verrechnungskonto Gewinnermittlung § 4 Abs. 3 EStG, nicht ergebniswirksam
+1372;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Wirtschaftsgüter des Umlaufvermögens nach § 4 Abs. 3 Satz 4 EStG
 1373;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;
 1376;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;Forderungen gegen typisch stille Gesellschafter
 1377;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;- Restlaufzeit bis 1 Jahr
 1378;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;- Restlaufzeit größer 1 Jahr
 1379;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;
-1380;;;;sonstige_bidirectional;Überleitungskonto Kostenstelle
+1380;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Überleitungskonto Kostenstelle
 1381;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;Forderungen gegen GmbH-Gesellschafter
 1382;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;- Restlaufzeit bis 1 Jahr
 1383;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;- Restlaufzeit größer 1 Jahr
@@ -296,23 +296,23 @@
 1386;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;- Restlaufzeit bis 1 Jahr
 1387;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;- Restlaufzeit größer 1 Jahr
 1389;;;;;Ansprüche aus betrieblicher Altersversorgung und Pensionsansprüche (Mitunternehmer)
-1390;F;;;sonstige_bidirectional;Verrechnungskonto Ist-Versteuerung
+1390;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Verrechnungskonto Ist-Versteuerung
 1391;F;;;;Neutralisierung ertragswirksamer Sachverhalte für § 4 Abs. 3 EStG
 1394;;;;;Forderungen gegen Gesellschaft/Gesamthand
-1400;S;;;fll_standard;Forderungen aus Lieferungen und Leistungen
-1401;R;;;fll_standard;Forderungen aus Lieferungen und Leistungen
-1410;F;;;fll_standard;Forderungen aus Lieferungen und Leistungen ohne Kontokorrent
-1445;F;;;fll_standard;Forderungen aus Lieferungen und Leistungen zum allgemeinen Umsatzsteuersatz oder eines Kleinunternehmers (EÜR)
-1446;F;;;fll_standard;Forderungen aus Lieferungen und Leistungen zum ermäßigten Umsatzsteuersatz (EÜR)
-1447;F;;;fll_standard;Forderungen aus steuerfreien oder nicht steuerbaren Lieferungen und Leistungen (EÜR)
-1448;F;;;fll_standard;Forderungen aus Lieferungen und Leistungen nach Durchschnittssätzen nach § 24 UStG (EÜR)
-1449;F;;;fll_standard;Gegenkonto 1445-1448 bei Aufteilung der Forderungen nach Steuersätzen (EÜR)
-1450;F;;;fll_standard;Forderungen nach § 11 Abs. 1 Satz 2 EStG für § 4 Abs. 3 EStG
-1451;F;;;fll_standard;Forderungen aus Lieferungen und Leistungen ohne Kontokorrent - Restlaufzeit bis 1 Jahr
-1455;F;;;fll_standard;- Restlaufzeit größer 1 Jahr
-1460;F;;;fll_standard;Zweifelhafte Forderungen
-1461;F;;;fll_standard;- Restlaufzeit bis 1 Jahr
-1465;F;;;fll_standard;- Restlaufzeit größer 1 Jahr
+1400;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Forderungen aus Lieferungen und Leistungen
+1401;R;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Forderungen aus Lieferungen und Leistungen
+1410;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Forderungen aus Lieferungen und Leistungen ohne Kontokorrent
+1445;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Forderungen aus Lieferungen und Leistungen zum allgemeinen Umsatzsteuersatz oder eines Kleinunternehmers (EÜR)
+1446;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Forderungen aus Lieferungen und Leistungen zum ermäßigten Umsatzsteuersatz (EÜR)
+1447;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Forderungen aus steuerfreien oder nicht steuerbaren Lieferungen und Leistungen (EÜR)
+1448;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Forderungen aus Lieferungen und Leistungen nach Durchschnittssätzen nach § 24 UStG (EÜR)
+1449;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Gegenkonto 1445-1448 bei Aufteilung der Forderungen nach Steuersätzen (EÜR)
+1450;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Forderungen nach § 11 Abs. 1 Satz 2 EStG für § 4 Abs. 3 EStG
+1451;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Forderungen aus Lieferungen und Leistungen ohne Kontokorrent - Restlaufzeit bis 1 Jahr
+1455;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;- Restlaufzeit größer 1 Jahr
+1460;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Zweifelhafte Forderungen
+1461;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;- Restlaufzeit bis 1 Jahr
+1465;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;- Restlaufzeit größer 1 Jahr
 1470;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen;fll_standard;Forderungen aus Lieferungen und Leistungen gegen verbundene Unternehmen
 1471;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen;fll_standard;- Restlaufzeit bis 1 Jahr
 1475;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen;fll_standard;- Restlaufzeit größer 1 Jahr
@@ -323,11 +323,11 @@
 1485;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh;fll_standard;- Restlaufzeit größer 1 Jahr
 1488;;;;fll_standard;Wertberichtigungen auf Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht - Restlaufzeit bis 1 Jahr
 1489;;;;fll_standard;- Restlaufzeit größer 1 Jahr
-1490;F;;;fll_standard;Forderungen aus Lieferungen und Leistungen gegen Gesellschafter
-1491;F;;;fll_standard;- Restlaufzeit bis 1 Jahr
-1495;F;;;fll_standard;- Restlaufzeit größer 1 Jahr
+1490;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Forderungen aus Lieferungen und Leistungen gegen Gesellschafter
+1491;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;- Restlaufzeit bis 1 Jahr
+1495;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;- Restlaufzeit größer 1 Jahr
 1498;;;;fll_standard;Gegenkonto zu sonstigen Vermögensgegenständen bei Buchungen über Debitorenkonto
-1499;;;;fll_standard;Gegenkonto 1451-1497 bei Aufteilung Debitorenkonto
+1499;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;fll_standard;Gegenkonto 1451-1497 bei Aufteilung Debitorenkonto
 1500;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;Sonstige Vermögensgegenstände
 1501;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;- Restlaufzeit bis 1 Jahr
 1502;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;- Restlaufzeit größer 1 Jahr
@@ -369,40 +369,40 @@
 1550;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;Darlehen
 1551;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;- Restlaufzeit bis 1 Jahr
 1555;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;- Restlaufzeit größer 1 Jahr
-1556;F;;;sonstige_bidirectional;Nachträglich abziehbare Vorsteuer nach §15a Abs.1 UStG, bewegliche Wirtschaftsgüter
-1557;F;;;sonstige_bidirectional;Zurückzuzahlende Vorsteuer nach §15a Abs.1 UStG, bewegliche Wirtschaftsgüter
-1558;F;;;sonstige_bidirectional;Nachträglich abziehbare Vorsteuer nach §15a Abs.1 UStG, unbewegliche Wirtschaftsgüter
-1559;F;;;sonstige_bidirectional;Zurückzuzahlende Vorsteuer nach §15a Abs.1 UStG, unbewegliche Wirtschaftsgüter
-1560;S;;;sonstige_bidirectional;Aufzuteilende Vorsteuer
-1561;S;;;sonstige_bidirectional;Aufzuteilende Vorsteuer 7%
-1562;S;;;sonstige_bidirectional;Aufzuteilende Vorsteuer aus innergemeinschaftlichem Erwerb
-1563;S;;;sonstige_bidirectional;Aufzuteilende Vorsteuer aus innergemeinschaftlichem Erwerb 19%
-1564;R;1564-1565;;sonstige_bidirectional;
-1566;S;;;sonstige_bidirectional;Aufzuteilende Vorsteuer 19%
-1567;S;;;sonstige_bidirectional;Aufzuteilende Vorsteuer nach §§13a und 13b UStG
-1568;R;;;sonstige_bidirectional;
-1569;S;;;sonstige_bidirectional;Aufzuteilende Vorsteuer nach §§13a und 13b UStG 19%
-1570;S;;;sonstige_bidirectional;Abziehbare Vorsteuer
-1571;S;;;sonstige_bidirectional;Abziehbare Vorsteuer 7%
-1572;S;;;sonstige_bidirectional;Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb
-1573;S;;;sonstige_bidirectional;Vorsteuer aus Erwerb als letzter Abnehmer innerhalb eines Dreiecksgeschäfts
-1574;S;;;sonstige_bidirectional;Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb 19%
-1575;R;;;sonstige_bidirectional;
-1576;S;;;sonstige_bidirectional;Abziehbare Vorsteuer 19%
-1577;S;;;sonstige_bidirectional;Abziehbare Vorsteuer nach §13b UStG 19%
-1578;S;;;sonstige_bidirectional;Abziehbare Vorsteuer nach §13b UStG
-1579;R;;;sonstige_bidirectional;
-1580;S;;;sonstige_bidirectional;Gegenkonto Vorsteuer §4 Abs.3 EStG
-1581;S;;;sonstige_bidirectional;Auflösung Vorsteuer aus Vorjahr §4 Abs.3 EStG
-1582;S;;;sonstige_bidirectional;Vorsteuer aus Investitionen §4 Abs.3 EStG
-1583;R;;;sonstige_bidirectional;
-1584;S;;;sonstige_bidirectional;Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb von Neufahrzeugen von Lieferanten ohne USt-Id-Nr.
-1585;S;;;sonstige_bidirectional;Abziehbare Vorsteuer aus der Auslagerung von Gegenständen aus einem Umsatzsteuerlager
-1587;R;;;sonstige_bidirectional;
-1588;F;;;sonstige_bidirectional;Entstandene Einfuhrumsatzsteuer
-1589;R;;;sonstige_bidirectional;
-1590;;;;sonstige_bidirectional;Durchlaufende Posten
-1592;;;;sonstige_bidirectional;Fremdgeld
+1556;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Nachträglich abziehbare Vorsteuer nach §15a Abs.1 UStG, bewegliche Wirtschaftsgüter
+1557;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Zurückzuzahlende Vorsteuer nach §15a Abs.1 UStG, bewegliche Wirtschaftsgüter
+1558;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Nachträglich abziehbare Vorsteuer nach §15a Abs.1 UStG, unbewegliche Wirtschaftsgüter
+1559;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Zurückzuzahlende Vorsteuer nach §15a Abs.1 UStG, unbewegliche Wirtschaftsgüter
+1560;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Aufzuteilende Vorsteuer
+1561;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Aufzuteilende Vorsteuer 7%
+1562;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Aufzuteilende Vorsteuer aus innergemeinschaftlichem Erwerb
+1563;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Aufzuteilende Vorsteuer aus innergemeinschaftlichem Erwerb 19%
+1564;R;1564-1565;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;
+1566;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Aufzuteilende Vorsteuer 19%
+1567;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Aufzuteilende Vorsteuer nach §§13a und 13b UStG
+1568;R;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;
+1569;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Aufzuteilende Vorsteuer nach §§13a und 13b UStG 19%
+1570;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Abziehbare Vorsteuer
+1571;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Abziehbare Vorsteuer 7%
+1572;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb
+1573;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Vorsteuer aus Erwerb als letzter Abnehmer innerhalb eines Dreiecksgeschäfts
+1574;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb 19%
+1575;R;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;
+1576;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Abziehbare Vorsteuer 19%
+1577;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Abziehbare Vorsteuer nach §13b UStG 19%
+1578;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Abziehbare Vorsteuer nach §13b UStG
+1579;R;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;
+1580;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Gegenkonto Vorsteuer §4 Abs.3 EStG
+1581;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Auflösung Vorsteuer aus Vorjahr §4 Abs.3 EStG
+1582;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Vorsteuer aus Investitionen §4 Abs.3 EStG
+1583;R;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;
+1584;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb von Neufahrzeugen von Lieferanten ohne USt-Id-Nr.
+1585;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Abziehbare Vorsteuer aus der Auslagerung von Gegenständen aus einem Umsatzsteuerlager
+1587;R;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;
+1588;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Entstandene Einfuhrumsatzsteuer
+1589;R;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;
+1590;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Durchlaufende Posten
+1592;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Fremdgeld
 1593;F;;;vll_standard;Verrechnungskonto erhaltene Anzahlungen bei Buchung über Debitorenkonto
 1594;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen;receivable_affiliated;Forderungen gegen verbundene Unternehmen
 1595;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen;receivable_affiliated;- Restlaufzeit bis 1 Jahr
@@ -410,17 +410,17 @@
 1597;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh;receivable_beteiligung;Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht
 1598;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh;receivable_beteiligung;- Restlaufzeit bis 1 Jahr
 1599;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverh;receivable_beteiligung;- Restlaufzeit größer 1 Jahr
-1600;S;;;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen
-1601;R;1601-1603;;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen
-1605;F;;;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen zum allgemeinen Umsatzsteuersatz (EÜR)
-1606;F;;;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen zum ermäßigten Umsatzsteuersatz (EÜR)
-1607;F;;;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen ohne Vorsteuerabzug (EÜR)
-1609;F;;;vll_standard;Gegenkonto 1605-1607 bei Aufteilung der Verbindlichkeiten nach Steuersätzen (EÜR)
-1610;F;1610-1623;;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent
-1624;F;;;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen für Investitionen für § 4 Abs. 3 EStG
-1625;F;;;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent - Restlaufzeit bis 1 Jahr
-1626;F;;;vll_standard;- Restlaufzeit 1 bis 5 Jahre
-1628;F;;;vll_standard;- Restlaufzeit größer 5 Jahre
+1600;S;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen
+1601;R;1601-1603;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen
+1605;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen zum allgemeinen Umsatzsteuersatz (EÜR)
+1606;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen zum ermäßigten Umsatzsteuersatz (EÜR)
+1607;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen ohne Vorsteuerabzug (EÜR)
+1609;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Gegenkonto 1605-1607 bei Aufteilung der Verbindlichkeiten nach Steuersätzen (EÜR)
+1610;F;1610-1623;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent
+1624;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen für Investitionen für § 4 Abs. 3 EStG
+1625;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent - Restlaufzeit bis 1 Jahr
+1626;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;- Restlaufzeit 1 bis 5 Jahre
+1628;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;- Restlaufzeit größer 5 Jahre
 1630;F;;b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen;payable_affiliated;Verbindlichkeiten aus Lieferungen und Leistungen gegenüber verbundenen Unternehmen
 1631;F;;b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen;payable_affiliated;- Restlaufzeit bis 1 Jahr
 1635;F;;b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen;payable_affiliated;- Restlaufzeit 1 bis 5 Jahre
@@ -429,11 +429,11 @@
 1641;F;;b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_betei;payable_beteiligung;- Restlaufzeit bis 1 Jahr
 1645;F;;b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_betei;payable_beteiligung;- Restlaufzeit 1 bis 5 Jahre
 1648;F;;b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_betei;payable_beteiligung;- Restlaufzeit größer 5 Jahre
-1650;F;;;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen gegenüber Gesellschaftern
-1651;F;;;vll_standard;- Restlaufzeit bis 1 Jahr
-1655;F;;;vll_standard;- Restlaufzeit 1 bis 5 Jahre
-1658;F;;;vll_standard;- Restlaufzeit größer 5 Jahre
-1659;;;;vll_standard;Gegenkonto 1625-1658 bei Aufteilung Kreditorenkonto
+1650;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Verbindlichkeiten aus Lieferungen und Leistungen gegenüber Gesellschaftern
+1651;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;- Restlaufzeit bis 1 Jahr
+1655;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;- Restlaufzeit 1 bis 5 Jahre
+1658;F;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;- Restlaufzeit größer 5 Jahre
+1659;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;vll_standard;Gegenkonto 1625-1658 bei Aufteilung Kreditorenkonto
 1660;R;1660-1664;;liability_only;
 1665;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Verbindlichkeiten gegenüber GmbH-Gesellschaftern
 1666;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;- Restlaufzeit bis 1 Jahr
@@ -540,7 +540,7 @@
 1789;;;;needs_review;Umsatzsteuer laufendes Jahr
 1790;;;;needs_review;Umsatzsteuerverbindlichkeiten Vorjahr
 1791;;;;needs_review;Umsatzsteuerverbindlichkeiten frühere Jahre
-1792;;;;sonstige_bidirectional;Sonstige Verrechnungskonten (Interimskonten)
+1792;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Sonstige Verrechnungskonten (Interimskonten)
 1793;;;;liability_only;Verrechnungskonto geleistete Anzahlungen bei Buchung über Kreditorenkonto
 1794;S;;;needs_review;Umsatzsteuer aus Erwerb als letzter Abnehmer innerhalb eines Dreiecksgeschäfts
 1795;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Verbindlichkeiten im Rahmen der sozialen Sicherheit für § 4 Abs. 3 EStG
@@ -1712,7 +1712,7 @@
 9950;;;;;Ausstehende Einlagen auf das Kommandit-Kapital, eingefordert
 9960;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen;asset_only;Bewertungskorrektur zu Forderungen aus Lieferungen und Leistungen (Währungsumrechnung)
 9961;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Bewertungskorrektur zu sonstigen Verbindlichkeiten (Währungsumrechnung)
-9962;;;;asset_only;Bewertungskorrektur zu Guthaben bei Kreditinstituten (Bewertung Finanzmittelfonds)
+9962;;;b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut;asset_only;Bewertungskorrektur zu Guthaben bei Kreditinstituten (Bewertung Finanzmittelfonds)
 9963;;;b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_kreditinstituten;liability_only;Bewertungskorrektur zu Verbindlichkeiten gegenüber Kreditinstituten (Bewertung Finanzmittelfonds)
 9964;;;b.passiva.verbindlichkeiten.verbindlichkeiten_aus_lieferungen_und_leistungen;liability_only;Bewertungskorrektur zu Verbindlichkeiten aus Lieferungen und Leistungen (Währungsumrechnung)
 9965;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;unknown;Bewertungskorrektur zu sonstigen Vermögensgegenständen (Währungsumrechnung)
