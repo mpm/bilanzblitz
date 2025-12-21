@@ -290,7 +290,7 @@ passiva:
     gewinnvortragverlustvortrag:
       name: Gewinnvortrag/Verlustvortrag
       match_status: calculated
-      skr03_classification:
+      skr03_classification: Gewinnvortrag oder Verlustvortrag
       notes: Calculated field, no direct account mapping
     jahresueberschussjahresfehlbetrag:
       name: Jahresüberschuß/Jahresfehlbetrag
@@ -368,7 +368,9 @@ passiva:
       name: sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen
         Sicherheit
       match_status: auto
-      skr03_classification: Sonstige Verbindlichkeiten
+      skr03_classification:
+      - Sonstige Verbindlichkeiten
+      - Sonstige Verbindlichkeiten oder sonstige Vermögensgegenstände
       notes: Partial match
   rechnungsabgrenzungsposten:
     name: Rechnungsabgrenzungsposten
@@ -565,7 +567,6 @@ guv:
 # - Sonstige Aktiva oder sonstige Passiva
 # - Sonstige Rückstellungen oder aktiver Unterschiedsbetrag aus der Vermögensverrechnung
 # - Sonstige Verbindlichkeiten S-Saldo
-# - Sonstige Verbindlichkeiten oder sonstige Vermögensgegenstände
 # - Sonstige Vermögensgegenstände H-Saldo
 # - Sonstige Zinsen und ähnliche Erträge oder Zinsen und ähnliche Aufwendungen
 # - Steuern vom Einkommen und Ertrag

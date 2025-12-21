@@ -185,10 +185,10 @@
 0857;;;b.passiva.eigenkapital.gewinnruecklagen.andere_gewinnruecklagen;unknown;Gewinnrücklagen aus den Übergangsvorschriften BilMoG (Zuschreibung Finanzanlagevermögen)
 0858;;;b.passiva.eigenkapital.gewinnruecklagen.andere_gewinnruecklagen;unknown;Gewinnrücklagen aus den Übergangsvorschriften BilMoG (Auflösung der Sonderposten mit Rücklageanteil)
 0859;;;b.passiva.eigenkapital.gewinnruecklagen.andere_gewinnruecklagen;unknown;Latente Steuern (Gewinnrücklage Haben) aus erfolgsneutralen Verrechnungen
-0860;;;;needs_review;Gewinnvortrag vor Verwendung
+0860;;;b.passiva.eigenkapital.gewinnvortragverlustvortrag;needs_review;Gewinnvortrag vor Verwendung
 0865;F;;;;Gewinnvortrag vor Verwendung (mit Aufteilung für Kapitalkontenentwicklung)
 0867;F;;;;Verlustvortrag vor Verwendung (mit Aufteilung für Kapitalkontenentwicklung)
-0868;;;;needs_review;Verlustvortrag vor Verwendung
+0868;;;b.passiva.eigenkapital.gewinnvortragverlustvortrag;needs_review;Verlustvortrag vor Verwendung
 0870;F;;;;Festkapital
 0871;F;;;;Kapital (fester Anteil, nur Einzelunternehmer)
 0880;F;;;;Variables Kapital
@@ -475,7 +475,7 @@
 1720;;;b.passiva.verbindlichkeiten.erhaltene_anzahlungen_auf_bestellungen;unknown;- Restlaufzeit 1 bis 5 Jahre
 1721;;;b.passiva.verbindlichkeiten.erhaltene_anzahlungen_auf_bestellungen;unknown;- Restlaufzeit größer 5 Jahre
 1722;;;;unknown;Erhaltene Anzahlungen auf Bestellungen (von Vorräten offen abgesetzt)
-1725;S;;;needs_review;Umsatzsteuer in Folgeperiode fällig (§§ 13 Abs. 1 Nr. 6 und 13b Abs. 2 UStG)
+1725;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer in Folgeperiode fällig (§§ 13 Abs. 1 Nr. 6 und 13b Abs. 2 UStG)
 1728;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Umsatzsteuer aus im anderen EU-Land steuerpflichtigen elektronischen Dienstleistungen
 1729;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Steuerzahlungen aus im anderen EU-Land steuerpflichtigen Leistungen
 1730;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Kreditkartenabrechnung
@@ -489,11 +489,11 @@
 1738;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;- Restlaufzeit 1 bis 5 Jahre
 1739;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;- Restlaufzeit größer 5 Jahre
 1740;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Verbindlichkeiten aus Lohn und Gehalt
-1741;;;;needs_review;Verbindlichkeiten aus Lohn- und Kirchensteuer
-1742;;;;needs_review;Verbindlichkeiten im Rahmen der sozialen Sicherheit
-1743;;;;needs_review;- Restlaufzeit bis 1 Jahr
-1744;;;;needs_review;- Restlaufzeit 1 bis 5 Jahre
-1745;;;;needs_review;- Restlaufzeit größer 5 Jahre
+1741;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Verbindlichkeiten aus Lohn- und Kirchensteuer
+1742;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Verbindlichkeiten im Rahmen der sozialen Sicherheit
+1743;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;- Restlaufzeit bis 1 Jahr
+1744;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;- Restlaufzeit 1 bis 5 Jahre
+1745;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;- Restlaufzeit größer 5 Jahre
 1746;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Verbindlichkeiten aus Einbehaltungen (KapESt und SolZ, KiSt auf KapESt) für offene Ausschüttungen
 1747;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Verbindlichkeiten für Verbrauchsteuern
 1748;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Verbindlichkeiten für Einbehaltungen von Arbeitnehmern
@@ -503,11 +503,11 @@
 1752;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;- Restlaufzeit 1 bis 5 Jahre
 1753;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;- Restlaufzeit größer 5 Jahre
 1754;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Steuerzahlungen an andere Länder
-1755;;;;needs_review;Lohn- und Gehaltsverrechnung
-1756;;;;needs_review;Lohn- und Gehaltsverrechnung nach § 11 Abs. 2 Satz 2 EStG für § 4 Abs. 3 EStG
+1755;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Lohn- und Gehaltsverrechnung
+1756;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Lohn- und Gehaltsverrechnung nach § 11 Abs. 2 Satz 2 EStG für § 4 Abs. 3 EStG
 1757;;;;;Verbindlichkeiten gegenüber Gesellschaft/Gesamthand
 1758;;;;;Sonstige Verbindlichkeiten aus genossenschaftlicher Rückvergütung
-1759;;;;needs_review;Voraussichtliche Beitragsschuld gegenüber den Sozialversicherungsträgern
+1759;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Voraussichtliche Beitragsschuld gegenüber den Sozialversicherungsträgern
 1760;S;;;needs_review;Umsatzsteuer nicht fällig
 1761;S;;;needs_review;Umsatzsteuer nicht fällig 7 %
 1762;S;;;needs_review;Umsatzsteuer nicht fällig aus im Inland steuerpflichtigen EU-Lieferungen
@@ -517,32 +517,32 @@
 1766;S;;;needs_review;Umsatzsteuer nicht fällig 19 %
 1767;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Umsatzsteuer aus im anderen EU-Land steuerpflichtigen Lieferungen
 1768;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Umsatzsteuer aus im anderen EU-Land steuerpflichtigen sonstigen Leistungen/Werklieferungen
-1769;S;;;needs_review;Umsatzsteuer aus der Auslagerung von Gegenständen aus einem Umsatzsteuerlager
-1770;S;;;needs_review;Umsatzsteuer
-1771;S;;;needs_review;Umsatzsteuer 7 %
-1772;S;;;needs_review;Umsatzsteuer aus innergemeinschaftlichem Erwerb
-1773;R;;;needs_review;
-1774;S;;;needs_review;Umsatzsteuer aus innergemeinschaftlichem Erwerb 19 %
-1775;R;;;needs_review;
-1776;S;;;needs_review;Umsatzsteuer 19 %
-1777;S;;;needs_review;Umsatzsteuer aus im Inland steuerpflichtigen EU-Lieferungen
-1778;S;;;needs_review;Umsatzsteuer aus im Inland steuerpflichtigen EU-Lieferungen 19 %
-1779;S;;;needs_review;Umsatzsteuer aus innergemeinschaftlichem Erwerb ohne Vorsteuerabzug
-1780;F;;;needs_review;Umsatzsteuer-Vorauszahlungen
-1781;F;;;needs_review;Umsatzsteuer-Vorauszahlungen 1/11
-1782;F;;;needs_review;Nachsteuer, UStVA Kz. 65
-1783;F;;;needs_review;In Rechnung unrichtig oder unberechtigt ausgewiesene Steuerbeträge, UStVA Kz. 69
-1784;S;;;needs_review;Umsatzsteuer aus innergemeinschaftlichem Erwerb von Neufahrzeugen von Lieferanten ohne Umsatzsteuer-Identifikationsnummer
-1785;S;;;needs_review;Umsatzsteuer nach § 13b UStG
-1786;R;;;needs_review;
-1787;S;;;needs_review;Umsatzsteuer nach § 13b UStG 19 %
-1788;;;;needs_review;Einfuhrumsatzsteuer aufgeschoben bis ...
-1789;;;;needs_review;Umsatzsteuer laufendes Jahr
-1790;;;;needs_review;Umsatzsteuerverbindlichkeiten Vorjahr
-1791;;;;needs_review;Umsatzsteuerverbindlichkeiten frühere Jahre
+1769;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer aus der Auslagerung von Gegenständen aus einem Umsatzsteuerlager
+1770;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer
+1771;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer 7 %
+1772;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer aus innergemeinschaftlichem Erwerb
+1773;R;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;
+1774;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer aus innergemeinschaftlichem Erwerb 19 %
+1775;R;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;
+1776;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer 19 %
+1777;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer aus im Inland steuerpflichtigen EU-Lieferungen
+1778;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer aus im Inland steuerpflichtigen EU-Lieferungen 19 %
+1779;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer aus innergemeinschaftlichem Erwerb ohne Vorsteuerabzug
+1780;F;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer-Vorauszahlungen
+1781;F;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer-Vorauszahlungen 1/11
+1782;F;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Nachsteuer, UStVA Kz. 65
+1783;F;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;In Rechnung unrichtig oder unberechtigt ausgewiesene Steuerbeträge, UStVA Kz. 69
+1784;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer aus innergemeinschaftlichem Erwerb von Neufahrzeugen von Lieferanten ohne Umsatzsteuer-Identifikationsnummer
+1785;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer nach § 13b UStG
+1786;R;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;
+1787;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer nach § 13b UStG 19 %
+1788;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Einfuhrumsatzsteuer aufgeschoben bis ...
+1789;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer laufendes Jahr
+1790;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuerverbindlichkeiten Vorjahr
+1791;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuerverbindlichkeiten frühere Jahre
 1792;;;b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende;sonstige_bidirectional;Sonstige Verrechnungskonten (Interimskonten)
 1793;;;;liability_only;Verrechnungskonto geleistete Anzahlungen bei Buchung über Kreditorenkonto
-1794;S;;;needs_review;Umsatzsteuer aus Erwerb als letzter Abnehmer innerhalb eines Dreiecksgeschäfts
+1794;S;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;needs_review;Umsatzsteuer aus Erwerb als letzter Abnehmer innerhalb eines Dreiecksgeschäfts
 1795;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Verbindlichkeiten im Rahmen der sozialen Sicherheit für § 4 Abs. 3 EStG
 1796;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Ausgegebene Geschenkgutscheine
 1797;;;b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen;liability_only;Verbindlichkeiten aus Umsatzsteuer-Vorauszahlungen
@@ -812,10 +812,10 @@
 2840;;;;needs_review;Entnahmen aus der Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen
 2841;F;;;;Entnahmen aus gesamthänderisch gebundenen Rücklagen (mit Aufteilung für Kapitalkontenentwicklung)
 2850;;;;;Entnahmen aus anderen Ergebnisrücklagen
-2860;;;;needs_review;Gewinnvortrag nach Verwendung
+2860;;;b.passiva.eigenkapital.gewinnvortragverlustvortrag;needs_review;Gewinnvortrag nach Verwendung
 2865;F;;;;Gewinnvortrag nach Verwendung (mit Aufteilung für Kapitalkontenentwicklung)
 2867;F;;;;Verlustvortrag nach Verwendung (mit Aufteilung für Kapitalkontenentwicklung)
-2868;;;;needs_review;Verlustvortrag nach Verwendung
+2868;;;b.passiva.eigenkapital.gewinnvortragverlustvortrag;needs_review;Verlustvortrag nach Verwendung
 2870;;;;unknown;Vorabausschüttung
 2890;;;guv.sonstige_betriebliche_aufwendungen;pnl_only;Verrechneter kalkulatorischer Unternehmerlohn
 2891;;;guv.sonstige_betriebliche_aufwendungen;pnl_only;Verrechnete kalkulatorische Miete und Pacht
