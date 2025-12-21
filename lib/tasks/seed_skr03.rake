@@ -30,19 +30,20 @@ namespace :accounting do
       line = line.strip
       next if line.empty?
 
-      # Split by semicolon: code;flags;range;category;description
-      parts = line.split(";", 5)
+      # Split by semicolon: code;flags;range;cid;presentation_rule;description
+      parts = line.split(";", 6)
 
-      # Need exactly 5 parts
-      if parts.length != 5
-        raise "Non-empty line with more than five columns: #{parts.inspect}"
+      # Need exactly 6 parts
+      if parts.length != 6
+        raise "Non-empty line with wrong number of columns (expected 6, got #{parts.length}): #{parts.inspect}"
       end
 
       code = parts[0].strip
       flags = parts[1].strip
       range = parts[2].strip
-      category = parts[3].strip
-      description = parts[4].strip
+      cid = parts[3].strip
+      presentation_rule = parts[4].strip
+      description = parts[5].strip
 
       description = "Unbenannt #{code}" if description.empty?
 
@@ -52,22 +53,23 @@ namespace :accounting do
       # Track this account code and where it appears
       seen_codes[code] << { line: line_number, description: description }
 
-      # Determine account type based on account number and category
-      account_type = determine_account_type(code, category)
+      # Determine account type based on account number and cid
+      account_type = determine_account_type(code, cid)
 
       # Extract tax rate from description if present
       tax_rate = extract_tax_rate(description)
 
-      # Store flags in config hash
+      # Store flags and presentation rule in config hash
       config = {}
       config["_flags"] = flags unless flags.empty?
+      config["_presentation_rule"] = presentation_rule unless presentation_rule.empty?
 
       # Check if this is a system account (closing accounts have flag "S")
       is_system_account = flags.include?("S")
 
       if dry_run
         # In dry mode, just print the parsed data
-        puts "#{code.ljust(6)} | #{account_type.ljust(10)} | #{tax_rate.to_s.ljust(5)} | #{range.ljust(12)} | #{category.ljust(8)} | #{description}"
+        puts "#{code.ljust(6)} | #{account_type.ljust(10)} | #{tax_rate.to_s.ljust(5)} | #{range.ljust(12)} | #{cid.ljust(8)} | #{presentation_rule.ljust(12)} | #{description}"
       else
         # Store template data for creation
         templates_data << {
@@ -78,7 +80,7 @@ namespace :accounting do
           description: description,
           config: config,
           range: range.presence,
-          cid: category == "NONE" ? nil : category,
+          cid: cid.empty? ? nil : cid,
           is_system_account: is_system_account
         }
       end
@@ -157,6 +159,26 @@ namespace :accounting do
 
         puts
         puts "Created #{created_count} account templates"
+
+        # Now update existing accounts with new account_type from templates
+        puts
+        puts "Updating existing accounts with account_type from templates..."
+
+        existing_updates = 0
+        Account.find_each do |account|
+          template = chart.account_templates.find_by(code: account.code)
+          next unless template
+
+          if account.account_type != template.account_type
+            account.update!(account_type: template.account_type)
+            existing_updates += 1
+            print "+"
+            STDOUT.flush
+          end
+        end
+
+        puts
+        puts "Updated #{existing_updates} existing accounts with new account_type"
       end
 
       puts
@@ -168,16 +190,16 @@ namespace :accounting do
 
   # Determine account type using AccountMap category-based lookup
   # @param account_code [String] The account code (e.g., "0750")
-  # @param category_cid [String] The category identifier from CSV (can be "NONE")
+  # @param cid [String] The category identifier from CSV (can be empty)
   # @return [String] The account type ("asset", "liability", "equity", "expense", "revenue")
-  def determine_account_type(account_code, category_cid)
+  def determine_account_type(account_code, cid)
     account_num = account_code.to_i
 
     # Special handling: 9xxx accounts (closing/carryforward) - always equity
     return "equity" if account_num >= 9000 && account_num < 10000
 
-    # If category is "NONE", use fallback logic
-    if category_cid.nil? || category_cid.empty? || category_cid == "NONE"
+    # If cid is empty, use fallback logic
+    if cid.nil? || cid.empty?
       return fallback_account_type(account_num)
     end
 
