@@ -108,7 +108,7 @@ class AccountMap
     # @return [Hash] Raw JSON structure from bilanz-with-categories.json
     def load_balance_sheet_structure
       @balance_sheet_structure ||= begin
-        path = Rails.root.join('contrib', 'bilanz-with-categories.json')
+        path = Rails.root.join("contrib", "bilanz-with-categories.json")
         JSON.parse(File.read(path), symbolize_names: true)
       end
     end
@@ -235,7 +235,7 @@ class AccountMap
     # @return [String, nil] The full cid path (e.g., "b.aktiva.anlagevermoegen.sachanlagen") or nil
     def cid_for_code(account_code)
       # Search balance sheet (aktiva and passiva)
-      [:aktiva, :passiva].each do |side|
+      [ :aktiva, :passiva ].each do |side|
         nested_balance_sheet_categories[side].each do |top_key, top_data|
           result = find_cid_in_category(account_code, top_data, "b.#{side}.#{top_key}")
           return result if result
@@ -374,12 +374,12 @@ class AccountMap
 
       # Normalize the name to create a consistent key
       key = name_str.downcase
-        .gsub(/ä/, 'ae')
-        .gsub(/ö/, 'oe')
-        .gsub(/ü/, 'ue')
-        .gsub(/ß/, 'ss')
-        .gsub(/[^a-z0-9]+/, '_')
-        .gsub(/^_+|_+$/, '')
+        .gsub(/ä/, "ae")
+        .gsub(/ö/, "oe")
+        .gsub(/ü/, "ue")
+        .gsub(/ß/, "ss")
+        .gsub(/[^a-z0-9]+/, "_")
+        .gsub(/^_+|_+$/, "")
         .to_sym
 
       # Handle special cases for known keys

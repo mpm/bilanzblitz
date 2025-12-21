@@ -97,11 +97,11 @@ class PresentationRuleDetector
         # H-Saldo at end typically means "Wertberichtigung" or credit-balance account
         # S-Saldo at end typically means debit-balance constraint
         inferred_rule = case saldo_type
-                        when :h_saldo_only
+        when :h_saldo_only
                           category_name.include?("Forderung") ? :fll_standard : :liability_only
-                        when :s_saldo_only
+        when :s_saldo_only
                           category_name.include?("Verbindlichkeit") ? :vll_standard : :asset_only
-                        end
+        end
         return {
           rule: inferred_rule,
           confidence: :medium,

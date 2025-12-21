@@ -341,7 +341,7 @@ class CategoryMappingGenerator
 
     unless is_calculated
       # Try to match this category
-      (matched, _unmatched) = FuzzyMatcher.fuzzy_match([name], @skr03_categories)
+      (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ name ], @skr03_categories)
       match_result = matched[name]
     end
 
@@ -386,7 +386,7 @@ class CategoryMappingGenerator
     match_result = nil
 
     unless is_calculated
-      (matched, _unmatched) = FuzzyMatcher.fuzzy_match([name], @skr03_categories)
+      (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ name ], @skr03_categories)
       match_result = matched[name]
     end
 
@@ -427,7 +427,7 @@ class CategoryMappingGenerator
     end
 
     # Try to match
-    (matched, _unmatched) = FuzzyMatcher.fuzzy_match([name], @skr03_categories)
+    (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ name ], @skr03_categories)
     match_result = matched[name]
 
     if match_result[:no_match]
@@ -512,7 +512,7 @@ class CategoryMappingGenerator
         }
       else
         # Try to match
-        (matched, _unmatched) = FuzzyMatcher.fuzzy_match([section_name], @skr03_categories)
+        (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ section_name ], @skr03_categories)
         match_result = matched[section_name]
 
         if match_result[:no_match]
@@ -555,7 +555,7 @@ class CategoryMappingGenerator
               "notes" => "Calculated field, no direct account mapping"
             }
           else
-            (matched, _unmatched) = FuzzyMatcher.fuzzy_match([child_name], @skr03_categories)
+            (matched, _unmatched) = FuzzyMatcher.fuzzy_match([ child_name ], @skr03_categories)
             child_match = matched[child_name]
 
             if child_match[:no_match]
