@@ -64,6 +64,23 @@ rules:
       gg. verbundene'
     debit_rsid: b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen
     credit_rsid: b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen
+  receivable_beteiligung:
+    name: Forderungen gg. Beteiligungsunternehmen
+    description: 'S-Saldo: Forderungen gg. Beteiligung | H-Saldo: Verbindlichkeiten
+      gg. Beteiligung'
+    debit_rsid: b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverhaeltnis_besteht
+    credit_rsid: b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_beteiligungsverhaeltnis_besteht
+  payable_beteiligung:
+    name: Verbindlichkeiten gg. Beteiligungsunternehmen
+    description: 'H-Saldo: Verbindlichkeiten gg. Beteiligung | S-Saldo: Forderungen
+      gg. Beteiligung'
+    debit_rsid: b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_unternehmen_mit_denen_ein_beteiligungsverhaeltnis_besteht
+    credit_rsid: b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_beteiligungsverhaeltnis_besteht
+  sonstige_bidirectional:
+    name: Sonstige Forderungen/Verbindlichkeiten bidirektional
+    description: 'S-Saldo: Sonstige Vermögensgegenstände | H-Saldo: Sonstige Verbindlichkeiten'
+    debit_rsid: b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende
+    credit_rsid: b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen
   asset_only:
     name: Nur Aktiva
     description: Immer auf der Aktivseite (z.B. Anlagevermögen, Vorräte)
@@ -1340,18 +1357,6 @@ classifications:
     - '4876'
     - '4877'
     - '4878'
-    status: unknown
-  GuV-Posten:
-    detected_rule: unknown
-    confidence: none
-    reason: No pattern matched
-    accounts: []
-    status: unknown
-  BilanzPosten:
-    detected_rule: unknown
-    confidence: none
-    reason: No pattern matched
-    accounts: []
     status: unknown
   Unfertige Erzeugnisse, unfertige Leistungen:
     detected_rule: unknown

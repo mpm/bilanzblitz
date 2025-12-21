@@ -90,6 +90,7 @@ module Contrib
             codes_string = row[1]&.strip
 
             next if classification_name.nil? || classification_name.empty?
+            next if Utils::ParserTools::LEFT_SIDE_IGNORE_LIST.include?(classification_name)
 
             @stats[:total_classifications] += 1
 

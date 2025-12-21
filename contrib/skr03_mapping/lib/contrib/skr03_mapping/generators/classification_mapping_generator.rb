@@ -227,6 +227,7 @@ module Contrib
           ocr_data.each do |row|
             classification_name = row[0]&.strip
             next if classification_name.nil? || classification_name.empty?
+            next if Utils::ParserTools::LEFT_SIDE_IGNORE_LIST.include?(classification_name)
 
             classifications[classification_name] = true
           end

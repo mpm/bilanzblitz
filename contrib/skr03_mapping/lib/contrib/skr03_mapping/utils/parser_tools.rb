@@ -20,6 +20,44 @@ module Contrib
           /70000-99999/   # Kreditoren (vendor accounts)
         ].freeze
 
+        # These position keys are from obvious parsing fails, they all map to the "empty" positional key.
+        # These headers that occured within the page (rare), they do not contain any accounts on the right column
+        # ignore these entirely
+        LEFT_SIDE_IGNORE_LIST = [ "GuV-Posten", "BilanzPosten" ].freeze
+
+        # These are inbetween headers in the list of items (no account code).
+        # these will also be just ignored.
+        RIGHT_SIDE_IGNORE_LIST = [
+          "Immaterielle Vermögensgegenstände",
+          "Sachanlagen",
+          "Finanzanlagen",
+          "Verbindlichkeiten",
+          "Kapital Kapitalgesellschaft",
+          "Kapitalrücklage",
+          "Gewinnrücklagen",
+          "Rückstellungen",
+          "Abgrenzungsposten",
+          "Wertpapiere",
+          "Forderungen und sonstige Vermögensgegenstände",
+          "Sonstige betriebliche Aufwendungen",
+          "Zinsen und ähnliche Aufwendungen",
+          "Steuern vom Einkommen und Ertrag",
+          "Sonstige Aufwendungen",
+          "Sonstige betriebliche Erträge",
+          "Zinserträge",
+          "Sonstige Erträge",
+          "Verrechnete kalkulatorische Kosten",
+          "Bestand an Vorräten",
+          "Verrechnete Stoffkosten",
+          "Personalaufwendungen",
+          "Sonstige betriebliche Aufwendungen und Abschreibungen",
+          "Kalkulatorische Kosten",
+          "Kapital Eigenkapital Vollhafter/Einzelunternehmer",
+          "Konten für die Verbuchung von Sonderbetriebseinnahmen",
+          "Statistische Konten für die im Anhang anzugebenden sonstigen finanziellen Verpflichtungen",
+          "Kosten bei Anwendung des Umsatzkostenverfahrens"
+        ].freeze
+
         # Parses an account code string from the OCR results.
         #
         # @param str [String] Account code string to parse
@@ -168,6 +206,8 @@ module Contrib
           parts = codes_string.split(";").map(&:strip)
 
           parts.each do |part|
+            next if RIGHT_SIDE_IGNORE_LIST.include?(part)
+
             # Remove leading flags like "AV", "F", "S", "R"
             clean_part = part.gsub(/^[A-Z]+\s+/, "")
 

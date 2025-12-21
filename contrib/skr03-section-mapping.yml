@@ -514,7 +514,7 @@ guv:
 # To fix: For each classification below, find the appropriate HGB category in the
 # mapping above and manually set its skr03_classification field.
 #
-# Total unmatched: 59
+# Total unmatched: 57
 #
 # - Abschreibungen auf Vermögensgegenstände des Umlaufvermögens, soweit diese die in der Kapitalgesellschaft üblichen Abschreibungen überschreiten
 # - Abschreibungen auf immaterielle Vermögensgegenstände des Anlagevermögens und Sachanlagen
@@ -524,7 +524,6 @@ guv:
 # - Auf Grund einer Gewinngemeinschaft, eines Gewinn- oder Teilgewinnabführungsvertrags erhaltene Gewinne
 # - Aufwendungen aus Verlustübernahme
 # - Ausschüttung
-# - BilanzPosten
 # - Eigene Anteile
 # - Eingeforderte, noch ausstehende Kapitaleinlagen
 # - Einlagen stiller Gesellschafter
@@ -550,7 +549,6 @@ guv:
 # - Genossenschaftsanteile
 # - Gewinnvortrag oder Verlustvortrag
 # - Gezeichnetes Kapital in DM
-# - GuV-Posten
 # - Habensalden: Sonstige Verbindlichkeiten
 # - Habensalden: Verbindlichkeiten aus Lieferungen und Leistungen
 # - In Arbeit befindliche Aufträge

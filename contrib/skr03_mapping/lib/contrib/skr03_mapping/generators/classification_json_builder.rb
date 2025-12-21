@@ -128,10 +128,12 @@ module Contrib
             right_column = row[1]
 
             next if classification_name.empty? && right_column.nil?
+            next if Utils::ParserTools::LEFT_SIDE_IGNORE_LIST.include?(classification_name)
 
             items = right_column&.split(";")&.map(&:strip)
             next unless items
 
+            items = items.reject { |item| Utils::ParserTools::RIGHT_SIDE_IGNORE_LIST.include?(item) }
             account_codes = items.select { |item| item =~ /\d{4,5}/ }
             account_codes.each do |ac|
               all_codes << [ classification_name, ac ]
@@ -521,10 +523,12 @@ module Contrib
             right_column = row[1]
 
             next if classification_name.empty? && right_column.nil?
+            next if Utils::ParserTools::LEFT_SIDE_IGNORE_LIST.include?(classification_name)
 
             items = right_column&.split(";")&.map(&:strip)
             next unless items
 
+            items = items.reject { |item| Utils::ParserTools::RIGHT_SIDE_IGNORE_LIST.include?(item) }
             account_codes = items.select { |item| item =~ /\d{4,5}/ }
             account_codes.each do |ac|
               all_codes << [ classification_name, ac ]

@@ -20,7 +20,10 @@ module Contrib
 
           # Load classifications from OCR
           ocr_data = JSON.parse(File.read(ocr_file))
-          all_classifications = ocr_data.map { |row| row[0]&.strip }.reject { |c| c.nil? || c.empty? }.uniq.sort
+          all_classifications = ocr_data.map { |row| row[0]&.strip }
+                                        .reject { |c| c.nil? || c.empty? }
+                                        .reject { |c| Utils::ParserTools::LEFT_SIDE_IGNORE_LIST.include?(c) }
+                                        .uniq.sort
 
           # Load mapping
           mapping = File.exist?(mapping_file) ? YAML.load_file(mapping_file) : nil
