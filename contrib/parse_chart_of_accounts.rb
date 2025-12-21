@@ -5,6 +5,9 @@
 # Chart of Accounts Parser for SKR03
 # ===================================
 #
+# DEPRECATED: This script is deprecated. See contrib/README.md for more details and alternatives.
+# use the other scripts in contrib directory instead to generate category mappings.
+#
 # This script parses OCR-extracted SKR03 chart of accounts data and generates
 # structured JSON files that map German accounting standard report sections (GuV and Bilanz)
 # to their corresponding account codes based on SKR03 account classifications.
