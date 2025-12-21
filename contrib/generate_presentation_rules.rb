@@ -410,62 +410,62 @@ class PresentationRulesGenerator
       "fll_standard" => {
         "name" => "Forderungen L&L Standard",
         "description" => "S-Saldo: Forderungen aus L&L | H-Saldo: Sonstige Verbindlichkeiten",
-        "debit_cid" => "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen",
-        "credit_cid" => "b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen"
+        "debit_rsid" => "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen",
+        "credit_rsid" => "b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen"
       },
       "vll_standard" => {
         "name" => "Verbindlichkeiten L&L Standard",
         "description" => "H-Saldo: Verbindlichkeiten aus L&L | S-Saldo: Sonstige Vermögensgegenstände",
-        "debit_cid" => "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende",
-        "credit_cid" => "b.passiva.verbindlichkeiten.verbindlichkeiten_aus_lieferungen_und_leistungen"
+        "debit_rsid" => "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende",
+        "credit_rsid" => "b.passiva.verbindlichkeiten.verbindlichkeiten_aus_lieferungen_und_leistungen"
       },
       "bank_bidirectional" => {
         "name" => "Bankkonten bidirektional",
         "description" => "S-Saldo: Liquide Mittel | H-Saldo: Verbindlichkeiten ggü. Kreditinstituten",
-        "debit_cid" => "b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut",
-        "credit_cid" => "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_kreditinstituten"
+        "debit_rsid" => "b.aktiva.umlaufvermoegen.kassenbestand_bundesbankguthaben_guthaben_bei_kreditinstitut",
+        "credit_rsid" => "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_kreditinstituten"
       },
       "tax_standard" => {
         "name" => "Steuerforderung/-schuld",
         "description" => "S-Saldo: Sonstige Vermögensgegenstände | H-Saldo: Sonstige Verbindlichkeiten",
-        "debit_cid" => "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende",
-        "credit_cid" => "b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen"
+        "debit_rsid" => "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende",
+        "credit_rsid" => "b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen"
       },
       "receivable_affiliated" => {
         "name" => "Forderungen gg. verbundene Unternehmen",
         "description" => "S-Saldo: Forderungen gg. verbundene | H-Saldo: Verbindlichkeiten gg. verbundene",
-        "debit_cid" => "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen",
-        "credit_cid" => "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen"
+        "debit_rsid" => "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen",
+        "credit_rsid" => "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen"
       },
       "payable_affiliated" => {
         "name" => "Verbindlichkeiten gg. verbundene Unternehmen",
         "description" => "H-Saldo: Verbindlichkeiten gg. verbundene | S-Saldo: Forderungen gg. verbundene",
-        "debit_cid" => "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen",
-        "credit_cid" => "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen"
+        "debit_rsid" => "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_gegen_verbundene_unternehmen",
+        "credit_rsid" => "b.passiva.verbindlichkeiten.verbindlichkeiten_gegenueber_verbundenen_unternehmen"
       },
       "asset_only" => {
         "name" => "Nur Aktiva",
         "description" => "Immer auf der Aktivseite (z.B. Anlagevermögen, Vorräte)",
-        "debit_cid" => nil,
-        "credit_cid" => nil
+        "debit_rsid" => nil,
+        "credit_rsid" => nil
       },
       "liability_only" => {
         "name" => "Nur Passiva",
         "description" => "Immer auf der Passivseite (z.B. Rückstellungen, Verbindlichkeiten)",
-        "debit_cid" => nil,
-        "credit_cid" => nil
+        "debit_rsid" => nil,
+        "credit_rsid" => nil
       },
       "equity_only" => {
         "name" => "Nur Eigenkapital",
         "description" => "Immer im Eigenkapital",
-        "debit_cid" => nil,
-        "credit_cid" => nil
+        "debit_rsid" => nil,
+        "credit_rsid" => nil
       },
       "pnl_only" => {
         "name" => "Nur GuV",
         "description" => "Aufwands- und Ertragskonten - nicht in der Bilanz",
-        "debit_cid" => nil,
-        "credit_cid" => nil
+        "debit_rsid" => nil,
+        "credit_rsid" => nil
       }
     }
   end

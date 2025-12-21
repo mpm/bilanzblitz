@@ -81,7 +81,7 @@ class BalanceSheetService
         name: account.name,
         type: account.account_type,
         balance: position[:balance],
-        resolved_cid: position[:cid],
+        resolved_rsid: position[:rsid],
         side: position[:side]
       }
     end.compact.reject { |a| a[:code].start_with?("9") } # Filter 9000-series closing accounts
@@ -116,30 +116,30 @@ class BalanceSheetService
     aktiva_sections = {}
     passiva_sections = {}
 
-    # Build all aktiva sections using resolved_cid matching
+    # Build all aktiva sections using resolved_rsid matching
     categories[:aktiva].each_key do |category_key|
-      section = build_section_by_resolved_cid(aktiva_accounts, category_key, :aktiva)
+      section = build_section_by_resolved_rsid(aktiva_accounts, category_key, :aktiva)
       aktiva_sections[category_key] = section unless section.empty?
     end
 
-    # Build all passiva sections using resolved_cid matching
+    # Build all passiva sections using resolved_rsid matching
     categories[:passiva].each_key do |category_key|
-      section = build_section_by_resolved_cid(passiva_accounts, category_key, :passiva)
+      section = build_section_by_resolved_rsid(passiva_accounts, category_key, :passiva)
       passiva_sections[category_key] = section unless section.empty?
     end
 
     { aktiva: aktiva_sections, passiva: passiva_sections }
   end
 
-  # Build a section by matching accounts via resolved_cid instead of code lookup
+  # Build a section by matching accounts via resolved_rsid instead of code lookup
   # This allows saldo-dependent accounts to appear in the correct section
-  def build_section_by_resolved_cid(accounts, category_key, side)
-    # Get the cid prefix for this category
-    category_cid = "b.#{side}.#{category_key}"
+  def build_section_by_resolved_rsid(accounts, category_key, side)
+    # Get the rsid prefix for this category
+    category_rsid = "b.#{side}.#{category_key}"
 
-    # Filter accounts whose resolved_cid starts with this category's cid
+    # Filter accounts whose resolved_rsid starts with this category's rsid
     matching_accounts = accounts.select do |a|
-      a[:resolved_cid]&.start_with?(category_cid)
+      a[:resolved_rsid]&.start_with?(category_rsid)
     end
 
     return BalanceSheetSection.empty(category_key) if matching_accounts.empty?

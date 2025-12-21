@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# Helper class to represent a balance sheet section with nested structure
-# Provides both hierarchical view and flattened accounts for backward compatibility
+# Helper class to represent a Report Section (Berichtsposition) with nested structure.
+# Provides both hierarchical view and flattened accounts for reporting purposes.
 #
 # @example Basic usage
 #   section = BalanceSheetSection.new(

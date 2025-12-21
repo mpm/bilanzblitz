@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
-# Presentation rules (Bilanzierungsregeln) determine where an account balance
-# appears on the balance sheet based on the saldo direction (debit or credit).
+# Presentation rules (Bilanzierungsregeln) determine the final Report Section where
+# an account balance appears on the balance sheet based on the saldo direction.
+#
+# These rules decouple an account's logical identity (Semantic Category / CID)
+# from its physical position on a report (Report Section).
 #
 # German Terminology:
 # - H-Saldo = Haben-Saldo = Credit balance (liability side / credit-normal accounts)
@@ -31,8 +34,8 @@ class PresentationRule
   RECEIVABLE_AFFILIATED = :receivable_affiliated  # Forderungen gg. verbundene Unternehmen
   PAYABLE_AFFILIATED = :payable_affiliated        # Verbindlichkeiten gg. verbundene Unternehmen
 
-  # CID constants for common balance sheet positions
-  module Cids
+  # RSID constants for common balance sheet positions
+  module Rsids
     # Aktiva
     FORDERUNGEN_LL = "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.forderungen_aus_lieferungen_und_leistungen"
     SONSTIGE_VERMOEGENSGEGENSTAENDE = "b.aktiva.umlaufvermoegen.forderungen_und_sonstige_vermoegensgegenstaende.sonstige_vermoegensgegenstaende"
@@ -52,81 +55,82 @@ class PresentationRule
   # Each rule specifies:
   # - name: Human-readable German name
   # - description: What this rule does
-  # - debit_cid: Balance sheet position when account has debit balance (nil = use semantic cid)
-  # - credit_cid: Balance sheet position when account has credit balance (nil = use semantic cid)
-  # - bidirectional: Whether the account can flip between aktiva and passiva
+  # - debit_rsid: Report Section ID when account has debit balance (nil = use semantic CID as default RSID)
+  # - credit_rsid: Report Section ID when account has credit balance (nil = use semantic CID as default RSID)
+  # - bidirectional: Whether the account can flip between aktiva and passiva sections
   RULES = {
     asset_only: {
       name: "Nur Aktiva",
       description: "Immer auf der Aktivseite (z.B. Anlagevermögen, Vorräte)",
-      debit_cid: nil,
-      credit_cid: nil,
+      debit_rsid: nil,
+      credit_rsid: nil,
       bidirectional: false
     },
     liability_only: {
       name: "Nur Passiva",
       description: "Immer auf der Passivseite (z.B. Rückstellungen, Verbindlichkeiten)",
-      debit_cid: nil,
-      credit_cid: nil,
+      debit_rsid: nil,
+      credit_rsid: nil,
       bidirectional: false
     },
     equity_only: {
       name: "Nur Eigenkapital",
       description: "Immer im Eigenkapital",
-      debit_cid: nil,
-      credit_cid: nil,
+      debit_rsid: nil,
+      credit_rsid: nil,
       bidirectional: false
     },
     pnl_only: {
       name: "Nur GuV",
       description: "Aufwands- und Ertragskonten - nicht in der Bilanz",
-      debit_cid: nil,
-      credit_cid: nil,
+      debit_rsid: nil,
+      credit_rsid: nil,
       bidirectional: false
     },
     fll_standard: {
       name: "Forderungen L&L Standard",
       description: "S-Saldo: Forderungen aus L&L | H-Saldo: Sonstige Verbindlichkeiten",
-      debit_cid: Cids::FORDERUNGEN_LL,
-      credit_cid: Cids::SONSTIGE_VERBINDLICHKEITEN,
+      debit_rsid: Rsids::FORDERUNGEN_LL,
+      credit_rsid: Rsids::SONSTIGE_VERBINDLICHKEITEN,
       bidirectional: true
     },
     vll_standard: {
       name: "Verbindlichkeiten L&L Standard",
       description: "H-Saldo: Verbindlichkeiten aus L&L | S-Saldo: Sonstige Vermögensgegenstände",
-      debit_cid: Cids::SONSTIGE_VERMOEGENSGEGENSTAENDE,
-      credit_cid: Cids::VERBINDLICHKEITEN_LL,
+      debit_rsid: Rsids::SONSTIGE_VERMOEGENSGEGENSTAENDE,
+      credit_rsid: Rsids::VERBINDLICHKEITEN_LL,
       bidirectional: true
     },
     bank_bidirectional: {
       name: "Bankkonten bidirektional",
       description: "S-Saldo: Liquide Mittel | H-Saldo: Verbindlichkeiten ggü. Kreditinstituten",
-      debit_cid: Cids::LIQUIDE_MITTEL,
-      credit_cid: Cids::VERBINDLICHKEITEN_KREDITINSTITUTE,
+      debit_rsid: Rsids::LIQUIDE_MITTEL,
+      credit_rsid: Rsids::VERBINDLICHKEITEN_KREDITINSTITUTE,
       bidirectional: true
     },
     tax_standard: {
       name: "Steuerforderung/-schuld",
       description: "S-Saldo: Sonstige Vermögensgegenstände | H-Saldo: Sonstige Verbindlichkeiten",
-      debit_cid: Cids::SONSTIGE_VERMOEGENSGEGENSTAENDE,
-      credit_cid: Cids::SONSTIGE_VERBINDLICHKEITEN,
+      debit_rsid: Rsids::SONSTIGE_VERMOEGENSGEGENSTAENDE,
+      credit_rsid: Rsids::SONSTIGE_VERBINDLICHKEITEN,
       bidirectional: true
     },
     receivable_affiliated: {
       name: "Forderungen gg. verbundene Unternehmen",
       description: "S-Saldo: Forderungen gg. verbundene | H-Saldo: Verbindlichkeiten gg. verbundene",
-      debit_cid: Cids::FORDERUNGEN_VERBUNDENE,
-      credit_cid: Cids::VERBINDLICHKEITEN_VERBUNDENE,
+      debit_rsid: Rsids::FORDERUNGEN_VERBUNDENE,
+      credit_rsid: Rsids::VERBINDLICHKEITEN_VERBUNDENE,
       bidirectional: true
     },
     payable_affiliated: {
       name: "Verbindlichkeiten gg. verbundene Unternehmen",
       description: "H-Saldo: Verbindlichkeiten gg. verbundene | S-Saldo: Forderungen gg. verbundene",
-      debit_cid: Cids::FORDERUNGEN_VERBUNDENE,
-      credit_cid: Cids::VERBINDLICHKEITEN_VERBUNDENE,
+      debit_rsid: Rsids::FORDERUNGEN_VERBUNDENE,
+      credit_rsid: Rsids::VERBINDLICHKEITEN_VERBUNDENE,
       bidirectional: true
     }
   }.freeze
+
 
   class << self
     # Get all available rule identifiers
@@ -144,13 +148,13 @@ class PresentationRule
       RULES.key?(rule_id&.to_sym)
     end
 
-    # Determine the balance sheet position for an account based on its balance
+    # Determine the balance sheet Report Section (RSID) for an account based on its balance
     #
     # @param rule_id [Symbol, String] The presentation rule identifier
     # @param total_debit [Float] Total debit amount for the account
     # @param total_credit [Float] Total credit amount for the account
-    # @param semantic_cid [String] The semantic category ID (fallback position)
-    # @return [Hash, nil] { cid: String, balance: Float, side: :aktiva/:passiva } or nil for P&L
+    # @param semantic_cid [String] The semantic category ID (used as default RSID)
+    # @return [Hash, nil] { rsid: String, balance: Float, side: :aktiva/:passiva } or nil for P&L
     def apply(rule_id, total_debit, total_credit, semantic_cid)
       rule = RULES[rule_id&.to_sym]
 
@@ -170,19 +174,19 @@ class PresentationRule
       if rule[:bidirectional]
         # Saldo-dependent positioning
         if is_debit_balance
-          resolved_cid = rule[:debit_cid] || semantic_cid
+          resolved_rsid = rule[:debit_rsid] || semantic_cid
         else
-          resolved_cid = rule[:credit_cid] || semantic_cid
+          resolved_rsid = rule[:credit_rsid] || semantic_cid
         end
       else
-        # Fixed positioning - always use semantic cid
-        resolved_cid = semantic_cid
+        # Fixed positioning - always use semantic CID as default RSID
+        resolved_rsid = semantic_cid
       end
 
-      side = determine_side(resolved_cid)
+      side = determine_side(resolved_rsid)
 
       {
-        cid: resolved_cid,
+        rsid: resolved_rsid,
         balance: net_balance.abs,
         side: side,
         # Original balance direction (for display purposes)
@@ -208,7 +212,8 @@ class PresentationRule
 
     private
 
-    # Apply default logic when no specific rule is defined
+    # Apply default logic when no specific rule is defined.
+    # Treats the Semantic Category (CID) as the Report Section ID (RSID).
     def apply_default(total_debit, total_credit, semantic_cid)
       return nil unless semantic_cid
 
@@ -218,17 +223,17 @@ class PresentationRule
       side = determine_side(semantic_cid)
 
       {
-        cid: semantic_cid,
+        rsid: semantic_cid,
         balance: net_balance.abs,
         side: side,
         debit_balance: net_balance > 0
       }
     end
 
-    # Determine balance sheet side from cid
-    def determine_side(cid)
-      return :aktiva unless cid
-      cid.start_with?("b.aktiva") ? :aktiva : :passiva
+    # Determine balance sheet side from Report Section ID (RSID)
+    def determine_side(rsid)
+      return :aktiva unless rsid
+      rsid.start_with?("b.aktiva") ? :aktiva : :passiva
     end
   end
 end

@@ -1,7 +1,7 @@
-# Service to map accounts to GuV sections and balance sheet categories
-# Provides centralized configuration for account categorization according to § 275 Abs. 2 HGB
+# Service to map accounts to GuV report sections and balance sheet semantic categories.
+# Provides centralized configuration for account categorization according to § 275 Abs. 2 HGB.
 class AccountMap
-  # Define GuV sections according to § 275 Abs. 2 HGB (Gesamtkostenverfahren)
+  # Define GuV report sections according to § 275 Abs. 2 HGB (Gesamtkostenverfahren)
   GUV_SECTIONS = {
     umsatzerloese: {
       title: "1. Umsatzerlöse",
@@ -119,7 +119,7 @@ class AccountMap
       @nested_categories ||= transform_json_to_nested_structure(load_balance_sheet_structure)
     end
 
-    # Get the human-readable title for a GuV section
+    # Get the human-readable title for a GuV report section
     # @param section_id [Symbol] The section identifier (e.g., :umsatzerloese)
     # @return [String] The section title
     # @raise [ArgumentError] if section_id is unknown
@@ -128,7 +128,7 @@ class AccountMap
       GUV_SECTIONS[section_id][:title]
     end
 
-    # Get the full list of account codes for a GuV section (expands ranges)
+    # Get the full list of account codes for a GuV report section (expands ranges)
     # @param section_id [Symbol] The section identifier
     # @return [Array<String>] Array of account codes
     # @raise [ArgumentError] if section_id is unknown
@@ -137,7 +137,7 @@ class AccountMap
       expand_account_ranges(GUV_SECTIONS[section_id][:accounts])
     end
 
-    # Filter accounts list to only include those matching the given section
+    # Filter accounts list to only include those matching the given report section
     # @param account_list [Array<Hash>] List of account hashes with :code key
     # @param section_id [Symbol] The section identifier
     # @return [Array<Hash>] Filtered list of accounts
@@ -203,7 +203,8 @@ class AccountMap
       build_section_recursive(account_list, category_id, structure, level: 1)
     end
 
-    # Determine account type (asset, liability, equity, expense, revenue) for a given account code
+    # Determine account type (asset, liability, equity, expense, revenue) for a given account code.
+    # The account type is derived from the account's Semantic Category.
     # @param account_code [String] The account code (e.g., "0750", "4000")
     # @return [String, nil] The account type or nil if not found in any category
     def account_type_for_code(account_code)

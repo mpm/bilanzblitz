@@ -8,17 +8,17 @@ Service classes encapsulate business logic and complex operations. They follow a
 
 ### AccountMap
 
-**Purpose**: Centralized account categorization for GuV sections and balance sheet categories.
+**Purpose**: Centralized mapping of accounts to their logical identity (**Semantic Category / CID**) and default reporting structure.
 
 **Location**: `app/services/account_map.rb`
 
 **Key Features**:
-- Maps SKR03 account codes to GuV sections (§ 275 Abs. 2 HGB)
-- Maps SKR03 account codes to balance sheet categories (§ 266 HGB)
-- Supports nested balance sheet structure with subcategories
-- Determines account types (asset, liability, equity, expense, revenue) from category membership
-- Based on official SKR03 documentation
-- Single source of truth for account categorization
+- Maps SKR03 account codes to their **Semantic Category** (logical identity, stored as `cid`).
+- For the balance sheet, it provides the **Semantic Category** (§ 266 HGB). This represents what the account *is* and serves as the default **RSID** before applying `PresentationRule`.
+- For the GuV, it maps accounts directly to **Report Sections** (§ 275 Abs. 2 HGB), as GuV positions are generally fixed and not saldo-dependent.
+- Determines account types (asset, liability, equity, expense, revenue) from **Semantic Category** membership.
+- Based on official SKR03 documentation.
+- Single source of truth for account logical identity (**CIDs**).
 
 **Key Methods**:
 ```ruby
@@ -37,6 +37,9 @@ AccountMap.nested_category_structure(:anlagevermoegen)
 AccountMap.category_name(:sachanlagen)  # Works with nested categories
 AccountMap.build_nested_section(accounts, :anlagevermoegen)  # Returns BalanceSheetSection tree
 
+# Account logical identity
+AccountMap.cid_for_code("0750")  # => "b.passiva.verbindlichkeiten.sonstige_verbindlichkeiten..."
+
 # Account type determination
 AccountMap.account_type_for_code("0750")  # => "liability"
 AccountMap.account_type_for_code("4000")  # => "expense"
@@ -46,7 +49,7 @@ AccountMap.account_type_for_code("4000")  # => "expense"
 
 **Account Type Determination**:
 
-AccountMap determines account types by looking up the account code in the nested category structure:
+AccountMap determines account types by looking up the account code in the nested semantic category structure:
 
 1. **Balance sheet accounts**: Determined by whether the account belongs to Aktiva or Passiva
    - Aktiva accounts → `"asset"`
@@ -68,54 +71,23 @@ This replaces the old range-based approach which was structurally incorrect for 
 
 ### PresentationRule
 
-**Purpose**: Determines where account balances appear on the balance sheet based on saldo direction (Bilanzierungsregeln).
+**Purpose**: Determines the final **Report Section (RSID)** where an account balance appears based on saldo direction (Bilanzierungsregeln). This decouples an account's logical identity (**Semantic Category / CID**) from its physical position on a report.
 
 **Location**: `app/services/presentation_rule.rb`
 
-**Key Concept**: Some accounts can appear on either side of the balance sheet depending on their balance direction. For example:
-- Account 1499 (Forderungen L&L): Debit balance → Aktiva, Credit balance → Sonstige Verbindlichkeiten
-- Bank accounts: Debit balance → Liquide Mittel, Credit balance → Verbindlichkeiten ggü. Kreditinstituten
+**Key Concept**: Some accounts can appear in different **Report Sections** on either side of the balance sheet depending on their balance direction. For example:
+- Account 1499 (Forderungen L&L): Debit balance → Aktiva (Forderungen L&L section), Credit balance → Passiva (Sonstige Verbindlichkeiten section)
+- Bank accounts: Debit balance → Aktiva (Liquide Mittel section), Credit balance → Passiva (Verbindlichkeiten ggü. Kreditinstituten section)
 
-**Available Rules**:
-- `asset_only` - Always on Aktiva side (e.g., fixed assets, inventory)
-- `liability_only` - Always on Passiva side (e.g., provisions)
-- `equity_only` - Always in Eigenkapital
-- `pnl_only` - P&L accounts (never on balance sheet)
-- `fll_standard` - Forderungen aus L&L (saldo-dependent)
-- `vll_standard` - Verbindlichkeiten aus L&L (saldo-dependent)
-- `bank_bidirectional` - Bank accounts (saldo-dependent)
-- `tax_standard` - Tax accounts (saldo-dependent)
-- `receivable_affiliated` - Forderungen gg. verbundene Unternehmen (saldo-dependent)
-- `payable_affiliated` - Verbindlichkeiten gg. verbundene Unternehmen (saldo-dependent)
-
-**Key Method**:
-```ruby
-# Apply presentation rule to determine balance sheet position
-position = PresentationRule.apply(
-  :fll_standard,           # rule identifier
-  total_debit: 1500.0,     # total debit amount
-  total_credit: 500.0,     # total credit amount
-  semantic_cid: "b.aktiva.umlaufvermoegen.forderungen..."  # fallback position
-)
-
-# Returns: { cid: "b.aktiva.umlaufvermoegen.forderungen...",
-#            balance: 1000.0,
-#            side: :aktiva,
-#            debit_balance: true }
-```
-
-**Integration**:
-- `AccountTemplate` and `Account` models have `presentation_rule` field
-- `BalanceSheetService` applies presentation rules when calculating account positions
-- Rules are assigned during SKR03 import via `contrib/generate_presentation_rules.rb`
-
-**German Terminology**:
-- Fachliche Kategorie (Semantic Category) = The account's logical meaning (stored in `cid`)
-- Bilanzierungsregel (Presentation Rule) = Rule determining presentation based on saldo
+**Terminology**:
+- **Semantic Category (Fachliche Kategorie)**: The account's logical identity (stored in `cid`).
+- **Presentation Rule (Bilanzierungsregel)**: Rule determining the **Report Section ID (RSID)** based on saldo direction (S-Saldo/H-Saldo).
+- **Report Section (Berichtsposition)**: The final position on the balance sheet or GuV.
 
 ### BalanceSheetSection
 
-**Purpose**: Helper class for nested balance sheet structure with hierarchical subcategories.
+**Purpose**: Helper class for representing nested HGB **Report Sections** with hierarchical subcategories.
+
 
 **Location**: `app/services/balance_sheet_section.rb`
 
@@ -162,8 +134,8 @@ TaxFormFieldMap.kst_section_label(:adjustments)
 **Key Features**:
 - Queries posted journal entries for fiscal year
 - Excludes closing entries (`entry_type: 'closing'`)
-- Applies `PresentationRule` to determine saldo-dependent account positioning
-- Uses `AccountMap` and `BalanceSheetSection` for nested categorization
+- Resolves the final **Report Section** for each account by applying `PresentationRule` to the account's **Semantic Category** (handling saldo-dependent positioning)
+- Uses `AccountMap` and `BalanceSheetSection` for nested hierarchical reporting
 - Integrates with `GuVService` for net income calculation
 - Validates Aktiva = Passiva
 - Supports stored balance sheets for closed fiscal years
@@ -184,10 +156,10 @@ data = result.data # Contains balance sheet and GuV data
 
 **Key Features**:
 - Implements § 275 Abs. 2 HGB format
-- Uses `AccountMap` for section categorization
+- Uses `AccountMap` for **Report Section** categorization
 - Excludes closing entries and 9xxx accounts
 - Calculates net income (Jahresüberschuss/Jahresfehlbetrag)
-- Section subtotals and display hints
+- Report Section subtotals and display hints
 - Stored in balance sheets when fiscal year closes
 
 **Usage**:

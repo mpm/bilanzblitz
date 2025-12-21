@@ -62,6 +62,17 @@ The `AccountUsage` model tracks frequently used accounts per company:
 - Recently used accounts retrieved via `company.account_usages.recent`
 - Enables quick account selection in the booking UI
 
+### Account Categorization and Reporting Logic
+
+BilanzBlitz decouples an account's accounting identity from its reporting position using a multi-step logic chain:
+
+1. **Semantic Category (CID)**: Every account is assigned a `cid` (e.g., `b.aktiva.umlaufvermoegen.liquide_mittel`). This represents the account's logical identity (**Semantic Category**).
+2. **Presentation Rules**: Logic that determines the final **Report Section** for an account balance.
+   - For most accounts, the presentation rule is `asset_only`, `liability_only`, or `pnl_only`, meaning their **Report Section** matches their **Semantic Category**.
+   - **Bidirectional Accounts**: Rules that allow accounts to switch **Report Sections** based on saldo. A bank account with a debit balance appears in the "Liquide Mittel" section (Aktiva), while a credit balance (overdraft) appears in "Verbindlichkeiten ggü. Kreditinstituten" (Passiva).
+3. **Report Sections**: The final nodes in the hierarchical balance sheet or GuV structure where balances are aggregated and displayed.
+4. **Account Types**: Broad classifications (`asset`, `liability`, `equity`, `revenue`, `expense`) derived from the **Semantic Category** via `AccountMap`.
+
 ### VAT Account Constants
 
 Standard SKR03 VAT accounts are defined in `Account::VAT_ACCOUNTS`:

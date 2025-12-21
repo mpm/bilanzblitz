@@ -71,7 +71,7 @@ The `./dc` script is shorthand for `devcontainer exec --workspace-folder .`
 
 ```
 app/
-├── controllers/          # Rails controllers (Inertia endpoints)
+├── controllers/         # Rails controllers (Inertia endpoints)
 │   ├── fiscal_years_controller.rb
 │   ├── tax_reports_controller.rb
 │   └── reports/
@@ -85,13 +85,14 @@ app/
 │   ├── balance_sheet_service.rb
 │   ├── guv_service.rb
 │   ├── ustva_service.rb
-│   └── kst_service.rb
+│   ├── kst_service.rb
+│   └── presentation_rule.rb
 ├── frontend/            # React + TypeScript
 │   ├── components/      # Reusable components
-│   ├── pages/          # Inertia pages
-│   ├── types/          # TypeScript types
-│   └── utils/          # Formatting utilities
-└── views/              # Minimal (Inertia uses React)
+│   ├── pages/           # Inertia pages
+│   ├── types/           # TypeScript types
+│   └── utils/           # Formatting utilities
+└── views/               # Minimal (Inertia uses React)
 
 docs/                    # Detailed documentation
 ├── ARCHITECTURE.md
@@ -203,14 +204,15 @@ When working on this project:
 
 - Use `./dc` for all Rails/npm commands
 - Respect GoBD immutability rules (posted entries cannot be modified)
-- Consider German accounting standards (SKR03/04, HGB)
+- Consider German accounting standards (SKR03, HGB)
 - Use Inertia.js for routing (no separate API layer)
 - Check existing utilities before creating new ones:
   - Formatting functions: `app/frontend/utils/formatting.ts`
   - TypeScript types: `app/frontend/types/`
   - Service classes: `app/services/`
-- Use `AccountMap` service for account categorization (don't hardcode ranges)
-- Balance sheets support nested subcategories via `AccountMap.build_nested_section()` and `BalanceSheetSection`
+- Use `AccountMap` service for account **Semantic Category** mapping (don't hardcode ranges)
+- Use `PresentationRule` to determine the **Report Section** for accounts based on saldo direction
+- Balance sheets support nested **Report Sections** via `AccountMap.build_nested_section()` and `BalanceSheetSection`
 - Use `TaxFormFieldMap` service for tax form field definitions
 - Import types from centralized locations (`types/accounting.ts`, `types/journal-entries.ts`, `types/tax-reports.ts`)
 - Extract reusable components to `app/frontend/components/`

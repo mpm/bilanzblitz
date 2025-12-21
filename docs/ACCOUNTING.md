@@ -1,5 +1,27 @@
 # German Accounting Context
 
+## Data Model & Terminology
+
+To handle the complexity of German accounting (SKR03/SKR04) and HGB reporting requirements, the application distinguishes between four key concepts:
+
+1. **Account Classification (Kontenbeschriftung)**:
+   The raw category description from the chart of accounts (e.g., DATEV SKR03). This is used as the source for initial mapping but is often ambiguous as it can mix semantic meaning with presentation rules.
+
+2. **Semantic Category (Fachliche Kategorie)**:
+   The internal logical identity of an account, represented by the `cid` (Category ID, e.g., `b.aktiva.umlaufvermoegen.liquide_mittel`). It defines what the account *is* from an accounting perspective.
+
+3. **Presentation Rule (Bilanzierungsregel)**:
+   The logic that determines how an account balance is treated for reporting. While most accounts have a fixed position, bidirectional accounts (e.g., bank accounts) use these rules to switch sides on the balance sheet depending on whether they have a debit or credit balance.
+
+4. **Report Section (Berichtsposition)**:
+   A specific node or line item in the official HGB balance sheet (§ 266 HGB) or GuV (§ 275 HGB) structure. This is where the account finally appears in a report. In the code, this is often referred to as **RSID** (Report Section ID).
+
+### Pragmatic Identity of CID and RSID
+
+To keep the data model simple, we use the same identifier format (e.g., `b.aktiva.umlaufvermoegen.liquide_mittel`) for both Semantic Categories (CID) and Report Sections (RSID). 
+
+In the vast majority of cases, an account's CID is identical to its RSID. However, for accounts governed by a **Presentation Rule**, the CID represents the "logical identity" (and acts as a default RSID), while the rule determines the final **RSID** based on the actual account balance at reporting time.
+
 ## Chart of Accounts (Kontenrahmen)
 
 The application supports standard German charts of accounts:

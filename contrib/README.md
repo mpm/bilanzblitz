@@ -57,7 +57,7 @@ This script:
 - Reads the official HGB structure from `bilanz-aktiva.json`, `bilanz-passiva.json`, and `guv.json`
 - Reads SKR03 categories from `skr03-ocr-results.json`
 - Performs fuzzy matching between HGB and SKR03 category names
-- Generates hierarchical category IDs (e.g., `aktiva.anlagevermoegen.immaterielle.geschaeftswert`)
+- Generates semantic category IDs (CIDs) (e.g., `aktiva.anlagevermoegen.immaterielle.geschaeftswert`)
 - Creates `category-mapping.yml` - a human-editable YAML file
 
 **Important**: The script reports TWO types of unmatched categories:
@@ -107,7 +107,14 @@ aktiva:
 
 To fix an unmatched SKR03 category, find the appropriate HGB category and update its `skr03_category` field.
 
-#### 3. Generate Presentation Rules Mapping
+#### 3. Conceptual Decoupling: CID vs. Presentation Rule
+
+BilanzBlitz distinguishes between what an account *is* (Semantic Category) and where it is *placed* (Presentation Rule).
+
+1. **Semantic Category (CID)**: The logical accounting identity of an account (e.g., "Bank account"). This is stored in the `cid` field of an account.
+2. **Presentation Rule**: The logic that determines the actual reporting position. For most accounts, the position matches the CID. However, for saldo-dependent accounts (e.g., Bank, Tax, FLL/VLL), the presentation rule might move the account to a different side of the balance sheet.
+
+#### 4. Generate Presentation Rules Mapping
 
 Run `ruby generate_presentation_rules.rb` to detect saldo-dependent accounts.
 
@@ -127,7 +134,7 @@ This script:
 3. Manually assign rules to unknown categories (marked `status: unknown`)
 4. Fix any incorrect detections (marked `status: needs_review`)
 
-#### 4. Build Final JSON Files
+#### 5. Build Final JSON Files
 
 Run `ruby build_category_json.rb` to generate the final output files.
 
@@ -137,9 +144,10 @@ This script:
 - Reads account codes from `skr03-ocr-results.json`
 - Generates `bilanz-with-categories.json` with all account codes properly mapped
 - Generates `guv-with-categories.json` with all account codes properly mapped
-- Generates `skr03-accounts.csv` with hierarchical category IDs and presentation rules
+- Generates `skr03-accounts.csv` with semantic category IDs (CIDs) and presentation rules
 
-The generated files use hierarchical category IDs (e.g., `b.aktiva.anlagevermoegen.sachanlagen`) for human-readable category identification.
+The generated files use semantic category IDs (CIDs) (e.g., `b.aktiva.anlagevermoegen.sachanlagen`) for human-readable category identification.
+
 
 ### Alternative: Legacy Single-Step Approach
 
@@ -239,7 +247,7 @@ A CSV file containing all SKR03 account codes with their descriptions, category 
 - `code`: The account code (e.g., "1499")
 - `flags`: Optional flags from the SKR03 PDF (usually empty)
 - `range`: Account code range if applicable (e.g., "4000-4999")
-- `cid`: Hierarchical category ID (e.g., "b.aktiva.anlagevermoegen.sachanlagen")
+- `cid`: Semantic category ID (CID) (e.g., "b.aktiva.anlagevermoegen.sachanlagen")
 - `presentation_rule`: Presentation rule identifier (e.g., "fll_standard", "asset_only")
 - `description`: Human-readable description of the account
 
@@ -284,7 +292,7 @@ A structured JSON file mapping the German balance sheet (Bilanz) structure to SK
 ```
 
 **Key Attributes**:
-- `cid`: Hierarchical category identifier (e.g., "b.aktiva.anlagevermoegen.sachanlagen"). Null if no match found.
+- `cid`: Semantic category identifier (e.g., "b.aktiva.anlagevermoegen.sachanlagen"). Null if no match found.
 - `matched_category`: The parsed SKR03 category name that was matched
 - `codes`: Array of account codes belonging to this category
 - `items`: Sub-categories within a section
@@ -321,7 +329,7 @@ A structured JSON file mapping the German Profit & Loss (GuV) structure accordin
 ```
 
 **Key Attributes**:
-- `cid`: Hierarchical category identifier (e.g., "guv.umsatzerloese"). Null if no match found.
+- `cid`: Semantic category identifier (e.g., "guv.umsatzerloese"). Null if no match found.
 - `matched_category`: The parsed SKR03 category name that was matched
 - `codes`: Array of account codes belonging to this category
 - `children`: Sub-sections for composite GuV positions (e.g., Materialaufwand has subsections for materials and services)
@@ -334,12 +342,12 @@ These files are designed to be imported into the BilanzBlitz application to enab
 2. **Report Generation**: Generate balance sheets and GuV reports by aggregating accounts according to their categories
 3. **Validation**: Ensure posted journal entries use accounts appropriate for their intended purpose
 
-The hierarchical category identifier (`cid`) serves as a stable, human-readable identifier that links:
+The semantic category identifier (`cid`) serves as a stable, human-readable identifier that links:
 - Account codes in `skr03-accounts.csv`
 - Categories in `bilanz-with-categories.json`
 - Categories in `guv-with-categories.json`
 
-**Example hierarchical IDs**:
+**Example semantic IDs**:
 - `b.aktiva.anlagevermoegen.immaterielle_vermoegensgegenstaende.geschaefts_oder_firmenwert`
 - `b.passiva.verbindlichkeiten.verbindlichkeiten_aus_lieferungen_und_leistungen`
 - `guv.umsatzerloese`
