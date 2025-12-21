@@ -59,15 +59,15 @@ export const BalanceSheetSection = ({
     section.accounts.forEach((account) => {
       rows.push(
         <tr
-          key={`${section.sectionKey}-${account.accountCode}`}
+          key={`${section.sectionKey}-${account.code}`}
           className="hover:bg-accent/50 transition-colors"
         >
           <td className={`py-1.5 ${depth === 0 ? 'pl-6' : depth === 1 ? 'pl-10' : depth === 2 ? 'pl-14' : 'pl-18'}`}>
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs text-muted-foreground">
-                {account.accountCode}
+                {account.code}
               </span>
-              <span className="text-sm">{account.accountName}</span>
+              <span className="text-sm">{account.name}</span>
             </div>
           </td>
           <td className="py-1.5 text-right font-mono text-sm">

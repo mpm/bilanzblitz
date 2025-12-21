@@ -94,13 +94,13 @@ RSpec.describe GuVService do
         expect(revenue_section[:label]).to eq("1. Umsatzerlöse")
         expect(revenue_section[:subtotal]).to eq(10000)
         expect(revenue_section[:display_type]).to eq(:positive)
-        expect(revenue_section[:accounts].map { |a| a[:account_code] }).to include("8000")
+        expect(revenue_section[:accounts].map { |a| a[:code] }).to include("8000")
 
         # Verify material expense section
         expect(material_section[:label]).to eq("2. Materialaufwand")
         expect(material_section[:subtotal]).to eq(-3000)
         expect(material_section[:display_type]).to eq(:negative)
-        expect(material_section[:accounts].map { |a| a[:account_code] }).to include("3000")
+        expect(material_section[:accounts].map { |a| a[:code] }).to include("3000")
 
         # Verify personnel expense section
         expect(personnel_section[:label]).to eq("3. Personalaufwand")
@@ -163,7 +163,7 @@ RSpec.describe GuVService do
 
         # No section should contain account 9000
         result.data[:sections].each do |section|
-          account_codes = section[:accounts].map { |a| a[:account_code] }
+          account_codes = section[:accounts].map { |a| a[:code] }
           expect(account_codes).not_to include("9000")
         end
       end

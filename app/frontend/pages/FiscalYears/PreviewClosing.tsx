@@ -6,18 +6,13 @@ import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { formatCurrency } from '@/utils/formatting'
 import { ArrowLeft, Lock, AlertCircle, CheckCircle } from 'lucide-react'
+import type { AccountBalance } from '@/types/accounting'
 
 interface FiscalYear {
   id: number
   year: number
   startDate: string
   endDate: string
-}
-
-interface AccountBalance {
-  accountCode: string
-  accountName: string
-  balance: number
 }
 
 interface BalanceSheetSectionNested {
@@ -108,11 +103,11 @@ export default function PreviewClosing({
                     </td>
                   </tr>
                   {section.accounts.map((account) => (
-                    <tr key={account.accountCode} className="border-b">
+                    <tr key={account.code} className="border-b">
                       <td className="py-2 text-sm">
                         <div>
-                          <span className="font-medium">{account.accountCode}</span>{' '}
-                          {account.accountName}
+                          <span className="font-medium">{account.code}</span>{' '}
+                          {account.name}
                         </div>
                       </td>
                       <td className="py-2 text-sm text-right font-mono">

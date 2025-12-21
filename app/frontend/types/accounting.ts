@@ -2,8 +2,8 @@
 
 // Account balance interface (shared by Balance Sheet and GuV)
 export interface AccountBalance {
-  accountCode: string
-  accountName: string
+  code: string
+  name: string
   balance: number
 }
 

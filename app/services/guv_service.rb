@@ -160,8 +160,8 @@ class GuVService
   def format_accounts(accounts)
     accounts.map do |account|
       {
-        account_code: account[:code],
-        account_name: account[:name],
+        code: account[:code],
+        name: account[:name],
         balance: account[:balance].round(2)
       }
     end

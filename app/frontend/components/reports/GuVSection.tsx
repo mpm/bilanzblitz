@@ -57,15 +57,15 @@ export const GuVSection = ({ guv, showPreviousYear = false }: GuVSectionProps) =
               ) : (
                 section.accounts.map((account) => (
                   <tr
-                    key={account.accountCode}
+                    key={account.code}
                     className="hover:bg-accent/50 transition-colors"
                   >
                     <td className="py-2 pl-6">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-sm text-muted-foreground">
-                          {account.accountCode}
+                          {account.code}
                         </span>
-                        <span className="text-sm">{account.accountName}</span>
+                        <span className="text-sm">{account.name}</span>
                       </div>
                     </td>
                     <td
