@@ -230,7 +230,47 @@ class AccountMap
       nil
     end
 
+    # Get the hierarchical category ID (cid) for an account code
+    # @param account_code [String] The account code (e.g., "0750", "1400")
+    # @return [String, nil] The full cid path (e.g., "b.aktiva.anlagevermoegen.sachanlagen") or nil
+    def cid_for_code(account_code)
+      # Search balance sheet (aktiva and passiva)
+      [:aktiva, :passiva].each do |side|
+        nested_balance_sheet_categories[side].each do |top_key, top_data|
+          result = find_cid_in_category(account_code, top_data, "b.#{side}.#{top_key}")
+          return result if result
+        end
+      end
+
+      # Search GuV
+      guv_section = find_guv_section_for_account(account_code)
+      return "guv.#{guv_section}" if guv_section
+
+      nil
+    end
+
     private
+
+    # Recursively search for account code and return full cid path
+    # @param account_code [String] The account code to search for
+    # @param category_data [Hash] Category data with :codes and :children
+    # @param cid_path [String] Current cid path being built
+    # @return [String, nil] Full cid path if found, nil otherwise
+    def find_cid_in_category(account_code, category_data, cid_path)
+      # Check codes at this level
+      codes = expand_account_ranges(category_data[:codes] || [])
+      return cid_path if codes.include?(account_code)
+
+      # Recursively check children
+      if category_data[:children]
+        category_data[:children].each do |child_key, child_data|
+          result = find_cid_in_category(account_code, child_data, "#{cid_path}.#{child_key}")
+          return result if result
+        end
+      end
+
+      nil
+    end
 
     # Transform JSON structure to nested hash format
     # @param json_data [Hash] Raw JSON data with :aktiva and :passiva keys
@@ -262,9 +302,13 @@ class AccountMap
       # Convert to string if it's a symbol (from JSON.parse with symbolize_names: true)
       name_str = name.to_s
 
+      # Ensure codes is always an array (handle empty strings from JSON)
+      codes = data[:codes]
+      codes = [] unless codes.is_a?(Array)
+
       category = {
         name: name_str,
-        codes: data[:codes] || [],
+        codes: codes,
         children: {}
       }
 
@@ -276,7 +320,7 @@ class AccountMap
             item_key = name_to_key(item[:name])
             category[:children][item_key] = {
               name: item[:name],
-              codes: item[:codes] || [],
+              codes: ensure_codes_array(item[:codes]),
               children: {}
             }
 
@@ -286,7 +330,7 @@ class AccountMap
                 child_key = name_to_key(child[:name])
                 category[:children][item_key][:children][child_key] = {
                   name: child[:name],
-                  codes: child[:codes] || [],
+                  codes: ensure_codes_array(child[:codes]),
                   children: {}
                 }
               end
@@ -297,7 +341,7 @@ class AccountMap
               child_key = name_to_key(child[:name])
               category[:children][child_key] = {
                 name: child[:name],
-                codes: child[:codes] || [],
+                codes: ensure_codes_array(child[:codes]),
                 children: {}
               }
             end
@@ -312,7 +356,7 @@ class AccountMap
           child_key = name_to_key(child[:name])
           category[:children][child_key] = {
             name: child[:name],
-            codes: child[:codes] || [],
+            codes: ensure_codes_array(child[:codes]),
             children: {}
           }
         end
@@ -564,6 +608,13 @@ class AccountMap
         return section_id if codes.include?(account_code)
       end
       nil
+    end
+
+    # Ensure codes is always an array (handles nil, empty strings, etc.)
+    # @param codes [Object] Value that should be an array of codes
+    # @return [Array] Array of codes (empty if input was invalid)
+    def ensure_codes_array(codes)
+      codes.is_a?(Array) ? codes : []
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_20_143157) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_20_235805) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -24,11 +24,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_20_143157) do
     t.text "description"
     t.boolean "is_system_account", default: false
     t.string "name", null: false
+    t.string "presentation_rule"
     t.string "range"
     t.decimal "tax_rate", precision: 5, scale: 2, default: "0.0"
     t.datetime "updated_at", null: false
     t.index ["chart_of_accounts_id", "code"], name: "index_account_templates_on_chart_and_code", unique: true
     t.index ["chart_of_accounts_id"], name: "index_account_templates_on_chart_of_accounts_id"
+    t.index ["presentation_rule"], name: "index_account_templates_on_presentation_rule"
   end
 
   create_table "account_usages", force: :cascade do |t|
@@ -51,6 +53,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_20_143157) do
     t.datetime "created_at", null: false
     t.boolean "is_system_account", default: false
     t.string "name", null: false
+    t.string "presentation_rule"
     t.decimal "tax_rate", precision: 5, scale: 2, default: "0.0"
     t.datetime "updated_at", null: false
     t.index ["company_id", "code"], name: "index_accounts_on_company_id_and_code", unique: true

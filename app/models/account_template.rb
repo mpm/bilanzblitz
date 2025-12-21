@@ -25,7 +25,8 @@ class AccountTemplate < ApplicationRecord
         name: name,
         account_type: account_type,
         tax_rate: tax_rate,
-        is_system_account: is_system_account || false
+        is_system_account: is_system_account || false,
+        presentation_rule: presentation_rule
       )
       company.accounts << local_account
       local_account

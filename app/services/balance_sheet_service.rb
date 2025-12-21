@@ -54,28 +54,44 @@ class BalanceSheetService
         "accounts.code",
         "accounts.name",
         "accounts.account_type",
+        "accounts.presentation_rule",
         "SUM(CASE WHEN line_items.direction = 'debit' THEN line_items.amount ELSE 0 END) as total_debit",
         "SUM(CASE WHEN line_items.direction = 'credit' THEN line_items.amount ELSE 0 END) as total_credit"
       )
-      .group("accounts.id", "accounts.code", "accounts.name", "accounts.account_type")
+      .group("accounts.id", "accounts.code", "accounts.name", "accounts.account_type", "accounts.presentation_rule")
 
-    # Calculate net balance for each account
+    # Apply presentation rules to determine balance and position
     results.map do |account|
-      balance = calculate_account_balance(
-        account.account_type,
-        account.total_debit.to_f,
-        account.total_credit.to_f
-      )
+      total_debit = account.total_debit.to_f
+      total_credit = account.total_credit.to_f
+
+      # Get semantic cid for this account from AccountMap
+      semantic_cid = AccountMap.cid_for_code(account.code)
+
+      # Determine presentation rule (from DB or infer from account type)
+      rule = account.presentation_rule&.to_sym || infer_presentation_rule(account.account_type)
+
+      # Apply the presentation rule to determine resolved position
+      position = PresentationRule.apply(rule, total_debit, total_credit, semantic_cid)
+
+      next nil unless position # Skip P&L accounts and zero balances
 
       {
         code: account.code,
         name: account.name,
         type: account.account_type,
-        balance: balance
+        balance: position[:balance],
+        resolved_cid: position[:cid],
+        side: position[:side]
       }
-    end.reject { |a| a[:balance].abs < 0.01 || a[:code].start_with?("9") } # Filter near-zero balances and 9000-series closing accounts
+    end.compact.reject { |a| a[:code].start_with?("9") } # Filter 9000-series closing accounts
   end
 
+  def infer_presentation_rule(account_type)
+    PresentationRule.infer_from_type(account_type)
+  end
+
+  # Legacy method for backward compatibility
   def calculate_account_balance(account_type, total_debit, total_credit)
     case account_type
     when "asset", "expense"
@@ -90,26 +106,51 @@ class BalanceSheetService
   end
 
   def group_by_balance_sheet_sections(account_balances)
-    # Build all sections from the dynamically loaded JSON structure
-    aktiva_sections = {}
-    passiva_sections = {}
+    # Separate accounts by resolved side (aktiva vs passiva)
+    aktiva_accounts = account_balances.select { |a| a[:side] == :aktiva }
+    passiva_accounts = account_balances.select { |a| a[:side] == :passiva }
 
     # Get all top-level categories from AccountMap
     categories = AccountMap.nested_balance_sheet_categories
 
-    # Build all aktiva sections
+    aktiva_sections = {}
+    passiva_sections = {}
+
+    # Build all aktiva sections using resolved_cid matching
     categories[:aktiva].each_key do |category_key|
-      section = AccountMap.build_nested_section(account_balances, category_key)
+      section = build_section_by_resolved_cid(aktiva_accounts, category_key, :aktiva)
       aktiva_sections[category_key] = section unless section.empty?
     end
 
-    # Build all passiva sections
+    # Build all passiva sections using resolved_cid matching
     categories[:passiva].each_key do |category_key|
-      section = AccountMap.build_nested_section(account_balances, category_key)
+      section = build_section_by_resolved_cid(passiva_accounts, category_key, :passiva)
       passiva_sections[category_key] = section unless section.empty?
     end
 
     { aktiva: aktiva_sections, passiva: passiva_sections }
+  end
+
+  # Build a section by matching accounts via resolved_cid instead of code lookup
+  # This allows saldo-dependent accounts to appear in the correct section
+  def build_section_by_resolved_cid(accounts, category_key, side)
+    # Get the cid prefix for this category
+    category_cid = "b.#{side}.#{category_key}"
+
+    # Filter accounts whose resolved_cid starts with this category's cid
+    matching_accounts = accounts.select do |a|
+      a[:resolved_cid]&.start_with?(category_cid)
+    end
+
+    return BalanceSheetSection.empty(category_key) if matching_accounts.empty?
+
+    # Delegate to AccountMap for the nested structure, but with pre-filtered accounts
+    # We transform accounts back to the format AccountMap expects
+    account_balances_for_map = matching_accounts.map do |a|
+      { code: a[:code], name: a[:name], type: a[:type], balance: a[:balance] }
+    end
+
+    AccountMap.build_nested_section(account_balances_for_map, category_key)
   end
 
   def build_balance_sheet_data(grouped_sections, net_income, guv_data = nil)

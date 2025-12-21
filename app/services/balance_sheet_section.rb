@@ -17,6 +17,18 @@ class BalanceSheetSection
   attr_reader :section_key, :section_name, :level, :children
   attr_accessor :accounts
 
+  # Create an empty section with just a key
+  # @param section_key [Symbol] The section identifier
+  # @return [BalanceSheetSection] An empty section
+  def self.empty(section_key)
+    new(
+      section_key: section_key,
+      section_name: AccountMap.category_name(section_key) || section_key.to_s,
+      level: 1,
+      accounts: []
+    )
+  end
+
   # @param section_key [Symbol] The section identifier (e.g., :anlagevermoegen)
   # @param section_name [String] The German name from JSON (e.g., "Anlagevermögen")
   # @param level [Integer] The nesting level (top-level = 1)
