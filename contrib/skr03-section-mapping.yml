@@ -1,5 +1,5 @@
 # SKR03 to HGB Classification Mapping
-# ====================================
+# ================================
 #
 # This file maps official HGB balance sheet and GuV categories to SKR03 account classifications.
 # It can be manually edited to fix incorrect matches before generating final JSON files.
@@ -35,8 +35,8 @@ aktiva:
         name: Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und
           Werte
         match_status: auto
-        skr03_classification: Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte
-          und Werte
+        skr03_classification: Selbst geschaffene gewerbliche Schutzrechte und ähnliche
+          Rechte und Werte
         notes: ''
       entgeltlich_erworbene_konzessionen_gewerbliche_schutzrechte_:
         name: entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche
@@ -329,16 +329,16 @@ passiva:
     verbindlichkeiten_gegenueber_verbundenen_unternehmen:
       name: Verbindlichkeiten gegenüber verbundenen Unternehmen
       match_status: auto
-      skr03_classification: Verbindlichkeiten gegenüber verbundenen Unternehmen oder Forderungen
-        gegen verbundene Unternehmen
+      skr03_classification: Verbindlichkeiten gegenüber verbundenen Unternehmen oder
+        Forderungen gegen verbundene Unternehmen
       notes: Partial match (case difference or similar)
     verbindlichkeiten_gegenueber_unternehmen_mit_denen_ein_betei:
       name: Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
         besteht
       match_status: auto
-      skr03_classification: Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis
-        besteht oder Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis
-        besteht
+      skr03_classification: Verbindlichkeiten gegenüber Unternehmen, mit denen ein
+        Beteiligungsverhältnis besteht oder Forderungen gegen Unternehmen, mit denen
+        ein Beteiligungsverhältnis besteht
       notes: Partial match (case difference or similar)
     sonstige_verbindlichkeiten_davon_aus_steuern_davon_im_rahmen:
       name: sonstige Verbindlichkeiten, davon aus Steuern, davon im Rahmen der sozialen
@@ -385,8 +385,8 @@ guv:
     aufwendungen_fuer_roh_hilfs_und_betriebsstoffe_und_fuer_bezo:
       name: Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene Waren
       match_status: auto
-      skr03_classification: Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für bezogene
-        Waren
+      skr03_classification: Aufwendungen für Roh-, Hilfs- und Betriebsstoffe und für
+        bezogene Waren
       notes: ''
     aufwendungen_fuer_bezogene_leistungen:
       name: Aufwendungen für bezogene Leistungen
@@ -407,8 +407,8 @@ guv:
       name: soziale Abgaben und Aufwendungen für Altersversorgung und für Unterstützung,
         davon für Altersversorgung
       match_status: auto
-      skr03_classification: Soziale Abgaben und Aufwendungen für Altersversorgung und für
-        Unterstützung
+      skr03_classification: Soziale Abgaben und Aufwendungen für Altersversorgung
+        und für Unterstützung
       notes: Partial match (case difference or similar)
   abschreibungen:
     name: Abschreibungen
@@ -450,7 +450,8 @@ guv:
   abschreibungen_auf_finanzanlagen_und_auf_wertpapiere_des_uml:
     name: Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens
     match_status: auto
-    skr03_classification: Abschreibungen auf Finanzanlagen und auf Wertpapiere des Umlaufvermögens
+    skr03_classification: Abschreibungen auf Finanzanlagen und auf Wertpapiere des
+      Umlaufvermögens
     notes: ''
   zinsen_und_aehnliche_aufwendungen_davon_an_verbundene_untern:
     name: Zinsen und ähnliche Aufwendungen, davon an verbundene Unternehmen
@@ -482,7 +483,7 @@ guv:
 # UNMATCHED SKR03 CLASSIFICATIONS
 # ==============================================================================
 #
-# The following SKR03 account classifications were NOT matched to any HGB category.
+# The following SKR03 classifications were NOT matched to any HGB category.
 # This means the accounts in these classifications will not appear in the balance
 # sheet or GuV reports unless you manually add them to the mapping above.
 #

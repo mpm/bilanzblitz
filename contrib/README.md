@@ -47,7 +47,37 @@ this (/-\d\d/) to find all number suffixes whether with space or not.
 
 ### Map SKR03 account classification to semantic id and report sections
 
-The recommended workflow uses a three-stage process that allows manual review and correction of mappings:
+The recommended workflow uses a three-stage process that allows manual review and correction of mappings.
+
+**NEW: Unified CLI Tool** (Recommended)
+
+The SKR03 mapping scripts have been refactored into a unified CLI tool located at `contrib/skr03_mapping/bin/skr03_mapper`. This provides better code organization, eliminates duplication, and offers a consistent command-line interface.
+
+**Benefits:**
+- Unified command interface (like git/rails)
+- Better code organization with proper namespacing (`Contrib::SKR03Mapping::`)
+- Eliminated ~245 lines of duplicated code
+- Easier to test and maintain
+- Backward compatible (old scripts still work as wrappers)
+
+**Quick Start:**
+```bash
+# Generate category mapping
+ruby contrib/skr03_mapping/bin/skr03_mapper generate-mapping
+
+# Generate presentation rules
+ruby contrib/skr03_mapping/bin/skr03_mapper generate-rules
+
+# Build final JSON files
+ruby contrib/skr03_mapping/bin/skr03_mapper build-json
+
+# Show help
+ruby contrib/skr03_mapping/bin/skr03_mapper help
+```
+
+**Legacy Scripts** (Still Supported)
+
+The original scripts (`generate_category_mapping.rb`, `generate_presentation_rules.rb`, `build_category_json.rb`) now act as thin wrappers around the new implementation and will continue to work for backward compatibility.
 
 #### 1. Generate Intermediate Mapping
 
