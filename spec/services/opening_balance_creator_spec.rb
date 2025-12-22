@@ -38,13 +38,18 @@ RSpec.describe OpeningBalanceCreator, type: :service do
       template.account_type = "equity"
     end
 
+    chart_of_accounts.account_templates.find_or_create_by!(code: "0860") do |template|
+      template.name = "Gewinnvortrag vor Verwendung"
+      template.account_type = "equity"
+    end
+
     chart_of_accounts.account_templates.find_or_create_by!(code: "0868") do |template|
-      template.name = "Verlustvortrag"
+      template.name = "Verlustvortrag vor Verwendung"
       template.account_type = "equity"
     end
 
     chart_of_accounts.account_templates.find_or_create_by!(code: "9805") do |template|
-      template.name = "Fehlbetrag"
+      template.name = "Gewinnvortrag/Verlustvortrag - Umbuchungen"
       template.account_type = "equity"
     end
 
@@ -55,29 +60,66 @@ RSpec.describe OpeningBalanceCreator, type: :service do
     end
   end
 
-  # Use the actual user data as test fixture (with symbol keys as expected by the service)
+  # Use the new nested format as returned by BalanceSheetService
   let(:balance_sheet_data) do
     {
       aktiva: {
-        total: 1095.79,
-        anlagevermoegen: [],
-        umlaufvermoegen: [
-          { balance: 1093.08, account_code: "1529", account_name: "Rückforderungen USt" },
-          { balance: 2.71, account_code: "1200", account_name: "Bank" }
-        ]
+        sections: {
+          anlagevermoegen: {
+            section_key: "anlagevermoegen",
+            section_name: "Anlagevermögen",
+            level: 1,
+            accounts: [],
+            own_total: 0,
+            total: 0,
+            children: []
+          },
+          umlaufvermoegen: {
+            section_key: "umlaufvermoegen",
+            section_name: "Umlaufvermögen",
+            level: 1,
+            accounts: [
+              { balance: 1093.08, code: "1529", name: "Rückforderungen USt", type: "asset" },
+              { balance: 2.71, code: "1200", name: "Bank", type: "asset" }
+            ],
+            own_total: 1095.79,
+            total: 1095.79,
+            children: []
+          }
+        },
+        total: 1095.79
       },
       passiva: {
-        total: 1095.79,
-        eigenkapital: [
-          { balance: 4000, account_code: "0800", account_name: "Gezeichnetes Kapital" },
-          { balance: -1348.84, account_code: "0868", account_name: "Verlustvortrag" },
-          { balance: -2255.37, account_code: "9805", account_name: "Fehlbetrag" }
-        ],
-        fremdkapital: [
-          { balance: 700, account_code: "0750", account_name: "Verbindlichkeiten ggü Gesellschaftern" }
-        ]
+        sections: {
+          eigenkapital: {
+            section_key: "eigenkapital",
+            section_name: "Eigenkapital",
+            level: 1,
+            accounts: [
+              { balance: 4000, code: "0800", name: "Gezeichnetes Kapital", type: "equity" },
+              { balance: -1348.84, code: "0868", name: "Verlustvortrag", type: "equity" },
+              { balance: -2255.37, code: "9805", name: "Fehlbetrag", type: "equity" }
+            ],
+            own_total: 395.79,
+            total: 395.79,
+            children: []
+          },
+          fremdkapital: {
+            section_key: "fremdkapital",
+            section_name: "Fremdkapital",
+            level: 1,
+            accounts: [
+              { balance: 700, code: "0750", name: "Verbindlichkeiten ggü Gesellschaftern", type: "liability" }
+            ],
+            own_total: 700,
+            total: 700,
+            children: []
+          }
+        },
+        total: 1095.79
       },
-      balanced: true
+      balanced: true,
+      net_income: 0
     }
   end
 
@@ -189,8 +231,8 @@ RSpec.describe OpeningBalanceCreator, type: :service do
     context "with invalid data" do
       it "fails when balance sheet doesn't balance" do
         unbalanced_data = balance_sheet_data.deep_dup
-        # Actually unbalance by changing an account balance (not just the total)
-        unbalanced_data[:passiva][:eigenkapital][0][:balance] = 9999.99
+        # Actually unbalance by changing the totals (aktiva != passiva)
+        unbalanced_data[:passiva][:total] = 9999.99
 
         creator = OpeningBalanceCreator.new(
           fiscal_year: fiscal_year_2021,

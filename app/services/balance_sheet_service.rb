@@ -226,7 +226,8 @@ class BalanceSheetService
         end,
         total: passiva_total.round(2)
       },
-      balanced: balanced
+      balanced: balanced,
+      net_income: net_income.round(2)
     }
 
     # Add GuV data if available

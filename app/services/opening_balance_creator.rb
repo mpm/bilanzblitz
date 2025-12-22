@@ -1,5 +1,6 @@
 class OpeningBalanceCreator
   include AccountingConstants
+  include ReportHelpers
 
   Result = Struct.new(:success?, :data, :errors, keyword_init: true)
 
@@ -74,15 +75,8 @@ class OpeningBalanceCreator
   def calculate_total(section)
     return 0 unless section.is_a?(Hash)
 
-    total = 0
-    section.each_value do |accounts|
-      next unless accounts.is_a?(Array)
-
-      accounts.each do |account|
-        total += account[:balance].to_f if account[:balance]
-      end
-    end
-    total
+    # Use pre-calculated total from BalanceSheetService
+    section[:total].to_f
   end
 
   def create_balance_sheet
@@ -146,55 +140,97 @@ class OpeningBalanceCreator
     ebk_total_debit = 0
     ebk_total_credit = 0
 
+    # Extract all accounts from nested sections
+    aktiva_accounts = extract_accounts_from_sections(@balance_data[:aktiva][:sections])
+    passiva_accounts = extract_accounts_from_sections(@balance_data[:passiva][:sections])
+
     # Process Aktiva (Assets) - Debit the asset accounts, Credit EBK
-    process_section(@balance_data[:aktiva], journal_entry) do |account_data|
+    aktiva_accounts.each do |account_data|
       balance = account_data[:balance].to_f
       next if balance.abs < 0.01
 
-      account = find_or_create_account(account_data[:account_code])
+      account = find_or_create_account(account_data[:code])
       next unless account
 
-      # Debit asset account
       journal_entry.line_items.build(
         account: account,
         amount: balance,
         direction: "debit"
       )
-
-      # Track credit to EBK
       ebk_total_credit += balance
     end
 
     # Process Passiva (Liabilities & Equity)
-    # Positive balances (liabilities, positive equity) = Credit the account
-    # Negative balances (losses, negative equity) = Debit the account
-    process_section(@balance_data[:passiva], journal_entry) do |account_data|
+    # Positive balances = Credit the account, Debit EBK
+    # Negative balances (losses) = Debit the account, Credit EBK
+    passiva_accounts.each do |account_data|
       balance = account_data[:balance].to_f
       next if balance.abs < 0.01
 
-      account = find_or_create_account(account_data[:account_code])
+      # Skip pseudo net_income account (handled separately below)
+      next if account_data[:code] == "net_income"
+
+      account = find_or_create_account(account_data[:code])
       next unless account
 
       if balance >= 0
-        # Positive balance: Credit liability/equity account (normal)
+        # Positive balance: Credit liability/equity account
         journal_entry.line_items.build(
           account: account,
           amount: balance,
           direction: "credit"
         )
-
-        # Track debit to EBK
         ebk_total_debit += balance
       else
-        # Negative balance (loss): Debit the account
+        # Negative balance (loss carryforward): Debit the account
         journal_entry.line_items.build(
           account: account,
-          amount: balance.abs,  # Use absolute value
+          amount: balance.abs,
           direction: "debit"
         )
-
-        # Track credit to EBK (negative balance means we credit EBK instead)
         ebk_total_credit += balance.abs
+      end
+    end
+
+    # Handle net_income: Reclassify from 9805 to 0860 (profit) or 0868 (loss)
+    net_income = @balance_data[:net_income]
+    if net_income && net_income.abs >= 0.01
+      umbuchung_account = find_or_create_account("9805")
+
+      if net_income >= 0
+        # Profit: Debit 9805, Credit 0860 (Gewinnvortrag vor Verwendung)
+        gewinn_account = find_or_create_account("0860")
+
+        journal_entry.line_items.build(
+          account: umbuchung_account,
+          amount: net_income,
+          direction: "debit"
+        )
+        ebk_total_credit += net_income
+
+        journal_entry.line_items.build(
+          account: gewinn_account,
+          amount: net_income,
+          direction: "credit"
+        )
+        ebk_total_debit += net_income
+      else
+        # Loss: Credit 9805, Debit 0868 (Verlustvortrag vor Verwendung)
+        verlust_account = find_or_create_account("0868")
+
+        journal_entry.line_items.build(
+          account: umbuchung_account,
+          amount: net_income.abs,
+          direction: "credit"
+        )
+        ebk_total_debit += net_income.abs
+
+        journal_entry.line_items.build(
+          account: verlust_account,
+          amount: net_income.abs,
+          direction: "debit"
+        )
+        ebk_total_credit += net_income.abs
       end
     end
 
@@ -213,18 +249,6 @@ class OpeningBalanceCreator
         amount: ebk_total_debit,
         direction: "debit"
       )
-    end
-  end
-
-  def process_section(section, journal_entry, &block)
-    return unless section.is_a?(Hash)
-
-    section.each_value do |accounts|
-      next unless accounts.is_a?(Array)
-
-      accounts.each do |account_data|
-        yield(account_data)
-      end
     end
   end
 

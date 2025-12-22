@@ -1,5 +1,6 @@
 class FiscalYearClosingService
   include AccountingConstants
+  include ReportHelpers
 
   Result = Struct.new(:success?, :data, :errors, keyword_init: true)
 
@@ -70,36 +71,6 @@ class FiscalYearClosingService
 
   private
 
-  # Helper method to recursively extract all accounts from nested sections
-  def extract_accounts_from_sections(sections_hash)
-    return [] unless sections_hash
-
-    accounts = []
-    sections_hash.each_value do |section|
-      # Add accounts from this section
-      accounts.concat(section[:accounts]) if section[:accounts]
-
-      # Recursively add accounts from children
-      if section[:children] && section[:children].any?
-        section[:children].each do |child_section|
-          accounts.concat(extract_accounts_from_section(child_section))
-        end
-      end
-    end
-    accounts
-  end
-
-  # Helper to extract accounts from a single section (recursive)
-  def extract_accounts_from_section(section)
-    accounts = section[:accounts] || []
-    if section[:children] && section[:children].any?
-      section[:children].each do |child_section|
-        accounts.concat(extract_accounts_from_section(child_section))
-      end
-    end
-    accounts
-  end
-
   def create_sbk_journal_entry(balance_sheet_data)
     # Create journal entry with closing type
     journal_entry = JournalEntry.new(
@@ -150,7 +121,7 @@ class FiscalYearClosingService
       balance = account_data[:balance].to_f
       next if balance.abs < 0.01
 
-      account = @company.accounts.find_by(code: account_data[:account_code])
+      account = @company.accounts.find_by(code: account_data[:code])
       next unless account
 
       # Credit asset account (closing it)
@@ -169,21 +140,53 @@ class FiscalYearClosingService
       balance = account_data[:balance].to_f
       next if balance.abs < 0.01
 
-      # Skip the pseudo net_income account (it's already reflected in equity accounts)
-      next if account_data[:account_code] == "net_income"
+      # Skip the pseudo net_income account (handled separately below)
+      next if account_data[:code] == "net_income"
 
-      account = @company.accounts.find_by(code: account_data[:account_code])
+      account = @company.accounts.find_by(code: account_data[:code])
       next unless account
 
-      # Debit liability/equity account (closing it)
-      journal_entry.line_items.build(
-        account: account,
-        amount: balance,
-        direction: "debit"
-      )
+      if balance >= 0
+        # Positive balance (normal liabilities/equity): Debit the account
+        journal_entry.line_items.build(
+          account: account,
+          amount: balance,
+          direction: "debit"
+        )
+        sbk_total_credit += balance
+      else
+        # Negative balance (losses): Credit the account with absolute value
+        journal_entry.line_items.build(
+          account: account,
+          amount: balance.abs,
+          direction: "credit"
+        )
+        sbk_total_debit += balance.abs
+      end
+    end
 
-      # Track credit to SBK
-      sbk_total_credit += balance
+    # Book net_income to account 9805 (Gewinnvortrag/Verlustvortrag - Umbuchungen)
+    net_income = balance_sheet_data[:net_income]
+    if net_income && net_income.abs >= 0.01
+      umbuchung_account = find_or_create_account("9805")
+
+      if net_income >= 0
+        # Profit: Credit 9805 (increases equity), Debit SBK
+        journal_entry.line_items.build(
+          account: umbuchung_account,
+          amount: net_income,
+          direction: "credit"
+        )
+        sbk_total_debit += net_income
+      else
+        # Loss: Debit 9805 (reduces equity), Credit SBK
+        journal_entry.line_items.build(
+          account: umbuchung_account,
+          amount: net_income.abs,
+          direction: "debit"
+        )
+        sbk_total_credit += net_income.abs
+      end
     end
 
     # Create balancing SBK line items
@@ -254,6 +257,18 @@ class FiscalYearClosingService
     else
       { created: false, errors: result.errors }
     end
+  end
+
+  def find_or_create_account(code)
+    # First try to find existing account
+    account = @company.accounts.find_by(code: code)
+    return account if account
+
+    # If not found, create from template
+    template = @company.chart_of_accounts&.account_templates&.find_by(code: code)
+    return nil unless template
+
+    template.add_to_company(@company)
   end
 
   def success(data)
