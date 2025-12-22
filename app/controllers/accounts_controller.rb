@@ -148,9 +148,14 @@ class AccountsController < ApplicationController
 
     # Get semantic category and presentation rule
     semantic_cid = AccountMap.cid_for_code(account.code)
-    rule = account.presentation_rule&.to_sym || infer_presentation_rule(account.account_type)
-    position = PresentationRule.apply(rule, debits, credits, semantic_cid)
-    balance = position ? position[:balance] : 0.0
+
+    # rule = account.presentation_rule&.to_sym || infer_presentation_rule(account.account_type)
+    # position = PresentationRule.apply(rule, debits, credits, semantic_cid)
+    # balance = position ? position[:balance] : 0.0
+    # The code above was using the same way to calculate the balance as in the balance sheet.
+    # This was not very useful for how I understand the feature when looking at a single account.
+    # Do a simple calculation instead:
+    balance = credits - debits
 
     # Get fiscal year info if filtered
     fiscal_year = fiscal_year_id ? @company.fiscal_years.find_by(id: fiscal_year_id) : nil
