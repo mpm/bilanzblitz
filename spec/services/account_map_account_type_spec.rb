@@ -51,6 +51,10 @@ RSpec.describe AccountMap, ".account_type_for_code" do
     it "classifies 2100 (Zinsen und ähnliche Aufwendungen) as expense" do
       expect(AccountMap.account_type_for_code("2100")).to eq("expense")
     end
+
+    it "classifies 2104 (Zinsaufwendungen für Verbindlichkeiten gegenüber Kreditinstituten) as expense" do
+      expect(AccountMap.account_type_for_code("2104")).to eq("expense")
+    end
   end
 
   describe "GuV accounts - Revenue" do

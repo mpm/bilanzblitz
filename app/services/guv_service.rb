@@ -79,55 +79,27 @@ class GuVService
   end
 
   def build_guv_structure(account_balances)
-    # Use AccountMap to filter accounts by GuV section
-    revenue_accounts = AccountMap.find_accounts(account_balances, :umsatzerloese)
-    material_accounts = AccountMap.find_accounts(account_balances, :materialaufwand_roh_hilfs_betriebsstoffe)
-    personnel_accounts = AccountMap.find_accounts(account_balances, :personalaufwand_loehne_gehaelter)
-    depreciation_accounts = AccountMap.find_accounts(account_balances, :abschreibungen_anlagevermoegen)
-    other_expense_accounts = AccountMap.find_accounts(account_balances, :sonstige_betriebliche_aufwendungen)
-
-    # Build sections array in Gesamtkostenverfahren order
     sections = []
 
-    # 1. Umsatzerlöse (Revenue)
-    sections << build_section(
-      key: :revenue,
-      label: "1. Umsatzerlöse",
-      accounts: revenue_accounts,
-      display_type: :positive
-    )
+    # Iterate through all GuV sections from AccountMap in correct order (§ 275 Abs. 2 HGB)
+    AccountMap.guv_sections_ordered.each do |section_id, section_data|
+      # Skip sections without accounts (parent sections or calculated fields)
+      next if section_data[:accounts].empty?
 
-    # 2. Materialaufwand (Material expense)
-    sections << build_section(
-      key: :material_expense,
-      label: "2. Materialaufwand",
-      accounts: material_accounts,
-      display_type: :negative
-    )
+      # Get accounts for this section
+      section_accounts = AccountMap.find_accounts(account_balances, section_id)
 
-    # 3. Personalaufwand (Personnel expense)
-    sections << build_section(
-      key: :personnel_expense,
-      label: "3. Personalaufwand",
-      accounts: personnel_accounts,
-      display_type: :negative
-    )
+      # Determine display type based on section type
+      display_type = section_data[:section_type] == :revenue ? :positive : :negative
 
-    # 4. Abschreibungen (Depreciation)
-    sections << build_section(
-      key: :depreciation,
-      label: "4. Abschreibungen",
-      accounts: depreciation_accounts,
-      display_type: :negative
-    )
-
-    # 5. Sonstige betriebliche Aufwendungen (Other operating expenses)
-    sections << build_section(
-      key: :other_operating_expense,
-      label: "5. Sonstige betriebliche Aufwendungen",
-      accounts: other_expense_accounts,
-      display_type: :negative
-    )
+      # Build section
+      sections << build_section(
+        key: section_id,
+        label: section_data[:title],
+        accounts: section_accounts,
+        display_type: display_type
+      )
+    end
 
     # Calculate net income (sum of all section subtotals)
     net_income = sections.sum { |s| s[:subtotal] }

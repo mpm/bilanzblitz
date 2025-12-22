@@ -119,13 +119,104 @@ class AccountMap
       @nested_categories ||= transform_json_to_nested_structure(load_balance_sheet_structure)
     end
 
+    # Load GuV structure from JSON file
+    # @return [Hash] Raw JSON structure from guv-sections-mapping.json
+    def load_guv_structure
+      @guv_structure ||= begin
+        path = Rails.root.join("contrib", "guv-sections-mapping.json")
+        JSON.parse(File.read(path), symbolize_names: true)
+      end
+    end
+
+    # Transform GuV JSON to internal format (flatten children to top-level)
+    # @param json_data [Hash] Raw JSON data with GuV sections
+    # @return [Hash] Transformed structure with flat sections
+    def transform_guv_structure(json_data)
+      sections = {}
+
+      json_data.each do |name, data|
+        if data[:children]
+          # Flatten children sections (e.g., Materialaufwand 5a and 5b)
+          data[:children].each do |child|
+            child_key = guv_name_to_key(child[:name])
+            sections[child_key] = {
+              title: child[:name],
+              accounts: child[:codes] || [],
+              rsid: child[:rsid],
+              section_type: determine_section_type(child[:name])
+            }
+          end
+        else
+          # Regular section
+          key = guv_name_to_key(name)
+          sections[key] = {
+            title: name.to_s,
+            accounts: data[:codes] || [],
+            rsid: data[:rsid],
+            section_type: determine_section_type(name.to_s)
+          }
+        end
+      end
+
+      sections
+    end
+
+    # Get GuV sections (dynamically loaded from JSON)
+    # @return [Hash] Transformed GuV sections, replaces GUV_SECTIONS constant
+    def guv_sections
+      @guv_sections ||= transform_guv_structure(load_guv_structure)
+    end
+
+    # Get GuV sections in correct order (§ 275 Abs. 2 HGB)
+    # @return [Hash] Ordered hash of GuV sections
+    def guv_sections_ordered
+      order = [
+        :umsatzerloese,
+        :bestandsveraenderungen,
+        :aktivierte_eigenleistungen,
+        :sonstige_betriebliche_ertraege,
+        :materialaufwand_roh_hilfs_betriebsstoffe,
+        :materialaufwand_bezogene_leistungen,
+        :personalaufwand_loehne_gehaelter,
+        :personalaufwand_soziale_abgaben,
+        :abschreibungen_anlagevermoegen,
+        :abschreibungen_umlaufvermoegen,
+        :sonstige_betriebliche_aufwendungen,
+        :ertraege_beteiligungen,
+        :ertraege_wertpapiere,
+        :sonstige_zinsen_ertraege,
+        :abschreibungen_finanzanlagen,
+        :zinsen_aufwendungen,
+        :steuern_einkommen_ertrag,
+        :sonstige_steuern
+      ]
+
+      order.map { |key| [ key, guv_sections[key] ] }.to_h.compact
+    end
+
+    # Get revenue sections (replaces REVENUE_SECTIONS constant)
+    # @return [Array<Symbol>] Array of revenue section identifiers
+    def revenue_sections
+      @revenue_sections ||= guv_sections.select { |k, v|
+        v[:section_type] == :revenue
+      }.keys
+    end
+
+    # Get expense sections (replaces EXPENSE_SECTIONS constant)
+    # @return [Array<Symbol>] Array of expense section identifiers
+    def expense_sections
+      @expense_sections ||= guv_sections.select { |k, v|
+        v[:section_type] == :expense
+      }.keys
+    end
+
     # Get the human-readable title for a GuV report section
     # @param section_id [Symbol] The section identifier (e.g., :umsatzerloese)
     # @return [String] The section title
     # @raise [ArgumentError] if section_id is unknown
     def section_title(section_id)
       validate_guv_section!(section_id)
-      GUV_SECTIONS[section_id][:title]
+      guv_sections[section_id][:title]
     end
 
     # Get the full list of account codes for a GuV report section (expands ranges)
@@ -134,7 +225,7 @@ class AccountMap
     # @raise [ArgumentError] if section_id is unknown
     def account_codes(section_id)
       validate_guv_section!(section_id)
-      expand_account_ranges(GUV_SECTIONS[section_id][:accounts])
+      expand_account_ranges(guv_sections[section_id][:accounts])
     end
 
     # Filter accounts list to only include those matching the given report section
@@ -224,7 +315,7 @@ class AccountMap
       # 3. Check GuV sections
       guv_section = find_guv_section_for_account(account_code)
       if guv_section
-        return REVENUE_SECTIONS.include?(guv_section) ? "revenue" : "expense"
+        return revenue_sections.include?(guv_section) ? "revenue" : "expense"
       end
 
       # 4. Not found in any category
@@ -416,10 +507,10 @@ class AccountMap
       end
     end
 
-    # Validate that the section_id exists in GUV_SECTIONS
+    # Validate that the section_id exists in guv_sections
     def validate_guv_section!(section_id)
-      unless GUV_SECTIONS.key?(section_id)
-        raise ArgumentError, "Unknown GuV section: #{section_id}. Valid sections: #{GUV_SECTIONS.keys.join(', ')}"
+      unless guv_sections.key?(section_id)
+        raise ArgumentError, "Unknown GuV section: #{section_id}. Valid sections: #{guv_sections.keys.join(', ')}"
       end
     end
 
@@ -610,7 +701,7 @@ class AccountMap
     # @param account_code [String] The account code
     # @return [Symbol, nil] The GuV section identifier or nil if not found
     def find_guv_section_for_account(account_code)
-      GUV_SECTIONS.each do |section_id, section_data|
+      guv_sections.each do |section_id, section_data|
         codes = expand_account_ranges(section_data[:accounts])
         return section_id if codes.include?(account_code)
       end
@@ -622,6 +713,56 @@ class AccountMap
     # @return [Array] Array of codes (empty if input was invalid)
     def ensure_codes_array(codes)
       codes.is_a?(Array) ? codes : []
+    end
+
+    # Map German GuV section names to symbol keys (for backward compatibility)
+    # @param name [String, Symbol] German section name from JSON
+    # @return [Symbol] Key for the section
+    def guv_name_to_key(name)
+      case name.to_s
+      when "Umsatzerlöse" then :umsatzerloese
+      when /Bestand/ then :bestandsveraenderungen
+      when /aktivierte Eigenleistungen/ then :aktivierte_eigenleistungen
+      when /betriebliche Erträge/ then :sonstige_betriebliche_ertraege
+      when /Roh-, Hilfs/ then :materialaufwand_roh_hilfs_betriebsstoffe
+      when /bezogene Leistungen/ then :materialaufwand_bezogene_leistungen
+      when /Löhne/ then :personalaufwand_loehne_gehaelter
+      when /soziale Abgaben/ then :personalaufwand_soziale_abgaben
+      when /auf immaterielle/ then :abschreibungen_anlagevermoegen
+      when /des Umlaufvermögens/ then :abschreibungen_umlaufvermoegen
+      when /betriebliche Aufwendungen/ then :sonstige_betriebliche_aufwendungen
+      when /Beteiligungen/ then :ertraege_beteiligungen
+      when /Wertpapieren/ then :ertraege_wertpapiere
+      when /sonstige Zinsen und ähnliche Erträge/ then :sonstige_zinsen_ertraege
+      when /auf Finanzanlagen/ then :abschreibungen_finanzanlagen
+      when /Zinsen und ähnliche Aufwendungen/ then :zinsen_aufwendungen
+      when /Einkommen und vom Ertrag/ then :steuern_einkommen_ertrag
+      when /sonstige Steuern/ then :sonstige_steuern
+      when /nach Steuern/ then :ergebnis_nach_steuern
+      when /Jahres/ then :jahresueberschuss_jahresfehlbetrag
+      else
+        # Fallback: normalize German name to symbol
+        name.to_s.downcase
+          .gsub(/ä/, "ae").gsub(/ö/, "oe").gsub(/ü/, "ue").gsub(/ß/, "ss")
+          .gsub(/[^a-z0-9]+/, "_").gsub(/^_+|_+$/, "").to_sym
+      end
+    end
+
+    # Determine if a GuV section is revenue, expense, or other
+    # @param name [String, Symbol] Section name
+    # @return [Symbol] :revenue, :expense, or :other
+    def determine_section_type(name)
+      case name.to_s
+      when /Umsatzerlöse/, /Bestand/, /Eigenleistungen/, /Erträge/
+        :revenue
+      when /Materialaufwand/, /Personalaufwand/, /Abschreibungen/,
+           /Aufwendungen/, /Zinsen und ähnliche Aufwendungen/, /Steuern/,
+           /Löhne/, /soziale Abgaben/, /Roh-, Hilfs/, /bezogene Leistungen/,
+           /auf immaterielle/, /des Umlaufvermögens/
+        :expense
+      else
+        :other
+      end
     end
   end
 end

@@ -84,13 +84,13 @@ class BalanceSheetService
       # added or substracted from the balance sheet calculation
       if account.account_type == "equity" && position[:rsid] == "b.passiva.eigenkapital.gewinnvortragverlustvortrag"
        # Check if this is a loss account based on name or code
-       if account.name.include?("Verlustvortrag") || account.code.in?(["0868", "2868"])
+       if account.name.include?("Verlustvortrag") || account.code.in?([ "0868", "2868" ])
          position = position.merge(
            balance: -position[:balance],  # Make it negative
            original_balance: position[:balance]  # Keep original for display
          )
        end
-     end
+      end
 
 
       {
