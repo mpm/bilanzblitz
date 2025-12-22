@@ -838,8 +838,26 @@
   },
   "Steuern vom Einkommen und vom Ertrag": {
     "rsid": "guv.steuern_vom_einkommen_und_vom_ertrag",
-    "skr03_classification": null,
-    "codes": []
+    "skr03_classification": "Steuern vom Einkommen und Ertrag",
+    "codes": [
+      "2200",
+      "2203",
+      "2204",
+      "2208",
+      "2209",
+      "2210",
+      "2213",
+      "2216",
+      "2218",
+      "2219",
+      "2250",
+      "2255",
+      "2260",
+      "2265",
+      "2281",
+      "2283",
+      "4320"
+    ]
   },
   "Ergebnis nach Steuern": {
     "rsid": "guv.ergebnis_nach_steuern",

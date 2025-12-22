@@ -637,22 +637,22 @@
 2170;;;guv.sonstige_betriebliche_aufwendungen;pnl_only;Nicht abziehbare Vorsteuer
 2171;;;guv.sonstige_betriebliche_aufwendungen;pnl_only;Nicht abziehbare Vorsteuer 7 %
 2176;;;guv.sonstige_betriebliche_aufwendungen;pnl_only;Nicht abziehbare Vorsteuer 19 %
-2200;;;;pnl_only;Körperschaftsteuer
-2203;;;;pnl_only;Körperschaftsteuer für Vorjahre
-2204;;;;pnl_only;Körperschaftsteuererstattungen für Vorjahre
-2208;;;;pnl_only;Solidaritätszuschlag
-2209;;;;pnl_only;Solidaritätszuschlag für Vorjahre
-2210;;;;pnl_only;Solidaritätszuschlagerstattungen für Vorjahre
-2213;;;;pnl_only;Kapitalertragsteuer 25 %
-2216;;;;pnl_only;Anrechenbarer Solidaritätszuschlag auf Kapitalertragsteuer 25 %
-2218;;;;pnl_only;Ausländische Steuer auf im Inland steuerfreie DBA-Einkünfte
-2219;;;;pnl_only;Anrechnung/Abzug ausländische Quellensteuer
-2250;;;;pnl_only;Aufwendungen aus der Zuführung und Auflösung von latenten Steuern
-2255;;;;pnl_only;Erträge aus der Zuführung und Auflösung von latenten Steuern
-2260;;;;pnl_only;Aufwendungen aus der Zuführung zu Steuerrückstellungen für Steuerstundung (BStBK)
-2265;;;;pnl_only;Erträge aus der Auflösung von Steuerrückstellungen für Steuerstundung (BStBK)
-2281;;;;pnl_only;Gewerbesteuernachzahlungen und Gewerbesteuererstattungen für Vorjahre nach § 4 Abs. 5b EStG
-2283;;;;pnl_only;Erträge aus der Auflösung von Gewerbesteuerrückstellungen nach § 4 Abs. 5b EStG
+2200;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Körperschaftsteuer
+2203;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Körperschaftsteuer für Vorjahre
+2204;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Körperschaftsteuererstattungen für Vorjahre
+2208;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Solidaritätszuschlag
+2209;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Solidaritätszuschlag für Vorjahre
+2210;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Solidaritätszuschlagerstattungen für Vorjahre
+2213;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Kapitalertragsteuer 25 %
+2216;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Anrechenbarer Solidaritätszuschlag auf Kapitalertragsteuer 25 %
+2218;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Ausländische Steuer auf im Inland steuerfreie DBA-Einkünfte
+2219;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Anrechnung/Abzug ausländische Quellensteuer
+2250;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Aufwendungen aus der Zuführung und Auflösung von latenten Steuern
+2255;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Erträge aus der Zuführung und Auflösung von latenten Steuern
+2260;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Aufwendungen aus der Zuführung zu Steuerrückstellungen für Steuerstundung (BStBK)
+2265;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Erträge aus der Auflösung von Steuerrückstellungen für Steuerstundung (BStBK)
+2281;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Gewerbesteuernachzahlungen und Gewerbesteuererstattungen für Vorjahre nach § 4 Abs. 5b EStG
+2283;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Erträge aus der Auflösung von Gewerbesteuerrückstellungen nach § 4 Abs. 5b EStG
 2285;;;guv.sonstige_steuern;unknown;Steuernachzahlungen Vorjahre für sonstige Steuern
 2287;;;guv.sonstige_steuern;unknown;Steuererstattungen Vorjahre für sonstige Steuern
 2289;;;guv.sonstige_steuern;unknown;Erträge aus der Auflösung von Rückstellungen für sonstige Steuern
@@ -1063,7 +1063,7 @@
 4300;;;guv.sonstige_betriebliche_aufwendungen;pnl_only;Nicht abziehbare Vorsteuer
 4301;;;guv.sonstige_betriebliche_aufwendungen;pnl_only;Nicht abziehbare Vorsteuer 7 %
 4304;;;guv.sonstige_betriebliche_aufwendungen;pnl_only;Nicht abziehbare Vorsteuer 19 %
-4320;;;;pnl_only;Gewerbesteuer
+4320;;;guv.steuern_vom_einkommen_und_vom_ertrag;pnl_only;Gewerbesteuer
 4340;;;guv.sonstige_steuern;unknown;Sonstige Betriebssteuern
 4350;;;guv.sonstige_steuern;unknown;Verbrauchsteuer (sonstige Steuern)
 4355;;;guv.sonstige_steuern;unknown;Ökosteuer

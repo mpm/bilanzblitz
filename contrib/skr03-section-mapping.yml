@@ -291,7 +291,7 @@ passiva:
       name: Gewinnvortrag/Verlustvortrag
       match_status: calculated
       skr03_classification: Gewinnvortrag oder Verlustvortrag
-      notes: Calculated field, no direct account mapping
+      notes: 'classification added by Malte (was: Calculated field, no direct account mapping)'
     jahresueberschussjahresfehlbetrag:
       name: Jahresüberschuß/Jahresfehlbetrag
       match_status: calculated
@@ -371,7 +371,7 @@ passiva:
       skr03_classification:
       - Sonstige Verbindlichkeiten
       - Sonstige Verbindlichkeiten oder sonstige Vermögensgegenstände
-      notes: Partial match
+      notes: '(Verbindlichkeiten oder sonstige... added by Malte) (was: Partial match)'
   rechnungsabgrenzungsposten:
     name: Rechnungsabgrenzungsposten
     match_status: auto
@@ -487,8 +487,8 @@ guv:
   steuern_vom_einkommen_und_vom_ertrag:
     name: Steuern vom Einkommen und vom Ertrag
     match_status: none
-    skr03_classification:
-    notes: No match found - needs manual review
+    skr03_classification: Steuern vom Einkommen und Ertrag
+    notes: Fixed by Malte
   ergebnis_nach_steuern:
     name: Ergebnis nach Steuern
     match_status: calculated
@@ -569,7 +569,6 @@ guv:
 # - Sonstige Verbindlichkeiten S-Saldo
 # - Sonstige Vermögensgegenstände H-Saldo
 # - Sonstige Zinsen und ähnliche Erträge oder Zinsen und ähnliche Aufwendungen
-# - Steuern vom Einkommen und Ertrag
 # - Steuerrückstellungen oder sonstige Vermögensgegenstände
 # - Verbindlichkeiten aus der Annahme gezogener Wechsel und aus der Ausstellung eigener Wechsel
 # - Verbindlichkeiten gegenüber Kreditinstituten oder Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks
