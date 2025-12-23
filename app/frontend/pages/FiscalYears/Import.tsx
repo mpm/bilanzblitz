@@ -21,6 +21,7 @@ interface ImportProps {
 
 export default function FiscalYearImport({ company }: ImportProps) {
   const [year, setYear] = useState<string>('')
+  const [netIncome, setNetIncome] = useState<number>(0)
   const [anlagevermoegen, setAnlagevermoegen] = useState<AccountEntry[]>([])
   const [umlaufvermoegen, setUmlaufvermoegen] = useState<AccountEntry[]>([])
   const [eigenkapital, setEigenkapital] = useState<AccountEntry[]>([])
@@ -58,7 +59,8 @@ export default function FiscalYearImport({ company }: ImportProps) {
 
   const aktivaTotal =
     calculateTotal(anlagevermoegen) + calculateTotal(umlaufvermoegen)
-  const passivaTotal = calculateTotal(eigenkapital) + calculateTotal(rueckstellungen) + calculateTotal(verbindlichkeiten)
+  const passivaAccountsTotal = calculateTotal(eigenkapital) + calculateTotal(rueckstellungen) + calculateTotal(verbindlichkeiten)
+  const passivaTotal = passivaAccountsTotal + netIncome
   const balanced = Math.abs(aktivaTotal - passivaTotal) < 0.01
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -84,13 +86,14 @@ export default function FiscalYearImport({ company }: ImportProps) {
         eigenkapital: eigenkapital.filter((e) => e.accountCode && e.balance),
         rueckstellungen: rueckstellungen.filter((e) => e.accountCode && e.balance),
         verbindlichkeiten: verbindlichkeiten.filter((e) => e.accountCode && e.balance),
-        total: passivaTotal,
+        total: passivaAccountsTotal,  // Only accounts, net_income passed separately
       },
       balanced: true,
     }
 
     router.post('/fiscal_years/import_create', {
       year,
+      net_income: netIncome,
       balance_sheet_data: JSON.stringify(balanceSheetData),
     })
   }
@@ -215,18 +218,34 @@ export default function FiscalYearImport({ company }: ImportProps) {
               <CardTitle>Fiscal Year</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="max-w-xs">
-                <Label htmlFor="year">Year (YYYY)</Label>
-                <Input
-                  id="year"
-                  type="number"
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                  placeholder="e.g., 2023"
-                  min="1900"
-                  max="2100"
-                  required
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="year">Year (YYYY)</Label>
+                  <Input
+                    id="year"
+                    type="number"
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    placeholder="e.g., 2023"
+                    min="1900"
+                    max="2100"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="netIncome">Jahresüberschuss / -fehlbetrag (EUR)</Label>
+                  <Input
+                    id="netIncome"
+                    type="number"
+                    step="0.01"
+                    value={netIncome}
+                    onChange={(e) => setNetIncome(parseFloat(e.target.value) || 0)}
+                    placeholder="0.00"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Positive = Profit (Überschuss), Negative = Loss (Fehlbetrag)
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -281,9 +300,23 @@ export default function FiscalYearImport({ company }: ImportProps) {
                   verbindlichkeiten,
                   setVerbindlichkeiten
                 )}
-                <div className="pt-4 border-t">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold">Total Passiva</span>
+                <div className="pt-4 border-t space-y-2">
+                  <div className="flex justify-between items-center text-sm text-muted-foreground">
+                    <span>Accounts Total</span>
+                    <span className="font-mono">
+                      {formatCurrency(passivaAccountsTotal)}
+                    </span>
+                  </div>
+                  {netIncome !== 0 && (
+                    <div className="flex justify-between items-center text-sm text-muted-foreground">
+                      <span>{netIncome >= 0 ? 'Jahresüberschuss' : 'Jahresfehlbetrag'}</span>
+                      <span className="font-mono">
+                        {formatCurrency(netIncome)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center font-semibold border-t pt-2">
+                    <span>Total Passiva</span>
                     <span className="font-mono font-bold">
                       {formatCurrency(passivaTotal)}
                     </span>

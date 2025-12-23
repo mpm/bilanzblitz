@@ -115,7 +115,8 @@ class FiscalYearsController < ApplicationController
     importer = FiscalYearImporter.new(
       company: @company,
       year: params[:year],
-      balance_sheet_data: balance_sheet_data
+      balance_sheet_data: balance_sheet_data,
+      net_income: params[:net_income].to_f
     )
 
     if importer.call
