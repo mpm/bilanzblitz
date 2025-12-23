@@ -43,9 +43,7 @@ module ReportHelpers
       end
     end
 
-    # Deduplicate by account code (keep first occurrence)
-    # This handles cases where the same account appears at multiple nesting levels
-    accounts.uniq { |account| account[:code] }
+    accounts
   end
 
   # Recursively extract accounts from a single section

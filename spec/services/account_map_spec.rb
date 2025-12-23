@@ -216,4 +216,45 @@ RSpec.describe AccountMap do
   # The system now uses the nested structure loaded from bilanz-sections-mapping.json.
   # Similarly, GUV_SECTIONS, REVENUE_SECTIONS, and EXPENSE_SECTIONS constants have been
   # replaced with dynamic methods that load from guv-sections-mapping.json.
+
+  describe ".build_nested_section" do
+    it "does not create duplicate accounts at multiple nesting levels" do
+      # Test with account codes that appear in the JSON structure
+      # Account 0038 is defined in anlagevermoegen.immaterielle_vermoegensgegenstaende.geleistete_anzahlungen
+      account_list = [
+        { code: "0038", name: "Anzahlung Test", balance: 1000.0 },
+        { code: "0050", name: "Grundstück Test", balance: 5000.0 },
+        { code: "0200", name: "BGA Test", balance: 2000.0 }
+      ]
+
+      result = AccountMap.build_nested_section(account_list, :anlagevermoegen)
+
+      # Recursively extract all account codes from entire structure
+      all_codes = result.flattened_accounts.map { |a| a[:code] }
+
+      # Should not have duplicates - each account should appear exactly once
+      expect(all_codes.length).to eq(all_codes.uniq.length),
+        "Expected no duplicate accounts, but found: #{all_codes.select { |c| all_codes.count(c) > 1 }.uniq}"
+    end
+
+    it "places accounts at the correct nesting level" do
+      # Test that accounts appear in the nested structure
+      account_list = [
+        { code: "0038", name: "Anzahlung", balance: 1000.0 }
+      ]
+
+      result = AccountMap.build_nested_section(account_list, :anlagevermoegen)
+
+      # Should have at least one account in the flattened list
+      expect(result.flattened_accounts).not_to be_empty
+      expect(result.flattened_accounts.first[:code]).to eq("0038")
+    end
+
+    it "handles empty account list" do
+      result = AccountMap.build_nested_section([], :anlagevermoegen)
+
+      # Should create structure but with no accounts
+      expect(result.flattened_accounts).to be_empty
+    end
+  end
 end

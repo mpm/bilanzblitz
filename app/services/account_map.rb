@@ -609,11 +609,15 @@ class AccountMap
         accounts: own_accounts
       )
 
-      # Recursively build children
+      # Filter out accounts already matched at this level before passing to children
+      # This ensures each account appears at only one nesting level (shallowest match wins)
+      remaining_accounts = account_list.reject { |account| own_codes.include?(account[:code]) }
+
+      # Recursively build children with filtered list
       if structure[:children]
         structure[:children].each do |child_key, child_data|
           child_section = build_section_recursive(
-            account_list,
+            remaining_accounts,
             child_key,
             child_data,
             level: level + 1
