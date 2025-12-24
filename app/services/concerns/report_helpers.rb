@@ -62,4 +62,56 @@ module ReportHelpers
 
     accounts
   end
+
+  # Add net_income as pseudo account to eigenkapital section
+  # Mutates the sections_hash in place
+  #
+  # @param sections_hash [Hash] The passiva sections hash (will be modified)
+  # @param net_income [Float] The net income amount
+  # @return [Hash] The modified sections_hash
+  #
+  # @example
+  #   passiva_sections = { eigenkapital: {...}, verbindlichkeiten: {...} }
+  #   add_net_income_to_eigenkapital!(passiva_sections, 5000.0)
+  #   # => passiva_sections[:eigenkapital][:accounts] now includes net_income pseudo account
+  def add_net_income_to_eigenkapital!(sections_hash, net_income)
+    return sections_hash unless sections_hash.is_a?(Hash)
+    return sections_hash if net_income.abs < 0.01  # Skip if zero
+
+    eigenkapital_section = sections_hash[:eigenkapital]
+    return sections_hash unless eigenkapital_section
+
+    # Duplicate accounts array to avoid mutating frozen arrays
+    eigenkapital_section[:accounts] = eigenkapital_section[:accounts].dup
+
+    # Add net_income pseudo account
+    eigenkapital_section[:accounts] << {
+      code: "net_income",
+      name: net_income >= 0 ? "Jahresüberschuss" : "Jahresfehlbetrag",
+      type: "equity",
+      balance: net_income
+    }
+
+    # Update totals and counts
+    eigenkapital_section[:own_total] = (eigenkapital_section[:own_total] || 0) + net_income
+    eigenkapital_section[:total] = (eigenkapital_section[:total] || 0) + net_income
+    eigenkapital_section[:account_count] += 1
+    eigenkapital_section[:total_account_count] += 1
+
+    sections_hash
+  end
+
+  # Calculate total from all nested sections recursively
+  #
+  # @param sections_hash [Hash] Hash of section_key => section data
+  # @return [Float] Total sum of all section totals
+  #
+  # @example
+  #   sections = { anlagevermoegen: {total: 1000}, umlaufvermoegen: {total: 500} }
+  #   calculate_sections_total(sections) # => 1500.0
+  def calculate_sections_total(sections_hash)
+    return 0.0 unless sections_hash.is_a?(Hash)
+
+    sections_hash.values.sum { |section| section[:total].to_f }
+  end
 end

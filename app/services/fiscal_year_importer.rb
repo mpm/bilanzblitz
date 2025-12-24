@@ -27,6 +27,8 @@
 #   result = importer.call
 #
 class FiscalYearImporter
+  include ReportHelpers
+
   attr_reader :company, :year, :balance_sheet_data, :net_income, :errors
 
   def initialize(company:, year:, balance_sheet_data:, net_income: 0.0)
@@ -38,6 +40,9 @@ class FiscalYearImporter
   end
 
   def call
+    # Transform balance sheet BEFORE validation
+    transform_balance_sheet!
+
     validate!
     return false unless @errors.empty?
 
@@ -79,16 +84,15 @@ class FiscalYearImporter
   end
 
   def balance_sheet_balanced?
+    # After transform_balance_sheet!, totals are already calculated correctly
+    # (including net_income in eigenkapital section)
     return false unless @balance_sheet_data[:aktiva].is_a?(Hash)
     return false unless @balance_sheet_data[:passiva].is_a?(Hash)
 
     aktiva_total = @balance_sheet_data[:aktiva][:total].to_f
     passiva_total = @balance_sheet_data[:passiva][:total].to_f
 
-    # Passiva total should include net_income (profit adds to equity, loss subtracts)
-    passiva_total_with_net_income = passiva_total + @net_income
-
-    (aktiva_total - passiva_total_with_net_income).abs < 0.01
+    (aktiva_total - passiva_total).abs < 0.01
   end
 
   def create_fiscal_year!
@@ -124,9 +128,32 @@ class FiscalYearImporter
     )
   end
 
-  # Convert flat balance sheet structure to nested structure
-  # This ensures compatibility with BalanceSheetService and OpeningBalanceCreator
-  def convert_to_nested_structure(flat_data)
+  # Transform balance sheet data to match BalanceSheetService format:
+  # 1. Convert flat structure to nested sections
+  # 2. Add net_income pseudo account to Eigenkapital
+  # 3. Calculate totals from nested accounts (not from input)
+  def transform_balance_sheet!
+    # Convert to nested structure first
+    @balance_sheet_data = {
+      aktiva: {
+        sections: build_nested_sections(@balance_sheet_data[:aktiva], :aktiva)
+      },
+      passiva: {
+        sections: build_nested_sections(@balance_sheet_data[:passiva], :passiva)
+      }
+    }
+
+    # Add net_income pseudo account to eigenkapital section
+    add_net_income_to_eigenkapital!(@balance_sheet_data[:passiva][:sections], @net_income)
+
+    # Calculate totals from nested sections (passiva_total now includes net_income)
+    @balance_sheet_data[:aktiva][:total] = calculate_sections_total(@balance_sheet_data[:aktiva][:sections])
+    @balance_sheet_data[:passiva][:total] = calculate_sections_total(@balance_sheet_data[:passiva][:sections])
+  end
+
+  # Wrap transformed balance sheet data with metadata
+  # Data is already in nested format from transform_balance_sheet!
+  def convert_to_nested_structure(transformed_data)
     {
       fiscal_year: {
         id: @fiscal_year.id,
@@ -135,15 +162,9 @@ class FiscalYearImporter
         end_date: @fiscal_year.end_date,
         closed: @fiscal_year.closed
       },
-      aktiva: {
-        sections: build_nested_sections(flat_data[:aktiva], :aktiva),
-        total: flat_data[:aktiva][:total]
-      },
-      passiva: {
-        sections: build_nested_sections(flat_data[:passiva], :passiva),
-        total: flat_data[:passiva][:total]
-      },
-      balanced: flat_data[:balanced],
+      aktiva: transformed_data[:aktiva],
+      passiva: transformed_data[:passiva],
+      balanced: true,  # Already validated
       net_income: @net_income,
       guv_data: nil
     }
@@ -174,10 +195,39 @@ class FiscalYearImporter
 
       # Build nested section structure using AccountMap
       section = AccountMap.build_nested_section(account_list, category_key)
-      sections[category_key] = section.to_h
+      section_hash = section.to_h
+
+      # AccountMap filters out accounts not in SKR03 mapping
+      # For imported data, we need to preserve all accounts, so add any missing ones
+      section_account_codes = collect_account_codes(section_hash)
+      missing_accounts = account_list.reject { |acc| section_account_codes.include?(acc[:code]) }
+
+      if missing_accounts.any?
+        # Add missing accounts to the top level of this section
+        section_hash[:accounts] = (section_hash[:accounts] || []) + missing_accounts
+        section_hash[:own_total] = (section_hash[:own_total] || 0) + missing_accounts.sum { |acc| acc[:balance] }
+        section_hash[:total] = (section_hash[:total] || 0) + missing_accounts.sum { |acc| acc[:balance] }
+        section_hash[:account_count] += missing_accounts.size
+        section_hash[:total_account_count] += missing_accounts.size
+      end
+
+      sections[category_key] = section_hash
     end
 
     sections
+  end
+
+  # Collect all account codes from a section hash (including children)
+  def collect_account_codes(section_hash)
+    codes = (section_hash[:accounts] || []).map { |acc| acc[:code] }
+
+    if section_hash[:children]
+      section_hash[:children].each do |child|
+        codes.concat(collect_account_codes(child))
+      end
+    end
+
+    codes
   end
 
   # Infer account type from side and category
