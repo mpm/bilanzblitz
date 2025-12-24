@@ -57,7 +57,7 @@ RSpec.describe 'Fiscal Year Import and Carryforward' do
           { account_code: "0800", account_name: "Gezeichnetes Kapital", balance: 50000 }
         ],
         verbindlichkeiten: [
-          { account_code: "1600", account_name: "Verbindlichkeiten", balance: 8000 }
+          { account_code: "0700", account_name: "Verbindlichkeiten ggü. verbundenen Unternehmen", balance: 8000 }
         ],
         total: 58000.0
       },
@@ -87,7 +87,7 @@ RSpec.describe 'Fiscal Year Import and Carryforward' do
     create(:account, company: company, code: "1200", name: "Bank", account_type: "asset")
     create(:account, company: company, code: "1400", name: "Forderungen", account_type: "asset")
     create(:account, company: company, code: "0800", name: "Gezeichnetes Kapital", account_type: "equity")
-    create(:account, company: company, code: "1600", name: "Verbindlichkeiten", account_type: "liability")
+    create(:account, company: company, code: "0700", name: "Verbindlichkeiten ggü. verbundenen Unternehmen", account_type: "liability")
 
     # Create next fiscal year (2024)
     fy_2024 = FiscalYear.create!(
@@ -116,7 +116,9 @@ RSpec.describe 'Fiscal Year Import and Carryforward' do
     opening_entry = fy_2024.journal_entries.opening.first
     expect(opening_entry).not_to be_nil
     expect(opening_entry.posted?).to be true
-    expect(opening_entry.line_items.count).to eq(6)  # 3 assets + 1 equity + 1 liability + 1 EBK
+    # Note: EBK appears twice (debit and credit) in a balanced opening entry to properly clear both sides
+    # This is correct German bookkeeping practice for opening balances (Eröffnungsbilanz-Konto)
+    expect(opening_entry.line_items.count).to eq(7)  # 3 assets + 1 equity + 1 liability + 2 EBK (debit + credit)
 
     # Verify specific accounts were created with correct balances
     line_items_by_code = opening_entry.line_items.includes(:account).index_by { |li| li.account.code }
@@ -163,7 +165,7 @@ RSpec.describe 'Fiscal Year Import and Carryforward' do
           { account_code: "0800", account_name: "Gezeichnetes Kapital", balance: 50000 }
         ],
         verbindlichkeiten: [
-          { account_code: "1600", account_name: "Verbindlichkeiten", balance: 5000 }
+          { account_code: "0700", account_name: "Verbindlichkeiten ggü. verbundenen Unternehmen", balance: 5000 }
         ],
         total: 55000.0
       },
@@ -190,7 +192,7 @@ RSpec.describe 'Fiscal Year Import and Carryforward' do
     create(:account, company: company, code: "0100", name: "Gebäude", account_type: "asset")
     create(:account, company: company, code: "1200", name: "Bank", account_type: "asset")
     create(:account, company: company, code: "0800", name: "Gezeichnetes Kapital", account_type: "equity")
-    create(:account, company: company, code: "1600", name: "Verbindlichkeiten", account_type: "liability")
+    create(:account, company: company, code: "0700", name: "Verbindlichkeiten ggü. verbundenen Unternehmen", account_type: "liability")
 
     # Create next fiscal year
     fy_2024 = FiscalYear.create!(
@@ -258,7 +260,7 @@ RSpec.describe 'Fiscal Year Import and Carryforward' do
           { account_code: "0800", account_name: "Kapital", balance: 170000 }
         ],
         verbindlichkeiten: [
-          { account_code: "1600", account_name: "Verbindlichkeiten L&L", balance: 13500 }
+          { account_code: "0700", account_name: "Verbindlichkeiten ggü. verbundenen Unternehmen", balance: 13500 }
         ],
         total: 183500.0
       },
