@@ -52,7 +52,7 @@ module ReportHelpers
   # @param section [Hash] A single BalanceSheetSection hash
   # @return [Array<Hash>] Flat array of account hashes from this section and all children
   def extract_accounts_from_section(section)
-    accounts = section[:accounts] || []
+    accounts = section[:accounts]&.dup || []
 
     if section[:children] && section[:children].any?
       section[:children].each do |child_section|

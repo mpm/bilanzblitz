@@ -103,7 +103,7 @@ class BalanceSheetSection
       section_key: @section_key,
       section_name: @section_name,
       level: @level,
-      accounts: @accounts,
+      accounts: @accounts.map(&:dup),
       own_total: own_total.round(2),
       total: total.round(2),
       account_count: account_count,

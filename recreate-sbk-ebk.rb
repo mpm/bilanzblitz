@@ -4,8 +4,8 @@
 # ===== CONFIGURATION =====
 
 COMPANY_ID = 2
-OLD_FISCAL_YEAR = 2020
-NEW_FISCAL_YEAR = 2021
+OLD_FISCAL_YEAR = 2021
+NEW_FISCAL_YEAR = 2022
 
 # ===== STEP 1: Load fiscal years =====
 puts "Loading fiscal years..."
