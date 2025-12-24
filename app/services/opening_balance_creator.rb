@@ -63,13 +63,10 @@ class OpeningBalanceCreator
 
     aktiva_total = calculate_total(@balance_data[:aktiva])
     passiva_total = calculate_total(@balance_data[:passiva])
-    net_income = @balance_data[:net_income].to_f
 
-    # Passiva total should include net_income (profit adds to equity, loss subtracts)
-    passiva_total_with_net_income = passiva_total + net_income
-
-    if (aktiva_total - passiva_total_with_net_income).abs > 0.01
-      @errors << "Aktiva (#{aktiva_total}) does not equal Passiva (#{passiva_total_with_net_income})"
+    # Note: passiva_total already includes net_income (added by BalanceSheetService line 201)
+    if (aktiva_total - passiva_total).abs > 0.01
+      @errors << "Aktiva (#{aktiva_total}) does not equal Passiva (#{passiva_total})"
       return false
     end
 
