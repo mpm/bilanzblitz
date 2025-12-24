@@ -1,7 +1,7 @@
 class BalanceSheetService
   Result = Struct.new(:success?, :data, :errors, keyword_init: true)
 
-  def initialize(company:, fiscal_year:, only_posted: true)
+  def initialize(company:, fiscal_year:, only_posted: true, force: false)
     @company = company
     @fiscal_year = fiscal_year
     @only_posted = only_posted
@@ -13,7 +13,7 @@ class BalanceSheetService
     return failure("Fiscal year is required") unless @fiscal_year
 
     # If fiscal year is closed, try to load stored balance sheet
-    if @fiscal_year.closed?
+    if @fiscal_year.closed? && !force
       stored_sheet = load_stored_balance_sheet
       return Result.new(success?: true, data: stored_sheet, errors: []) if stored_sheet
     end
